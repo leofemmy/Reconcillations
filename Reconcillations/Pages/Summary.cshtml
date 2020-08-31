@@ -1,0 +1,138 @@
+﻿@page
+@using DevExpress.AspNetCore
+@model Reconcillations.Pages.SummaryModel
+@{
+}
+@section header
+    {
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+}
+
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-head">
+                <header>Reconcile Statement Account Report Viewing</header>
+            </div>
+            <div class="card-body" id="bar-parent2">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group row">
+                        <label class="col-md-3 control-label">Start Date <span class="required"> * </span></label>
+                        @*<div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" readonly="readonly">*@
+                        @*<input id="txtstart" class="form-control" asp-for="summarys.Startdate" size="16" type="text" value="">*@
+                        <div class="col-md-4">
+                            <input asp-for="summarys.Startdate" class="form-control" />
+                            <span asp-validation-for="summarys.Startdate" class="text-danger"></span>
+                        </div>
+                        @*<span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                        *@
+                        @*</div>*@
+                        <input type="hidden" id="dtp_input1" value="" />
+                        <br />
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 control-label">End Date <span class="required"> * </span></label>
+                        @*<div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" readonly="readonly">*@
+                        @*<input id="txtend" class="form-control" asp-for="summarys.Enddate" size="16" type="text" value="">*@
+                        <div class="col-md-4">
+                            <input asp-for="summarys.Enddate" class="form-control" />
+                            <span asp-validation-for="summarys.Enddate" class="text-danger"></span>
+                        </div>
+                        @*<span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                        *@
+                        @*</div>*@
+                        <input type="hidden" id="dtp_input1" value="" />
+                        <br />
+                    </div>
+                    <div class="form-group">
+                        <div class="offset-md-3 col-md-9">
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"> View </button>
+                            @*<input type="button" id="btnview" value="View" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" />*@
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            @(Html.DevExpress().WebDocumentViewer("WebDocumentViewer").Height("1000px").Bind(Model.Report))
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnview').click(function () {
+                if ($("#txtstart").val() != "" && $("#txtend").val() != "") {
+                    var summary = {};
+                    summary.startdate = $("#txtstart").val();
+                    summary.enddate = $("#txtend").val();
+
+                    console.log(summary);
+
+                    $.ajax({
+
+                        type: "POST",
+                        url: "Summary?handler=Summary",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify(summary),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (msg) {
+
+                            //$("#msg").html(msg);
+                            //console.log(msg);
+                            //console.log(msg.reconcileid);
+
+                            //$('#btnNext').show();
+
+                            //Swal.fire({
+                            //    type: 'success',
+                            //    title: 'Reconciliation Solution',
+                            //    text: 'Record Saved  Successfull !!!',
+                            //    footer: ''
+                            //})
+                        },
+                        error: function (e) {
+                            $("#msg").html("Error while making Ajax call!");
+                        }
+                    });
+                }
+                else {
+                    Swal.fire({
+                        type: 'warning',
+                        title: 'warning',
+                        text: 'Date Must Not Be Empty!!!',
+                        footer: ''
+                    })
+                }
+            })
+        });
+    </script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
+
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}
+

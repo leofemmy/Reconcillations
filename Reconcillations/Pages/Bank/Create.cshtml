@@ -1,0 +1,200 @@
+﻿@page
+@using Reconcillations.Entity
+@model Reconcillations.Pages.Bank.CreateModel
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "Add New Bank Account";
+
+    var curlist = httpContextAccessor.HttpContext.Session.GetObject<List<Currencys>>("psList");
+
+    var banlist = httpContextAccessor.HttpContext.Session.GetObject<List<BankType>>("bnList");
+
+    var bcode = httpContextAccessor.HttpContext.Session.GetObject<List<Classtypes>>("bcodeList");
+}
+@section header{
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+}
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-head">
+                <header>New Account Details</header>
+            </div>
+            <div class="card-body" id="bar-parent2">
+                <form method="post" class="form-horizontal">
+                    @Html.AntiForgeryToken()
+                    <div class="form-body">
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Bank Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <select asp-for="Bank.BankCode" id="postid" class="form-control select2"
+                                        asp-items="@(new SelectList(banlist,"BankCode","BankName"))">
+                                    @if (banlist != null)
+                                    {
+                                        <option value="">-- Select Type --</option>
+                                    }
+                                </select>
+                                <span class="alert-danger" asp-validation-for="Bank.BankCode"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Currency Description
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <select asp-for="Bank.CurrencyID" id="postid" class="form-control select2"
+                                            asp-items="@(new SelectList(curlist,"CurrencyID","CurrencyName"))">
+                                        @if (curlist != null)
+                                        {
+                                            <option value="">-- Select Type --</option>
+                                        }
+                                    </select>
+                                    <span class="alert-danger" asp-validation-for="Bank.CurrencyID"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Bank Type
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <select asp-for="Bank.code" id="postid" class="form-control select2"
+                                            asp-items="@(new SelectList(bcode,"Code","Description"))">
+                                        @if (bcode != null)
+                                        {
+                                            <option value="">-- Select Type --</option>
+                                        }
+                                    </select>
+                                    <span class="alert-danger" asp-validation-for="Bank.code"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Account Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtactname" asp-for="Bank.AccountName" class="form-control" autocomplete="off" />
+                                    <span class="alert-danger" asp-validation-for="Bank.AccountName"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Account Number
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtactno" asp-for="Bank.AccountNumber" class="form-control" autocomplete="off" onkeypress="return isNumberKey(event);" />
+                                    <span class="alert-danger" asp-validation-for="Bank.AccountNumber"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Opening Balance
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input asp-for="Bank.OpeningBal" class="form-control" asp-format="{0:#,###.00}" autocomplete="off" onblur="return NumberFormat(event);" />
+                                    <span class="alert-danger" asp-validation-for="Bank.OpeningBal"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkbox checkbox-icon-black">
+                            <input id="rememberChk2" type="checkbox" checked="checked" asp-for="Bank.IsLink">
+                            <label for="rememberChk2">
+                                Account Link PayDirect
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="offset-md-3 col-md-9">
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"><i class="glyphicon glyphicon-plus"></i> Create </button>
+                            <a class="btn btn-circle btn-primary btn-sx" asp-page="/Bank/Index"><i class="glyphicon glyphicon-backward"></i> List</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        function isDecimal(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            var parts = evt.srcElement.value.split('.');
+            if (parts.length > 1 && charCode == 46)
+                return false;
+            else {
+                if (charCode == 46 || (charCode >= 48 && charCode <= 57))
+                    return true;
+                return false;
+            }
+        }
+        function isNumberKey(evt, element) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 45 || charCode > 57) && !(charCode == 46 || charCode == 8))
+                return false;
+            else {
+                var len = $(element).val().length;
+                var index = $(element).val().indexOf('.');
+                if (index > 0 && charCode == 46) {
+                    return false;
+                }
+                if (index > 0) {
+                    var CharAfterdot = (len + 1) - index;
+                    if (CharAfterdot > 3) {
+                        return false;
+                    }
+                }
+
+            }
+            return true;
+        }
+        function NumberFormat(evt, element) {
+
+            var charCode = (evt.which) ? evt.which : event.keyCode
+
+            var len = $(element).val();
+
+            var string = numeral(len).format('0,0.00');
+
+            console.log(string);
+
+            //return string.value;
+
+            $("#txtopenbal").val(string);
+        }
+                                                                                //$("#txtopenbal").blur(function () {
+                                                                                //    var opb = $("#txtopenbal").val();
+                                                                                //    var string = numeral(opb).format('0,0.00');
+                                                                                //    $("#txtopenbal").val(string);
+                                                                                //});
+    </script>
+
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
+    <!--select2-->
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}

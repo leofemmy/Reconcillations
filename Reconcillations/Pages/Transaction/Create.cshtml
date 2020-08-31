@@ -1,0 +1,98 @@
+﻿@page
+@using Reconcillations.Entity
+@model Reconcillations.Pages.Transaction.CreateModel
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "Create New Transaction Definition";
+
+    var postList = httpContextAccessor.HttpContext.Session.GetObject<List<typeuser>>("psList");
+
+    var lst = httpContextAccessor.HttpContext.Session.GetObject<List<element>>("Lists");
+}
+@section header{
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <script type="text/javascript">
+                    //alert("@Model.Message");
+                  Swal.fire({
+                        type: 'success',
+                        title: 'success',
+                        text: "@Model.Message",
+                        footer: ''
+                 })
+
+    </script>
+}
+<div class="row">
+    <div class="col-md-6 col-sm-6">
+        <div class="card card-box">
+            <div class="card-head">
+                <header>New Transaction Definition Details!!!</header>
+                <button id="panel-button"
+                        class="mdl-button mdl-js-button mdl-button--icon pull-right"
+                        data-upgraded=",MaterialButton">
+                    <i class="material-icons">more_vert</i>
+                </button>
+                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                    data-mdl-for="panel-button"></ul>
+            </div>
+            <div class="card-body " id="bar-parent">
+                <form method="post">
+                    <div class="form-group">
+                        <label asp-for="transaction.Description" style="font-weight:bold;"></label>
+                        <input type='text' class='form-control' asp-for="transaction.Description" placeholder="Transaction Name" />
+                        <span class="alert-danger" asp-validation-for="transaction.Description"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="transaction.TypeCode" style="font-weight:bold;"></label>
+                        <select asp-for="transaction.TypeCode" id="postid" class="form-control select2"
+                                asp-items="@(new SelectList(postList,"TypeCode","TypeName"))">
+                            @if (postList != null)
+                            {
+
+                                <option value="">-- Select Type --</option>
+
+                            }
+                        </select>
+                        <span class="alert-danger" asp-validation-for="transaction.TypeCode"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="transaction.ElementCategoryID" style="font-weight:bold;"></label>
+                        <select asp-for="transaction.ElementCategoryID" class="form-control select2"
+                                asp-items="@(new SelectList(lst,"ElementCategoryID","Name"))">
+                            @if (lst != null)
+                            {
+                                <option value="">-- Select Element Category --</option>
+                            }
+
+                        </select>
+                        <span class="alert-danger" asp-validation-for="transaction.ElementCategoryID"></span>
+                    </div>
+
+                    <button class="btn btn-primary btn-sx mdl-js-ripple-effect" type="submit" data-type="success"><i class="glyphicon glyphicon-plus"></i> Add </button>
+                    <a class="btn btn-circle btn-primary btn-sx" asp-page="/Transaction/Index"><i class="glyphicon glyphicon-backward"></i> List</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
+    <!--select2-->
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+
+}

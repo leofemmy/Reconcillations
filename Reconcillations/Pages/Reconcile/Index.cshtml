@@ -1,0 +1,107 @@
+﻿@page
+@model Reconcillations.Pages.Reconcile.IndexModel
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "Reconcile Period Lists";
+}
+
+@section header{
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+}
+<script>
+
+    function myFunction(x) {
+        $("#item_view").modal();
+    };
+    $(document).ready(function () {
+        $("#success-alert").hide();
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#success-alert").slideUp(500);
+        });
+    });
+
+</script>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-topline-red">
+            <div class="card-head">
+                <header>Reconcile Period Lists</header>
+            </div>
+            <div class="card-body ">
+                <div class="row p-b-20">
+                    <div class="col-md-6 col-sm-6 col-6">
+                        <div class="btn-group">
+                            <a class="btn btn-info" style="margin-top: 20px; margin-bottom: 20px;" asp-page="/Reconcile/Create">
+                                <i class="fa fa-plus"></i> Create
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <table id="saveStage" class="display" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Bank Name</th>
+                            <th>Account Name</th>
+                            <th>Period Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Stage</th>
+                            <th>Days</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        @foreach (var items in Model._translist)
+                        {
+                            <tr>
+                                <td onclick="myFunction(this)" class="view-message ">
+                                    <h5>
+                                        @{ sno++; }
+                                        @sno
+                                    </h5>
+                                </td>
+                                @*<td onclick="myFunction(this)" class="view-message "><h5>@items.RecperID</h5></td>*@
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.BankName</h5></td>
+                                <td onclick="myFunction(this)" class="center view-message "><h5>@items.AccountName</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Description</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Stages</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.days</h5></td>
+                                <td>
+                                    <form method="post">
+                                        <span class="btn-group pull-right" style="margin-top: 5px">
+                                            @*<a class="btn btn-primary" asp-page="/Bank/Edit" asp-route-id="@items.RecperID" style="background-color: green; height: 29px; margin-top: -1px;">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>*@
+                                            <button type="submit" class="btn btn-circle btn-danger btn-xs" asp-page-handler="Delete" asp-route-id="@items.RecperID" style="height: 27px; margin-top: 0px;"
+                                                    onclick="return confirm('Are you sure to delete these  ?');">
+                                                @*<i class="fa fa-trash-o "></i>*@
+                                                Delete
+                                            </button>
+
+                                        </span>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {    <!-- data tables -->
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+
+}

@@ -1,0 +1,98 @@
+﻿@page
+@model Reconcillations.Pages.Approval.ViewModel
+@{
+}
+@section header
+    {
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        @Html.AntiForgeryToken()
+        <div class="card card-box">
+            <div class="card-body" id="bar-parent">
+                <div id="loading-div-background">
+                    <div id="loading-div" class="ui-corner-all">
+                        <div id="loadingbar"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>
+                        <h2 style="color:gray;font-weight:normal;">Processing, Please wait.... <img src="~/smile/assets/img/2.gif" /> </h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        @*<input type="button" id="validate" value="Validate OTP" class="btn btn-circle btn-primary">*@
+                        <input type="button" id="btnApprove" value="Approve" class="btn btn-circle btn-primary" />
+                        <input type="button" id="btndisapprove" value="Disapprove" class="btn btn-circle btn-primary" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExpress().WebDocumentViewer("WebDocumentViewer").Height("1000px").Bind(Model.Report))
+        </div>
+    </div>
+    @section Scripts
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#loading-div-background').hide();
+                $('#btnApprove').click(function () {
+                    $('#loading-div-background').show();
+                    Promise.resolve(
+                        $.ajax({
+                            url: "View?handler=Approval",
+                            type: "POST",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            //data: JSON.stringify(apprec),
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            //dataType: "json",
+                            //traditional: true,
+                            success: function (data) {
+                                console.log(data);
+                                $('#loading-div-background').hide();
+                                if (data === "00") {
+
+                                    Swal.fire({
+                                        type: 'success',
+                                        title: 'success',
+                                        text: 'Approval Done!',
+                                        footer: ''
+                                    });
+
+                                    $('#idtoken').hide();
+                                    $('#btntoken').hide();
+                                    $("#validate").hide();
+                                    $('#btnApprove').show();
+                                }
+                                else {
+                                    Swal.fire({
+                                        type: 'Error',
+                                        title: 'Error',
+                                        text: 'Error occur Approving Reconcile Record!',
+                                        footer: ''
+                                    });
+
+                                }
+
+                            }
+                        }))
+                });
+            });
+        </script>
+        <!-- Sweet Alert -->
+        <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+        <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+        <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+        <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+    }

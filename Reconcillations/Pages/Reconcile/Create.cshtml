@@ -1,0 +1,462 @@
+﻿@page
+@model Reconcillations.Pages.Reconcile.CreateModel
+@{
+}
+@section header{
+    <!-- Sweet Alert item CSS -->
+    @*<link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">*@
+
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">*@
+
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!-- Date Time item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/material-datetimepicker/bootstrap-material-datetimepicker.css" />
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    @*
+        <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>*@
+    <script src="~/smile/assets/plugins/numeral/numeral.min.js"></script>
+}
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-head">
+                <header> Reconcile Period</header>
+            </div>
+            <div class="card-body" id="bar-parent2">
+                <form method="post" id="form_sample_2" class="form-horizontal">
+                    @Html.AntiForgeryToken()
+                    <div class="form-body">
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Period Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtname" class="form-control" autocomplete="off" />
+                                    <span class="alert-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Bank Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <select class="form-control select2" id="bankid" name="select" asp-items="@Model.BankSelectList">
+                                    <option value="">Select Bank Names.</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Account Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <select class="form-control select2" id="accountid" name="select">
+                                        <option value="">Select Bank Names.</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Opening Balance
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input id="txtopen" asp-format="{0:#,###.00}" class="form-control" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 control-label">
+                                Start Date
+                                <span class="required"> * </span>
+                            </label>
+                            <div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy/mm/dd">
+                                <input id="txtstartdate" class="form-control" size="12" type="text" value="">
+                                <span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                                <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                            </div>
+                            <input type="hidden" id="dtp_input2" value="" />
+                            <br />
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 control-label">
+                                End Date  <span class="required"> * </span>
+                            </label>
+                            <div class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input1" data-link-format="yyyy/mm/dd">
+                                <input id="txtenddate" class="form-control" size="16" type="text" value="">
+                                <span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                                <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                            </div>
+                            <input type="hidden" id="dtp_input1" value="" />
+                            <br />
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Closing Balance
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtclose" class="form-control" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="reconid" />
+                    <div id="loading-div-background">
+                        <div id="loading-div" class="ui-corner-all">
+                            <div id="loadingbar"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>
+                            <h2 style="color:gray;font-weight:normal;">Processing, Please wait.... <img src="~/smile/assets/img/2.gif" /> </h2>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="button" id="btnvalidate" class="btn btn-circle btn-primary">Validate Info</button>
+                        <button type="button" id="btnsubmit" class="btn btn-circle btn-primary">Submit</button>
+                        <a class="btn btn-circle btn-primary btn-sx" asp-page="/Reconcile/Index"><i class="glyphicon glyphicon-backward"></i> List</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#txtopen").keypress(function (event) {
+                return isNumber(event, this);
+            });
+            $("#txtclose").keypress(function (event) {
+                return isNumber(event, this);
+            });
+            function isNumber(evt, element) {
+
+                var charCode = (evt.which) ? evt.which : event.keyCode
+
+                if (
+                    (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // Check minus and only once.
+                    (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // Check for dots and only once.
+                    (charCode < 48 || charCode > 57))
+                    return false;
+
+                return true;
+            }
+            $('#loading-div-background').hide();
+            $("#btnsubmit").hide();
+
+            var options = {};
+            var debtran = null; var dtdebit = null;
+            var cedtran = null; var item = null;
+            options.url = "Create?handler=BankAll";
+            options.type = "GET";
+            options.dataType = "json";
+            options.success = function (data) {
+                data.forEach(function (element) {
+                    $("#bankid").append($("<option> Select bank </option>").val
+                        (element.bankCode).html(element.bankName));
+                });
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+
+            $.ajax(options);
+            $("#bankid").change(function () {
+                $list = $("#accountid");
+                //console.log($list);
+                console.log($("#bankid").val());
+                $('#loading-div-background').show();
+                Promise.resolve(
+                    $.ajax({
+                        url: "Create?handler=SelectByCode",
+                        type: "GET",
+                        data: { bankcode: $("#bankid").val() },
+                        traditional: true,
+                        success: function (result) {
+                            $('#loading-div-background').hide();
+                            result.forEach(function (element) {
+                                $("#accountid").append($("<option>Select Bank Account Name  </option>").val
+                                    (element.accountID).html(element.accountName));
+                            });
+                        },
+                        error: function (e) {
+                            $('#loading-div-background').hide();
+                            //$("#msg").html("Error while making Ajax call!");
+                            Swal.fire({
+                                type: 'Error',
+                                title: 'Reconciliation Solution',
+                                text: e.responseText,
+                                footer: ''
+                            })
+                        }
+                    }));
+            });
+            // THE SCRIPT THAT CHECKS IF THE KEY PRESSED IS A NUMERIC OR DECIMAL VALUE.
+            function isNumber(evt, element) {
+
+                var charCode = (evt.which) ? evt.which : event.keyCode
+
+                if (
+                    (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // “-” CHECK MINUS, AND ONLY ONE.
+                    (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+                    (charCode < 48 || charCode > 57))
+                    return false;
+
+                return true;
+            }
+            $('#btnvalidate').click(function () {
+                //check if start date less than end date
+                var st = moment($('#txtstartdate').val(), "DD/MM/YYYY");
+                console.log(st);
+                var en = moment($('#txtenddate').val(), "DD/MM/YYYY");
+                console.log(en);
+                var timediff = en - st;
+                console.log(timediff);
+                $('#loading-div-background').show();
+
+                var days = timediff / (1000 * 60 * 60 * 24);
+
+                console.log(days);
+
+                if ($('#txtname').val().length == 0) {
+                    Swal.fire({
+                        type: 'warning',
+                        title: 'warning',
+                        text: 'Period Name/ Description Empty!!!',
+                        footer: ''
+                    })
+                }
+                else {
+                    if ($('#txtopen').val().length == 0) {
+                        Swal.fire({
+                            type: 'warning',
+                            title: 'warning',
+                            text: 'Account Balance Empty!!!',
+                            footer: ''
+                        })
+                    }
+                    else {
+                        if ($("#txtstartdate").val() == "" || $("#txtenddate").val() == "") {
+                            Swal.fire({
+                                type: 'warning',
+                                title: 'warning',
+                                text: 'Account Date Empty!!!',
+                                footer: ''
+                            })
+                        } else {
+
+                            if ($('#bankid').val().length == 0) {
+                                Swal.fire({
+                                    type: 'warning',
+                                    title: 'warning',
+                                    text: 'Bank Name Empty!!!',
+                                    footer: ''
+                                })
+                            } else {
+                                if ($('#accountid').val().length == 0) {
+                                    Swal.fire({
+                                        type: 'warning',
+                                        title: 'warning',
+                                        text: 'Account Name Empty!!!',
+                                        footer: ''
+                                    })
+
+                                }
+                                else {
+                                    if ($('#txtclose').val().length == 0) {
+                                        Swal.fire({
+                                            type: 'warning',
+                                            title: 'warning',
+                                            text: 'Account Closing Balance Empty!!!',
+                                            footer: ''
+                                        })
+                                    }
+                                    else {
+                                        if (days <= 0) {
+                                            Swal.fire({
+                                                type: 'error',
+                                                title: 'error',
+                                                text: 'Account End Date Should Not Be Less Or Greater Than Accounting Start Date!!!',
+                                                footer: ''
+                                            })
+                                        }
+                                        else {
+                                            //do the validation to the information submit
+                                            var reconcileday = {};
+                                            reconcileday.accountID = $('#accountid').val();
+                                            reconcileday.startdate = $("#txtstartdate").val();
+                                            reconcileday.enddate = $("#txtenddate").val();
+
+                                            console.log(reconcileday);
+                                            Promise.resolve(
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "Create?handler=ValidateDate",
+                                                    beforeSend: function (xhr) {
+                                                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                                                    },
+                                                    data: JSON.stringify(reconcileday),
+                                                    contentType: "application/json; charset=utf-8",
+                                                    processData: true,
+                                                    success: function (response) {
+                                                        $('#loading-div-background').hide();
+                                                        if (response.length == 0)
+                                                            Swal.fire({
+                                                                type: 'Error',
+                                                                title: 'Oops...',
+                                                                text: 'Some error occured while uploading!!!',
+                                                                footer: ''
+                                                            })
+
+                                                        else {
+                                                            console.log($("#txtopen").val());
+                                                            console.log(response);
+                                                            console.log(response.statusMessage);
+                                                            console.log(response.statusCode);
+                                                            console.log(response);
+
+                                                            var dbopebal = $("#txtopen").val();
+                                                            console.log(dbopebal);
+                                                            var dbclose = $("#txtclose").val();
+                                                            console.log(dbclose);
+                                                            $("#txtopen").val(numeral(dbopebal).format('0,0.00'));
+                                                            $("#txtclose").val(numeral(dbclose).format('0,0.00'));
+
+                                                            if (response.statusCode == '00') {
+                                                                $("#btnvalidate").hide();
+                                                                $('#btnsubmit').show();
+
+                                                                Swal.fire({
+                                                                    type: 'success',
+                                                                    title: 'Validation Success Info',
+                                                                    text: response.statusMessage,
+                                                                    footer: ''
+                                                                })
+                                                            }
+                                                            else {
+                                                                $("#btnvalidate").show();
+                                                                $('#btnsubmit').hide();
+
+                                                                Swal.fire({
+                                                                    type: 'success',
+                                                                    title: 'Validation Success Info',
+                                                                    text: response.statusMessage,
+                                                                    footer: ''
+                                                                })
+                                                            }
+
+
+                                                        }
+                                                    },
+                                                    error: function (e) {
+                                                        $('#loading-div-background').hide();
+                                                        Swal.fire({
+                                                            type: 'Error',
+                                                            title: 'Reconciliation Solution',
+                                                            text: e.responseText,
+                                                            footer: ''
+                                                        })
+                                                    }
+                                                }))
+                                        }
+
+
+
+                                    }
+                                }
+
+
+                            }
+
+                        }
+                    }
+
+
+                }
+            });
+            $('#btnsubmit').click(function () {
+                $('#loading-div-background').show();
+                var reconcile = {};
+                reconcile.period = $('#txtname').val();
+                reconcile.startDate = $("#txtstartdate").val();
+                reconcile.endDate = $("#txtenddate").val();
+                reconcile.accountID = $('#accountid').val();
+                reconcile.balance = $("#txtopen").val();
+                reconcile.close = $("#txtclose").val();
+                Promise.resolve(
+                    $.ajax({
+                        type: "POST",
+                        url: "Create?handler=Records",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify(reconcile),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (response) {
+                            console.log(response);
+                            $('#loading-div-background').hide();
+                            Swal.fire({
+                                type: 'success',
+                                title: 'Success',
+                                text: response.statusMessage,
+                                footer: ''
+                            })
+                            $("#btnsubmit").show();
+                            $("#btnvalidate").hide();
+
+                        },
+                        error: function (e) {
+                            //$('#dvData').html(e.responseText);
+                            Swal.fire({
+                                type: 'Error',
+                                title: 'Reconciliation Solution',
+                                text: e.responseText,
+                                footer: ''
+                            })
+                        }
+                    }))
+            });
+        });
+    </script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+    <!-- Select2 -->
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+    <!-- data tables -->
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+    <!-- Date Time Picker -->
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
+    @*<script src="https://cdn.datatables.net/plug-ins/1.10.19/dataRender/datetime.js"></script>*@
+
+
+
+}

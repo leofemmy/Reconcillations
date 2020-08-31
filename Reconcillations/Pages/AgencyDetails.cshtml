@@ -1,0 +1,84 @@
+﻿@page
+@using DevExpress.AspNetCore
+@model Reconcillations.Pages.AgencyDetailsModel
+@{
+}
+@section header
+    {    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" id="script">
+        function previewClick(s, e) {
+            if (e.Brick.text() != null) {
+                var stragency = e.Brick.text();
+                console.log(stragency);
+                var objBankImport = {};
+                objBankImport.revenuename = e.Brick.text();
+                console.log(objBankImport);
+                $.ajax({
+
+                    type: "POST",
+                    url: "AgencyDetails?handler=Loading",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(objBankImport),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (msg) {
+                        //alert(msg.statusMessage);
+                        if (msg == true) {
+                            window.location.href = "Details";
+                        }
+                        //window.location = "AgencyDetails";
+                    },
+                    error: function (xhr, textStatus, error) {
+                        //alert(xhr.statusText);
+                    }
+                });
+            }
+        }
+    </script>
+}
+<div class="card-body" id="bar-parent2">
+    <form method="post">
+        <div class="form-group">
+            <div class="offset-md-3 col-md-9">
+                <button id="btnview" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"> Click Here to View Revenue Details </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @*@(Html.DevExpress().WebDocumentViewer("WebDocumentViewer").Height("1000px").Bind(Model.Report) )*@
+                @{
+                    var documentViewer = Html.DevExpress().WebDocumentViewer("WebDocumentViewer")
+                        .Height("1000px")
+                        .Bind(Model.Report)
+                        .ClientSideEvents(configure => { configure.PreviewClick("previewClick"); }); ;
+                }
+                @documentViewer
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts
+    {    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
+
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}

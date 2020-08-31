@@ -1,0 +1,79 @@
+﻿@page
+@model Reconcillations.Pages.ChangeModel
+@{Layout = "Shared/_Layout"; ;
+    ViewData["Title"] = "Change  User Password";
+}
+@section header
+{
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+
+
+}
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <script type="text/javascript">
+                    //alert("@Model.Message");
+                  Swal.fire({
+                        type: 'warning',
+                        title: 'Oops...',
+                        text: "@Model.Message",
+                        footer: ''
+                 })
+
+    </script>
+}
+<div class="limiter">
+    <div class="container-login100 page-background">
+        <div class="wrap-login100">
+            @HttpContext.Session.GetString("UserEmail")
+            @*@if (!string.IsNullOrEmpty(Model.Property1))
+                {
+                    <script>alert("@Model.Property1");</script>
+                }*@
+
+            @*<h2>Change Password</h2>*@
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="card card-box">
+                            <div class="card-head">
+                                <header>Change Password</header>
+                            </div>
+                            <div class="card-body " id="bar-parent">
+                                <div class="form-group">
+                                    <label for="simpleFormEmail">Current Password</label>
+                                    <input type="password" class="form-control" id="simpleFormEmail" asp-for="passchng.currentPassword" placeholder="Current Pasword">
+                                </div>
+                                <div class="form-group">
+                                    <label for="simpleFormPassword">New Password</label>
+                                    <input type="password" class="form-control" id="simpleFormPassword" asp-for="passchng.Password" placeholder="New Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="simpleFormPassword"> Confirm New Password</label>
+                                    <input type="password" class="form-control" id="simpleFormPassword" asp-for="passchng.ConfirmPassword" placeholder="Confirm New Password">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Change</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*<input type="hidden" />
+                    <input type="hidden" />
+                    <input type="password" placeholder="Password" autocomplete="off" />
+                    <span class="text-danger"></span>
+                    <input type="password" placeholder="Confirm Password" autocomplete="off" />
+                    <span class="text-danger"></span>
+
+                    <button>Submit</button>*@
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+
+}

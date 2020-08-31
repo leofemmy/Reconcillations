@@ -1,0 +1,208 @@
+﻿@page
+@using DevExpress.AspNetCore
+@using Microsoft.AspNetCore.Http
+@using Reconcillations.Entity
+@model Reconcillations.Pages.ExpectionModel
+@{
+    var postList = httpContextAccessor.HttpContext.Session.GetObject<List<Accountlists>>("actlist");
+
+    var deftList = httpContextAccessor.HttpContext.Session.GetObject<List<Definitionlist>>("_definitionlist");
+}
+@section header{
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+
+}
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-head">
+                <header>Reconcile Exception  Report</header>
+            </div>
+            <div class="card-body" id="bar-parent2">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group row">
+                        <label class="col-md-3 control-label">
+                            Start Date   <span class="required"> * </span>
+                        </label>
+                        <span class="alert-danger"></span>
+                        <div class="col-md-4">
+                            <input asp-for="bankimport.Startdate" class="form-control">
+                            <span class="alert-danger" asp-validation-for="bankimport.Startdate"></span>
+                        </div>
+                        <input type="hidden" id="dtp_input1" value="" />
+                        <br />
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 control-label">
+                            End Date
+                            <span class="required"> * </span>
+
+                        </label>
+                        <span class="alert-danger"></span>
+                        <div class="col-md-4">
+                            <input asp-for="bankimport.Enddate" class="form-control">
+                            @*<span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                                <span class="input-group-addon"><span class="fa fa-calendar"></span></span>*@
+                            <span class="alert-danger" asp-validation-for="bankimport.Enddate"></span>
+                        </div>
+                        <input type="hidden" id="dtp_input1" value="" />
+                        <br />
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-md-3">
+                            Bank Account
+                            <span class="required"> * </span>
+                            <span class="alert-danger" asp-validation-for="bankimport.AccountID"></span>
+                        </label>
+                        <div class="col-md-4">
+                            <select asp-for="bankimport.AccountID" id="postid" class="form-control select2"
+                                    asp-items="@(new SelectList(postList,"AccountID","AccountName"))">
+                                @if (postList != null)
+                                {
+                                    <option value="">-- Select Bank  Account Name --</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-md-3">
+                            Exception type
+                            <span class="required"> * </span>
+                            <span class="alert-danger" asp-validation-for="bankimport.TransID"></span>
+                        </label>
+                        <div class="col-md-4">
+                            <select asp-for="bankimport.TransID" id="postid" class="form-control select2"
+                                    asp-items="@(new SelectList(deftList,"TransID","Description"))">
+                                @if (deftList != null)
+                                {
+                                    <option value="">-- Select Bank  Account Name --</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="control-label col-md-9">
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"> View </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    @(Html.DevExpress().WebDocumentViewer("WebDocumentViewer").Height("1000px").Bind(Model.Report))
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @*<script type="text/javascript">
+            $(document).ready(function () {
+                var options = {};
+                options.url = "Expection?handler=Definition";
+                options.type = "GET";
+                options.dataType = "json";
+                options.success = function (data) {
+                    data.forEach(function (element) {
+                        $("#transaid").append($("<option> Select Transaction definition </option>").val
+                            (element.transID).html(element.description));
+                    });
+                };
+                options.error = function () {
+                    $("#msg").html("Error while making Ajax call!");
+                };
+                $.ajax(options);
+
+                var option = {};
+                option.url = "Expection?handler=Accountlist";
+                option.type = "GET";
+                option.dataType = "json";
+                option.success = function (data) {
+                    console.log(data);
+                    data.forEach(function (element) {
+                        $("#bankid").append($("<option> Select Transaction definition </option>").val
+                            (element.accountID).html(element.accountName));
+                    });
+                };
+                option.error = function () {
+                    $("#msg").html("Error while making Ajax call!");
+                };
+
+                $.ajax(option);
+
+                $('#btnview').click(function () {
+
+                    if ($("#txtstart").val() == "" || $("#txtend").val() == "") {
+                        Swal.fire({
+                            type: 'Error',
+                            title: 'Oops...',
+                            text: 'Date Can not be Empty',
+                            footer: ''
+                        })
+                    }
+                    else if ($('#bankid').length == 0) {
+                        Swal.fire({
+                            type: 'Error',
+                            title: 'Oops...',
+                            text: 'Account Name Can not be Empty',
+                            footer: ''
+                        })
+
+                    }
+                    else if ($('#transaid').length == 0) {
+                        Swal.fire({
+                            type: 'Error',
+                            title: 'Oops...',
+                            text: 'Exception Type Can not be Empty',
+                            footer: ''
+                        })
+
+                    } else {
+                        var objexception = {};
+                        objexception.startdate = $("#txtstart").val();
+                        objexception.enddate = $("#txtend").val();
+                        objexception.transID = $('#transaid').val();
+                        objexception.accountID = $('#bankid').val();
+
+                        console.log(objexception);
+
+                        $.ajax({
+
+                            type: "POST",
+                            url: "Expection?handler=Exception",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            data: JSON.stringify(objexception),
+                            contentType: "application/json",
+                            dataType: "json",
+                            success: function (msg) {
+                                console.log(msg);
+                            },
+                            error: function () {
+                                $("#msg").html("Error while making Ajax call!");
+                            }
+                        });
+                    }
+                });
+            });
+        </script>*@
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
+
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}

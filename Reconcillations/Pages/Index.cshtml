@@ -1,0 +1,86 @@
+﻿@page
+@model IndexModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Log In";
+}
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" type="text/css" />
+<!-- icons -->
+<link href="~/smile/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="~/smile/fonts/material-design-icons/material-icon.css" rel="stylesheet" type="text/css" />
+<!-- start js include path -->
+<script src="~/smile/assets/plugins/jquery/jquery.min.js"></script>
+<!-- Sweet Alert item CSS -->
+@*<link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">*@
+@*<script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>*@
+<link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+<script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+<!-- bootstrap -->
+<link href="~/smile/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<!-- style -->
+<link rel="stylesheet" href="~/smile/assets/css/pages/extra_pages.css">
+<!-- favicon -->
+<link rel="shortcut icon" href="~/smile/assets/img/favicon.ico" />
+
+@*body of the page*@
+
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <script type="text/javascript">
+                    //alert("@Model.Message");
+                  Swal.fire({
+                        type: 'warning',
+                        title: 'Warning Message',
+                        text: "@Model.Message",
+                        footer: ''
+                 })
+
+    </script>
+}
+<div class="form-title">
+    <h1>Login </h1>
+</div>
+<!-- Login Form-->
+<div class="login-form text-center">
+    <div class="toggle">
+        <i class="fa fa-user-plus"></i>
+    </div>
+    <div class="form formLogin">
+        <h2>Login to your account</h2>
+        <form method="post" class="login100-form validate-form">
+            <input type="text" placeholder="User ID / Email Address" asp-for="cuserpass.Email" autocomplete="off" />
+            <span class="focus-input100" asp-validation-for="cuserpass.Email"></span>
+            <input type="password" placeholder="Password" asp-for="cuserpass.Userpass" autocomplete="off" />
+            <span class="focus-input100" asp-validation-for="cuserpass.Userpass"></span>
+            <div class="remember text-left">
+            </div>
+            <button>Login</button>
+            <div class="forgetPassword">
+                <a class="txt-info" href="~/Account/forgot_password">Forgot your password?</a>
+            </div>
+            @if (ViewData["Message"] != null)
+            {
+                <script type="text/javascript">
+            @*@Html.Raw(TempData["notification"])*@
+            Swal.fire({
+                            type: 'success',
+                            title: 'Success',
+                            text: ViewData ["Message"],
+                            footer: ''
+                        })
+                </script>
+            }
+        </form>
+    </div>
+</div>
+
+<!-- Sweet Alert -->
+@*<script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>*@
+<script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+<script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+<script src="~/smile/assets/js/pages/extra_pages/pages.js"></script>
+<!-- end js include path -->
+@*page scripts*@

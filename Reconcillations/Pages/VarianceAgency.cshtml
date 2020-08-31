@@ -1,0 +1,80 @@
+﻿@page
+@using DevExpress.AspNetCore
+@model Reconcillations.Pages.VarianceAgencyModel
+@{
+}
+@section header
+    {    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+}
+@*XtraRepVarianceAgency*@
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-head">
+                <header>Variances by Agencies</header>
+            </div>
+            <div class="card-body" id="bar-parent2">
+                <form method="post">
+                    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
+                    </asp:ScriptManager>
+                    @Html.AntiForgeryToken()
+                    <div class="form-group row">
+                        <label class="col-md-3 control-label">Start Date <span class="required"> * </span></label>
+                        <div class="col-md-4">
+                            <input asp-for="summarys.Startdate" class="form-control" />
+                            <span asp-validation-for="summarys.Startdate" class="text-danger"></span>
+                        </div>
+                        <input type="hidden" id="dtp_input1" value="" />
+                        <br />
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 control-label">End Date <span class="required"> * </span></label>
+                        <div class="col-md-4">
+                            <input asp-for="summarys.Enddate" class="form-control" />
+                            <span asp-validation-for="summarys.Enddate" class="text-danger"></span>
+                        </div>
+                        <input type="hidden" id="dtp_input1" value="" />
+                        <br />
+                    </div>
+                    <div class="form-group">
+                        <div class="offset-md-3 col-md-9">
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"> View </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            @(Html.DevExpress().WebDocumentViewer("webdocumentviewer").Height("1000px").Bind(Model.Report) )
+                            @*@{
+                                    var documentViewer = Html.DevExpress().WebDocumentViewer("WebDocumentViewer")
+                                        .Height("1000px")
+                                        .Bind(Model.Report)
+                                        .ClientSideEvents(configure => { configure.PreviewClick("previewClick"); }); ;
+                                }
+                                @documentViewer*@
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
+
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}

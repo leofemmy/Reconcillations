@@ -1,0 +1,104 @@
+﻿@page
+@model Reconcillations.Pages.Bank.IndexModel
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "Bank Account Lists";
+}
+@section header{
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+}
+<script>
+
+    function myFunction(x) {
+        $("#item_view").modal();
+    };
+    $(document).ready(function () {
+        $("#success-alert").hide();
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#success-alert").slideUp(500);
+        });
+    });
+
+</script>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-topline-red">
+            <div class="card-head">
+                <header>Bank Account Lists</header>
+            </div>
+            <div class="card-body ">
+                <div class="row p-b-20">
+                    <div class="col-md-6 col-sm-6 col-6">
+                        <div class="btn-group">
+                            <a class="btn btn-info" style="margin-top: 20px; margin-bottom: 20px;" asp-page="/Bank/Create">
+                                <i class="fa fa-plus"></i> Create
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <table id="saveStage" class="display" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th> S/N </th>
+                            <th> Account Name </th>
+                            <th> Account Number </th>
+                            <th> Opening Balance </th>
+                            <th> Bank Name </th>
+                            <th> Account Type </th>
+                            <th> Date Created </th>
+                            <th>Active</th>
+                            <th> Action </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        @foreach (var items in Model._BankLists)
+                        {
+                            <tr>
+                                <td onclick="myFunction(this)" class="view-message ">
+                                    <h5>
+                                        @{ sno++; }
+                                        @sno
+                                    </h5>
+                                </td>
+                                @*<td onclick="myFunction(this)" class="view-message "><h5>@items.AccountID</h5></td>*@
+                                <td onclick="myFunction(this)" class="center view-message "><h5>@items.AccountName</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.AccountNumber</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.OpeningBal)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.BankName</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Description</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:d}", items.CreatedDate)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.IsActive</h5></td>
+                                <td>
+                                    <form method="post">
+                                        <span class="btn-group pull-right" style="margin-top: 5px">
+                                            <a class="btn btn-primary" asp-page="/Bank/Edit" asp-route-id="@items.AccountID" style="background-color: green; height: 29px; margin-top: -1px;">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <button type="submit" class="btn btn-outline-warning btn-xs" asp-page-handler="Delete" asp-route-id="@items.AccountID" style="height: 27px; margin-top: 0px;"
+                                                    onclick="return confirm('Are you sure to disable these Account ?');">
+                                                <i class="fa fa-trash-o "></i>
+                                            </button>
+
+                                        </span>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {    <!-- data tables -->
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+
+}

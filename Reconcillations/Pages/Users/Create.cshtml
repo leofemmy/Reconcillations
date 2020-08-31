@@ -1,0 +1,130 @@
+﻿@page
+@using Reconcillations.Entity
+@model Reconcillations.Pages.Users.CreateModel
+@{
+    Layout = "Shared/_Layout"; ;
+    ViewData["Title"] = "Create New Application User";
+
+    var postList = httpContextAccessor.HttpContext.Session.GetObject<List<Usertypelist>>("psList");
+}
+@section header{}
+
+<div class="limiter">
+    <div class="container-login100 page-background">
+        <div class="wrap-login100">
+            @*<form method="post" class="login100-form validate-form">
+            *@
+            <form method="post">
+                <span class="login100-form-title p-b-34 p-t-27">
+                    New User's Account
+                </span>
+                <br />
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Surname
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="cUsers.Surname" placeholder="Surname" autocomplete="off" />
+                            <span class="alert-danger" asp-validation-for="cUsers.Surname"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        First Name
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="cUsers.FirstName" placeholder="First Name" autocomplete="off" />
+                            <span class="alert-danger" asp-validation-for="cUsers.FirstName"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Address
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="cUsers.Address" placeholder="Address" autocomplete="off" />
+                            <span class="alert-danger" asp-validation-for="cUsers.Address"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Mobile
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="cUsers.Mobile" placeholder="Mobile" autocomplete="off" />
+                            <span class="alert-danger" asp-validation-for="cUsers.Mobile"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Email Address
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="cUsers.Email" placeholder="Email" autocomplete="off" />
+                            <span class="alert-danger" asp-validation-for="cUsers.Email"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        User Type
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            @*@if (Model.UsertypeSelectlist != null)
+                                {
+                                    <select asp-for="cUsers.Usercode" class="form-control select2"
+                                            asp-items="@Model.UsertypeSelectlist">
+                                        <option value="">-- Select User Type --</option>
+                                    </select>
+                                }
+                                <span class="alert-danger" asp-validation-for="cUsers.Usercode"></span>*@
+                            <select asp-for="cUsers.Usercode" id="postid" class="form-control select2"
+                                    asp-items="@(new SelectList(postList,"TypeCode","Description"))">
+                                @if (postList != null)
+                                {
+
+                                    <option value="">-- Select User Type --</option>
+
+                                }
+                            </select>
+                            <span class="alert-danger" asp-validation-for="cUsers.Usercode"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    @*<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"><i class="glyphicon glyphicon-plus"></i> Add </button>*@
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        Submit
+                    </button>
+                    <a class="btn btn-circle btn-primary btn-sx" asp-page="/Users/Index"><i class="glyphicon glyphicon-backward"></i> List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts
+{}

@@ -1,0 +1,129 @@
+﻿@page
+@using Reconcillations.Entity
+@model Reconcillations.Pages.Users.EditModel
+@{
+    var postList = httpContextAccessor.HttpContext.Session.GetObject<List<Usertypelist>>("psList");
+}
+@section header{
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+}
+<div class="limiter">
+    <div class="container-login100 page-background">
+        <div class="wrap-login100">
+            <form method="post">
+                <span class="login100-form-title p-b-34 p-t-27">
+                    Modify User's Account
+                </span>
+                <br />
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Surname
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="users.Surname" placeholder="Surname" autocomplete="off" />
+                            <input type="hidden" asp-for="users.UserId" />
+                            <span class="alert-danger" asp-validation-for="users.Surname"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        First Name
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="users.Firstname" placeholder="First Name" autocomplete="off" />
+                            <span class="alert-danger" asp-validation-for="users.Firstname"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Address
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="users.Address" placeholder="Address" autocomplete="off" />
+                            <span class="alert-danger" asp-validation-for="users.Address"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Mobile
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="users.Mobile" placeholder="Mobile" autocomplete="off" readonly="readonly" />
+                            <span class="alert-danger" asp-validation-for="users.Mobile"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Email Address
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <i class="fa"></i>
+                            <input type='text' class='input100' asp-for="users.EmailAddress" placeholder="Email" autocomplete="off" readonly="readonly" />
+                            <span class="alert-danger" asp-validation-for="users.EmailAddress"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        User Type
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-icon right">
+                            <select asp-for="users.Usercode" id="postid" class="form-control select2"
+                                    asp-items="@(new SelectList(postList,"TypeCode","Description"))">
+                                @if (postList != null)
+                                {
+
+                                    <option value="">-- Select User Type --</option>
+
+                                }
+                            </select>
+                            <span class="alert-danger" asp-validation-for="users.Usercode"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        Update
+                    </button>
+                    <a class="btn btn-circle btn-primary btn-sx" asp-page="/Users/Index"><i class="glyphicon glyphicon-backward"></i> List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
+    <!--select2-->
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+
+}

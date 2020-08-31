@@ -1,0 +1,319 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@model Reconcillations.Pages.Approval.IndexModel
+@{ Layout = "Shared/_Layout"; ;
+    ViewData["Title"] = " Request Approval";
+}
+@section header
+    {
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="row">
+    <div id="dvtoken" class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <h3>Enter OPT sent to your register Email address: </h3>  @HttpContext.Session.GetString("UserEmail")
+            <div class="card-body" id="bar-parent">
+                <div class="form-body">
+                    <div class="form-group row">
+                        <div class="col-md-8">
+                            <input class="control-label col-md-12" type="text" id="idtoken" placeholder=" Enter OTP Sent to your Email Address">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="button" id="validate" value="Validate OTP" class="btn btn-circle btn-primary">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dvview" class="col-md-12">
+        <div class="card card-topline-red">
+            <div class="card-head">
+                <header>Request Approval Lists</header>
+            </div>
+            <div class="card-body ">
+                <table id="saveStage" class="display" style="width:100%;">
+                    <thead>
+                        <tr>
+                            @*<th></th>*@
+                            <th>ID</th>
+                            <th>Bank Name</th>
+                            <th>Account Name</th>
+                            <th>Period Name</th>
+                            <th>Opening Bal</th>
+                            <th>Credit</th>
+                            <th>Debit</th>
+                            <th>Closing bal</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            @*<th>Stage</th>*@
+                            <th>Request By</th>
+                            @*<th>Days</th>*@
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        @foreach (var items in Model._translist)
+                        {
+                        <tr>
+                            <td onclick="myFunction(this)" class="view-message ">
+                                <h5>
+                                    @{ sno++; }
+                                    @sno
+                                </h5>
+                            </td>
+                            @*<input name="AreChecked" type="checkbox" value="@i" /> @i
+                                <br />*@
+                            @*<td onclick="myFunction(this)" class="view-message "><h5><input name="chkrecpid" type="checkbox" value=@items.RecperID /></h5></td>*@
+                            @*<td onclick="myFunction(this)" class="view-message "><h5>@items.RecperID</h5></td>*@
+                            <td onclick="myFunction(this)" class="view-message "><h5>@items.BankName</h5></td>
+                            <td onclick="myFunction(this)" class="center view-message "><h5>@items.AccountName</h5></td>
+                            <td onclick="myFunction(this)" class="view-message "><h5>@items.Description</h5></td>
+                            <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.openingbal)</h5></td>
+                            <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.credit)</h5></td>
+                            <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.debit)</h5></td>
+                            <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.closebal)</h5></td>
+                            <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
+                            <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>
+                            @*<td onclick="myFunction(this)" class="view-message "><h5>@items.Stages</h5></td>*@
+                            <td onclick="myFunction(this)" class="view-message "><h5>@items.Requestby</h5></td>
+                            @*<td onclick="myFunction(this)" class="view-message "><h5>@items.days</h5></td>*@
+                            <td>
+                                <form method="post">
+                                    <span class="btn-group pull-right" style="margin-top: 5px">
+                                        <a class="btn btn-primary" asp-page="/Approval/View" asp-route-id="@items.RecperID" style="background-color: green; height: 29px; margin-top: -1px;">
+                                            View
+                                        </a>
+                                    </span>
+                                </form>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {  <!--select2-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Hide the "busy" Gif at load:
+
+            $("#dvview").hide();
+            //var options = {};
+            //var debtran = null; var dtdebit = null;
+            //var cedtran = null; var item = null;
+            //options.url = "Create?handler=BankAll";
+            //options.type = "GET";
+            //options.dataType = "json";
+            //options.success = function (data) {
+            //    data.forEach(function (element) {
+            //        $("#bankid").append($("<option> Select bank </option>").val
+            //            (element.recperID).html(element.description));
+            //    });
+            //};
+            //options.error = function () {
+            //    $("#msg").html("Error while making Ajax call!");
+            //};
+            $('#validate').click(function () {
+                var strOtp = {};
+
+                if ($('#idtoken').val().length != 0) {
+
+                    strOtp.strOtp = $('#idtoken').val();
+
+                    console.log(strOtp);
+
+                    $.ajax({
+                        url: "Approval/Index?handler=Validteotp",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: JSON.stringify(strOtp),
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        //dataType: "json",
+                        //traditional: true,
+                        success: function (data) {
+                            console.log(data);
+                            if (data === "00") {
+
+                                Swal.fire({
+                                    type: 'success',
+                                    title: 'success',
+                                    text: 'OTP Validated Successfull',
+                                    footer: ''
+                                });
+
+                                $('#idtoken').hide();
+                                //$('#btntoken').hide();
+                                $("#validate").hide();
+                                $('#dvview').show();
+
+                            }
+                            else {
+                                Swal.fire({
+                                    type: 'Error',
+                                    title: 'Error',
+                                    text: 'Error occur Validating OTP to your provided!',
+                                    footer: ''
+                                });
+
+                            }
+
+                        },
+                        error: function (e) {
+                            //$('#loading-div-background').hide();
+                            //$('#dvData').html(e.responseText);
+                            Swal.fire({
+                                type: 'error',
+                                title: e.statusText,
+                                text: e.responseText,
+                                footer: ''
+                            })
+                        }
+                    });
+                }
+                else {
+                    Swal.fire({
+                        type: 'Error',
+                        title: 'Error',
+                        text: 'Kindly provide OTP send to your email address!',
+                        footer: ''
+                    });
+                }
+            });
+            //$.ajax(options);
+            //$('#validate').click(function () {
+            //    var strOtp = {};
+
+            //    if ($('#idtoken').val().length != 0) {
+
+            //        var strOtp = {};
+            //        strOtp.strOtp = $("#idtoken").val();
+            //        //strOtp.strOtp = $('#idtoken').val();
+
+            //        console.log(strOtp);
+            //        $.ajax({
+            //            type: "POST",
+            //            url: "Index?handler=Validteotp",
+            //            beforeSend: function (xhr) {
+            //                xhr.setRequestHeader("MY-XSRF-TOKEN",
+            //                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            //            },
+            //            data: JSON.stringify(strOtp),
+            //            contentType: "application/json; charset=utf-8",
+            //            dataType: "json",
+            //            success: function (msg) {
+
+            //                $("#msg").html(msg);
+            //                $('#idtoken').hide();
+            //                //$('#btntoken').hide();
+            //                $("#validate").hide();
+            //                $('#dvview').show();
+            //                if (msg === "00") {
+            //                    Swal.fire({
+            //                        type: 'success',
+            //                        title: 'Reconciliation Solution',
+            //                        text: 'OTP Validated Successfull',
+            //                        footer: ''
+            //                    })
+            //                }
+
+            //            },
+            //            error: function (xhr, textStatus, error) {
+            //                //$("#msg").html("Error while making Ajax call!");
+            //                Swal.fire({
+            //                    type: error,
+            //                    title: 'Error Message',
+            //                    text: xhr.statusText,
+            //                    footer: ''
+            //                })
+            //            }
+            //        })
+            //        //Request / Index ? handler = Approval
+            //        //$.ajax({
+            //        //    url: "Index?handler=Validteotp",
+            //        //    type: "POST",
+            //        //    contentType: "application/json",
+            //        //    dataType: "json",
+            //        //    data: JSON.stringify(strOtp),
+            //        //    beforeSend: function (xhr) {
+            //        //        xhr.setRequestHeader("MY-XSRF-TOKEN",
+            //        //            $('input:hidden[name="__RequestVerificationToken"]').val());
+            //        //    },
+            //        //    success: function (data) {
+            //        //        console.log(data);
+            //        //        if (data === "00") {
+
+            //        //            Swal.fire({
+            //        //                type: 'success',
+            //        //                title: 'success',
+            //        //                text: 'OTP Validated Successfull',
+            //        //                footer: ''
+            //        //            });
+
+            //        //$('#idtoken').hide();
+            //        ////$('#btntoken').hide();
+            //        //$("#validate").hide();
+            //        //$('#dvview').show();
+
+            //        //        }
+            //        //        else {
+            //        //            Swal.fire({
+            //        //                type: 'Error',
+            //        //                title: 'Error',
+            //        //                text: 'Error occur Validating OTP to your provided!',
+            //        //                footer: ''
+            //        //            });
+
+            //        //        }
+
+            //        //    },
+            //        //    error: function (xhr, textStatus, error) {
+            //        //        //alert(e.textStatus);
+            //        //        //$('#loading-div-background').hide();
+            //        //        Swal.fire({
+            //        //            type: error,
+            //        //            title: 'Error Message',
+            //        //            text: xhr.statusText,
+            //        //            footer: ''
+            //        //        })
+            //        //    }
+            //        //});
+            //    }
+            //    else {
+            //        Swal.fire({
+            //            type: 'Error',
+            //            title: 'Error',
+            //            text: 'Kindly provide OTP sent to your email address!',
+            //            footer: ''
+            //        });
+            //    }
+            //});
+        });
+    </script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}

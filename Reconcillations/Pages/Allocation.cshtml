@@ -1,0 +1,76 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@using Reconcillations.Entity
+@model Reconcillations.Pages.AllocationModel
+@{
+    Layout = "Shared/_Layout"; ;
+    ViewData["Title"] = "Allocation Report";
+    var postList = httpContextAccessor.HttpContext.Session.GetObject<List<Postinglist>>("psList");
+}
+@section header
+    {
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="page-bar">
+    @* @HttpContext.Session.GetString("UserEmail")*@
+    <div class="page-title-breadcrumb">
+        <div class=" pull-left">
+            <div class="page-title">Allocation Reporting </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-body" id="bar-parent">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="form-body">
+                            <div class="form-group">
+                                <label class="col-md-12">
+                                    Select Reconciled Transaction
+                                    <span class="required"> * </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-body">
+                            <div class="form-group col-md-12">
+                                <select asp-for="pstlist.RecperID" id="postid" class="form-control select2"
+                                        asp-items="@(new SelectList(postList,"RecperID","Description"))">
+                                    @if (postList != null)
+                                    {
+                                        <option value="">-- Select Bank Name --</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"> View </button>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            @*@(Html.DevExpress().WebDocumentViewer("WebDocumentViewer").Height("1000px").Bind(new Reconcillations.Reports.XtraRepAllocation()))*@
+                            @(Html.DevExpress().WebDocumentViewer("WebDocumentViewer").Height("1000px").Bind(Model.Report))
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}

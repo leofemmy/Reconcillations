@@ -1,0 +1,91 @@
+﻿@page
+@model Reconcillations.Pages.Users.IndexModel
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "View User's Lists";
+}
+@section header{
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-topline-red">
+            <div class="card-head">
+                <header>View User's Account Lists</header>
+            </div>
+            <div class="card-body ">
+                <div class="row p-b-20">
+                    <div class="col-md-6 col-sm-6 col-6">
+                        <div class="btn-group">
+                            <a class="btn btn-info" style="margin-top: 20px; margin-bottom: 20px;" asp-page="/Users/Create">
+                                <i class="fa fa-plus"></i> Create
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <table id="saveStage" class="display" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            @*<th> User Id </th>*@
+                            <th> Surname </th>
+                            <th> Fisrt Name </th>
+                            <th> Mobile </th>
+                            <th> Email </th>
+                            <th> Description </th>
+                            <th> Active </th>
+                            <th> Action </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        @foreach (var items in Model._usersLists)
+                        {
+                            <tr>
+                                <td onclick="myFunction(this)" class="view-message ">
+                                    <h5>
+                                        @{ sno++; }
+                                        @sno
+                                    </h5>
+                                </td>
+                                @*<td onclick="myFunction(this)" class="view-message "><h5>@items.UserId</h5></td>*@
+                                <td onclick="myFunction(this)" class="center view-message "><h5>@items.Surname</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Firstname</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Mobile</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.EmailAddress</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Description</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.IsActive</h5></td>
+                                <td>
+                                    <form method="post">
+                                        <span class="btn-group pull-right" style="margin-top: 5px">
+                                            <a class="btn btn-primary" asp-page="/Users/Edit" asp-route-id="@items.UserId" style="background-color: green; height: 29px; margin-top: -1px;">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <button type="submit" class="btn btn-danger btn-xs" asp-page-handler="Disable" asp-route-id="@items.UserId" style="height: 27px; margin-top: 0px;"
+                                                    onclick="return confirm('Are you sure to disable these Account ?');">
+                                                <i class="fa fa-trash-o "></i>
+                                            </button>
+
+                                        </span>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {    <!-- data tables -->
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+
+}

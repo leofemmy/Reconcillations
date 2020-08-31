@@ -1,0 +1,344 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@using Reconcillations.Entity
+@model Reconcillations.Pages.ReclassificationModel
+@{
+    Layout = "Shared/_Layout"; ;
+    ViewData["Title"] = "Transaction Reclassification";
+    var postList = httpContextAccessor.HttpContext.Session.GetObject<List<Postinglist>>("psList");
+}
+@section header
+{
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+}
+<div class="page-bar">
+    <div class="page-title-breadcrumb">
+        <div class=" pull-left">
+            <div class="page-title">Transaction Reclassification </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-body" id="bar-parent">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="form-body">
+                            <div class="form-group">
+                                <label class="col-md-12">
+                                    Select Reconciled Transaction
+                                    <span class="required"> * </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-body">
+                            <div class="form-group col-md-12">
+                                <select asp-for="pstlist.RecperID" id="postid" class="form-control select2"
+                                        asp-items="@(new SelectList(postList,"RecperID","Description"))">
+                                    @if (postList != null)
+                                    {
+                                        <option value="">-- Select Bank Name --</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="button" id="btnSave" value="View" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" />
+                        </div>
+
+                    </div>
+                    <div class="card-body step active">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title"> Transaction Allocated</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table id="tbldebit" class="table table-striped table-bordered table-hover responsive" width="100%">
+                                            <thead class="thin-border-bottom">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Date</th>
+                                                    <th>Amount</th>
+                                                    <th>Old Category</th>
+                                                    <th>New Category</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                @*<button id="btnUpdate" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"> Update </button>*@
+                                <input type="button" id="btnUpdate" value="Update" style="display: none" class="btn btn-circle btn-primary" />
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var trs = null;
+            var trsold = null;
+            var dtdebit = null;
+
+            $('#btnUpdate').hide();
+        });
+        $('#btnUpdate').click(function () {
+            var values = new Array();
+
+            $("#tbldebit tr").each(function () {
+                var tr = $(this);
+                //get id column
+                var idb = $.trim(tr.find('td:eq(0)').html());
+                //console.log(idb);
+                tr.find("td").each(function () {
+                    var select = $(this).find("select");
+                    if (select.val() > 0) {
+                        //write selected value to array with id
+                        values.push({ 'bsid': idb, 'transID': select.val() });
+                    }
+                });
+            })
+            //console.log(values);
+
+            var objModify = {};
+            objModify.Userid = "aonabote@gmail.com";
+            objModify.dbvalue = values;
+
+            //console.log(objModify);
+            var options = {};
+            options.url = "Reclassification?handler=Modify";
+            options.type = "POST";
+            options.data = JSON.stringify(objModify);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.beforeSend = function (xhr) {
+                xhr.setRequestHeader("MY-XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            };
+            options.success = function (msg) {
+                $("#msg").html(msg);
+
+                var retval = null;
+                var msgb = msg.table;
+                var post = msg.table1;
+                console.log(msgb);
+                console.log(post);
+                for (var i = 0; i < msgb.length; i++) {
+                    retval = msgb[i].returnCode;
+                }
+                if (retval == "00") {
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Reconciliation Solution',
+                        text: 'Reclassification Log Success full Contact Admin for Approval !!!',
+                        footer: ''
+                    });
+                }
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+            $.ajax(options);
+        });
+
+        $("#tbldebit").on('change', function () {
+
+            var values = new Array();
+
+            var td = $(this);
+
+            console.log(td);
+
+            var idb = $.trim(td.find('td:eq(0)').html());
+
+            console.log(idb);
+
+            td.find("td").each(function () {
+                var select = $(this).find("select");
+                if (select.val() > 0) {
+                    //write selected value to array with id
+                    values.push({ 'bsid': idb, 'transID': select.val() });
+                }
+            });
+
+            console.log(values);
+
+            var objModify = {};
+            objModify.dbvalue = values;
+
+            var options = {};
+            options.url = "Reclassification?handler=CategoryCheck";
+            options.type = "POST";
+            options.data = JSON.stringify(objModify);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.beforeSend = function (xhr) {
+                xhr.setRequestHeader("MY-XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            };
+            options.success = function (msg) {
+                $("#msg").html(msg);
+
+                var retval = null;
+                var retmsg = null;
+                var msgb = msg.table;
+                //var post = msg.table1;
+                console.log(msgb);
+                //console.log(post);
+                for (var i = 0; i < msgb.length; i++) {
+                    retval = msgb[i].returnCode;
+                    retmsg = msgb[i].returnMessage;
+                }
+                console.log(retval);
+                console.log(retmsg);
+                if (retval == "01") {
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Reconciliation Solution',
+                        text: retmsg.toString(),//'Reclassification Log Success full Contact Admin for Approval !!!',
+                        footer: ''
+                    });
+                }
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+            $.ajax(options);
+
+        });
+
+        $('#btnSave').click(function () {
+            var reconcile = {};
+            reconcile.reconileID = $("#postid").val();
+
+            //console.log(reconcile);
+
+            var options = {};
+            options.url = "Reclassification?handler=Reclassified";
+            options.type = "GET";
+            options.data = { reconileID: $("#postid").val() }; //JSON.stringify(reconcile);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.success = function (data) {
+
+                //console.log(data);
+                //console.log(data.table1);
+                //console.log(data.table2);
+                var db = data.table1;
+
+                trsold = data.table1;
+                //console.log(trsold);
+
+                trs = data.table2;
+                var i = 1;
+
+                if (db != undefined || db.length > 0) {
+                    dtdebit = $('#tbldebit').DataTable({
+                        data: db,
+                        "bAutoWidth": false,
+                        "paging": false,
+                        "info": false,
+                        "bFilter": false,
+                        'scrollY': 700,
+                        //"columnDefs": [
+
+                        //    {
+                        //        "sWidth": "10%", "targets": [0],
+                        //        "visible": false,
+                        //        "searchable": false
+                        //    }
+
+                        //],
+                        columns: [
+                            {
+                                data: 'bsid'
+                            },
+                            {
+                                data: 'bsDate',
+                                render: function (d) {
+                                    return moment(d).format("DD/MM/YYYY");
+                                }
+                                //moment().format('L')
+
+                            },
+                            {
+                                data: 'amount',
+                                render: $.fn.dataTable.render.number(",", ".", 2),
+                                width: "10%"
+                            },
+                            {
+                                data: 'description',
+                                width: "60%"
+                            },
+                            {
+                                data: 'transID',
+                                render: function (data) {
+                                    return createSelect2(data);
+                                },
+                                width: "40%"
+                            }
+                        ]
+                    });
+
+                    $('#btnUpdate').show();
+                }
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+            $.ajax(options);
+        });
+
+       
+        function createSelect2(selItem) {
+            console.log(selItem);
+
+            var sel = "<select class='selcred'><option value='0'>Select Transaction Definition</option>";
+            for (var i = 0; i < trs.length; ++i) {
+                if (trs[i] == selItem) {
+                    sel += "<option selected value = '" + trs[0].transID + "' >" + trs[i].description + "</option>";
+                } else {
+                    sel += "<option  value = '" + trs[i].transID + "' >" + trs[i].description + "</option>";
+                }
+            }
+            sel += "</select>";
+            return sel;
+        }
+
+    </script>
+    <!-- data tables -->
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+    <!--select2-->
+    <script src="~/smile/assets/plugins/select2/js/select2.js">
+    </script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}

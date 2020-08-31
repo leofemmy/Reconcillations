@@ -1,0 +1,400 @@
+﻿@page
+@model Reconcillations.Pages.AccreditModel
+@{
+    Layout = "Shared/_Layout"; ;
+    ViewData["Title"] = "Reclassification Authorization";
+}
+@section header
+{
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="page-bar">
+    @*@HttpContext.Session.GetString("UserEmail")*@
+    <div class="page-title-breadcrumb">
+        <div class=" pull-left">
+            <div class="page-title">Reclassification Authorization </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+
+    <div id="dvtoken" class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <h3>Enter the OTP sent to your registered Email address: </h3>  @HttpContext.Session.GetString("UserEmail")
+            <div class="card-body" id="bar-parent">
+                <div class="form-body">
+                    <div class="form-group row">
+                        <div class="col-md-8">
+                            <input class="control-label col-md-12" type="text" id="idtoken" placeholder=" Enter OTP Sent to your Email Address">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="button" id="validate" value="Validate OTP" class="btn btn-circle btn-primary">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div id="idview" class="col-md-12">
+            <div class="card card-topline-red">
+                <div class="card-head">
+                    <header>List of Reclassified Enteries </header>
+                </div>
+                <div class="card-body ">
+                    <table id="example" class="table table-striped table-bordered table-hover responsive" cellspacing="0" width="100%">
+                        <thead class="thin-border-bottom">
+                            <tr>
+                                <th style="text-align: left; width:15%">ID</th>
+                                <th style="text-align: left; width:15%">Date</th>
+                                <th style="text-align: left; width:10%">Amount</th>
+                                <th style="text-align: left; width:20%">Old Category</th>
+                                <th style="text-align: left; width:20%">New Category</th>
+                                <th>Modifed By</th>
+                                <th>Modifed Date</th>
+                                <th>Approve</th>
+                                <th>Disapprove</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#idview").hide();
+
+
+
+            var dtdebit = null;
+            var options = {};
+            options.url = "Accredit?handler=ModifyAll";
+            options.type = "GET";
+            options.dataType = "json";
+            options.success = function (data) {
+                console.log(data);
+
+                var db = data;
+
+                console.log(data);
+
+                if (db != undefined || db.length > 0) {
+                    var table = $('#example').DataTable({
+                        data: db,
+                        "bAutoWidth": false,
+                        "paging": false,
+                        "info": false,
+                        "bFilter": false,
+                        'scrollY': 700,
+                        "columnDefs": [
+                            {
+                                "sWidth": "10%",
+                                "targets": [0],
+                                "visible": false,
+                                "searchable": false
+                            }
+                            //{
+                            //    "targets": -1,
+                            //    "data": null,
+                            //    "defaultContent": "<button type='button' class='btn-success' id='btnApprove' > APPROVE<span class='glyphicon glyphicon- eye - open glyphicon - info - sign' aria-hidden='true'></span> </button> &nbsp;" + "<button type='button' class='btn btn-danger' id='btnDisapprove' > DISAPPROVE <span class='glyphicon glyphicon- remove glyphicon - trash' aria- hidden='true' ></span> </button > "
+                            //}
+                        ],
+                        columns: [
+                            {
+                                data: 'modifyID',
+                                width: "10%"
+                            },
+                            {
+                                data: 'bsDate',
+                                render: function (d) {
+                                    return moment(d).format("DD/MM/YYYY");
+                                },
+                                width: "10%"
+                            },
+                            {
+                                data: 'amount',
+                                render: $.fn.dataTable.render.number(",", ".", 2),
+                                width: "10%"
+                            },
+                            {
+                                data: 'oldDescription',
+                                width: "20%"
+                            },
+                            {
+                                data: 'newDescription',
+                                width: "20%"
+                            },
+                            {
+                                data: 'modifyBy',
+                                width: "20%"
+                            },
+                            {
+                                data: 'modifyDate',
+                                render: function (d) {
+                                    return moment(d).format("DD/MM/YYYY");
+                                }
+                            },
+                            {
+                                "render": function (data, type, full, meta) {
+                                    //return '<a class="btn btn-info" href="#' + full.modifyID + '">Approve</a>';
+                                    return "<a href='#' class='btn btn-info' onclick=ApproveRec('" + full.modifyID + "'); >Approve</a>";
+                                }
+                            },
+                            {
+                                data: null, render: function (data, type, row) {
+                                    return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.modifyID + "'); >Disapprove</a>";
+                                }
+                            }
+                        ]
+                    });
+                }
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+
+
+            $.ajax(options);
+
+        });
+        $('#validate').click(function () {
+            var strOtp = {};
+
+            if ($('#idtoken').val().length != 0) {
+
+                strOtp.strOtp = $('#idtoken').val();
+
+                console.log(strOtp);
+
+                $.ajax({
+                    url: "Approval/Index?handler=Validteotp",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(strOtp),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    //dataType: "json",
+                    //traditional: true,
+                    success: function (data) {
+                        console.log(data);
+                        if (data === "00") {
+
+                            Swal.fire({
+                                type: 'success',
+                                title: 'success',
+                                text: 'OTP Validated Successfull',
+                                footer: ''
+                            });
+
+                            $('#dvtoken').hide();
+                            //$('#btntoken').hide();
+                            $("#validate").hide();
+                            $('#idview').show();
+
+                        }
+                        else {
+                            Swal.fire({
+                                type: 'Error',
+                                title: 'Error',
+                                text: 'Error occur Validating OTP to your provided!',
+                                footer: ''
+                            });
+
+                        }
+
+                    },
+                    error: function (e) {
+                        //$('#loading-div-background').hide();
+                        //$('#dvData').html(e.responseText);
+                        Swal.fire({
+                            type: 'error',
+                            title: e.statusText,
+                            text: e.responseText,
+                            footer: ''
+                        })
+                    }
+                });
+            }
+            else {
+                Swal.fire({
+                    type: 'Error',
+                    title: 'Error',
+                    text: 'Kindly provide OTP send to your email address!',
+                    footer: ''
+                });
+            }
+        });
+        function ApproveRec(ModifyID) {
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Approve Reclassify category!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, approve it!'
+            }).then((result) => {
+                if (result.value) {
+
+                    var objModify = {};
+                    objModify.modifyid = ModifyID;
+                    objModify.reasons = null;
+
+                    console.log(objModify);
+
+                    var options = {};
+                    options.url = "Accredit?handler=Approves";
+                    options.type = "POST";
+                    options.data = JSON.stringify(objModify);
+                    options.contentType = "application/json";
+                    options.dataType = "json";
+                    options.beforeSend = function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    };
+                    options.success = function (msg) {
+                        $("#msg").html(msg);
+                    };
+                    options.error = function () {
+                        $("#msg").html("Error while making Ajax call!");
+
+                        var retval = null;
+                        var retmsg = null;
+                        var msgb = msg.table;
+
+                        for (var i = 0; i < msgb.length; i++) {
+                            retval = msgb[i].returnCode;
+                            retmsg = msgb[i].returnMessage;
+                        }
+                        if (retval == "00") {
+                            // swal("Reconciliation Solution", retmsg.toString(), "success");
+                            Swal.fire(
+                                'Approved!',
+                                retmsg.toString(),
+                                'success'
+                            )
+                            //return retmsg.toString()
+                        }
+                    };
+                    $.ajax(options);
+
+                }
+            })
+
+
+
+            //if (confirm("Do you want to Approve ?")) {
+            //    console.log(ModifyID)
+            //}
+            //else {
+            //    return false;
+            //}
+        };
+
+        function Disapprec(value1, value2) {
+
+            var objModify = {};
+            objModify.modifyid = value1;
+            objModify.reasons = value2;
+
+            console.log(objModify);
+
+            var options = {};
+            options.url = "Accredit?handler=Disapprove";
+            options.type = "POST";
+            options.data = JSON.stringify(objModify);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.beforeSend = function (xhr) {
+                xhr.setRequestHeader("MY-XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            };
+            options.success = function (msg) {
+                $("#msg").html(msg);
+
+                var retval = null;
+                var retmsg = null;
+                var msgb = msg.table;
+
+                for (var i = 0; i < msgb.length; i++) {
+                    retval = msgb[i].returnCode;
+                    retmsg = msgb[i].returnMessage;
+                }
+                if (retval == "00") {
+                    // swal("Reconciliation Solution", retmsg.toString(), "success");
+                    return retmsg.toString()
+                }
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+            $.ajax(options);
+
+        }
+
+        function DeleteData(ModifyID) {
+
+            swal({
+                title: "Disapprove",
+                text: "Proved Reason's",
+                type: "input",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                animation: "slide-from-top",
+                inputAttributes: { autocapitalize: 'off' },
+                inputPlaceholder: "Write something"
+            },
+                function (inputValue) {
+                    if (inputValue === false) return false;
+
+                    if (inputValue === "") {
+                        swal.showInputError("You need to write something!");
+                        return false
+                    }
+                    else {
+
+                        Disapprec(ModifyID, inputValue);
+                        // console.log(returnValue.toString());
+                        //swal("Reconciliation Solution", returnValue.toString(), "success");
+
+                    }
+
+
+                });
+
+
+        }
+
+    </script>
+
+    <!-- data tables -->
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+    <!--select2-->
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+};

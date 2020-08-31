@@ -1,0 +1,51 @@
+﻿@page
+@model Reconcillations.Pages.Account.ConfirmEmailModel
+@{ Layout = null;
+    ViewData["Title"] = "Confirm Email";
+}
+<link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" type="text/css" />
+<!-- icons -->
+<link href="~/smile/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="~/smile/fonts/material-design-icons/material-icon.css" rel="stylesheet" type="text/css" />
+<!-- Sweet Alert item CSS -->
+<link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+<!-- bootstrap -->
+<link href="~/smile/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<!-- style -->
+<link rel="stylesheet" href="~/smile/assets/css/pages/extra_pages.css">
+<!-- favicon -->
+<link rel="shortcut icon" href="~/smile/assets/img/favicon.ico" />
+
+
+<div class="form-title">
+    <h1> Email Address Confirmation</h1>
+</div>
+<!-- Login Form-->
+<div class="login-form text-center">
+    <div class="toggle">
+        <i class="fa fa-user-plus"></i>
+    </div>
+    <div class="form formReset">
+        <h2>New password?</h2>
+        <form method="post">
+            <input asp-for="cuserpass.Code" type="hidden" />
+            <input asp-for="cuserpass.Email" type="hidden" />
+            <input type="password" placeholder="Password" asp-for="cuserpass.Password" autocomplete="off" />
+            <span class="text-danger" asp-validation-for="cuserpass.Password"></span>
+            <input type="password" placeholder="Confirm Password" asp-for="cuserpass.ConfirmPassword" autocomplete="off" />
+            <span class="text-danger" asp-validation-for="cuserpass.ConfirmPassword"></span>
+            @*<span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>*@
+            <button>Submit</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- start js include path -->
+<script src="~/smile/assets/plugins/jquery/jquery.min.js"></script>
+<script src="~/smile/assets/js/pages/extra_pages/pages.js"></script>
+<!-- end js include path -->

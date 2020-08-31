@@ -1,0 +1,1189 @@
+﻿@page
+@model Reconcillations.Pages.ImpBank.CreateModel
+@{
+    var session = httpContextAccessor.HttpContext.Session;
+    var suname = session.GetString("Usernames");
+    var useremail = session.GetString("UserEmail");
+
+}
+
+@section header{
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!-- Date Time item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/material-datetimepicker/bootstrap-material-datetimepicker.css" />
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!-- Optional: include a polyfill for ES6 Promises for IE11 and Android browser -->
+    @*<script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>*@
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="~/smile/assets/plugins/numeral/numeral.min.js"></script>
+}
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-head">
+                <header>Bank Statement Reconcilation</header>
+            </div>
+            <div class="card-body" id="bar-parent2">
+                <form id="form_sample_2" class="form-horizontal">
+                    @Html.AntiForgeryToken()
+                    <div class="form-body">
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Reconcillation Period
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <select class="form-control select2" id="bankid" name="select" asp-items="@Model.BankSelectList">
+                                    <option value="">Select Bank Names.</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Account Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <input type="text" id="txtactname" class="form-control number" asp-for="bankimport.CalClosingBal" name="number" readonly="readonly" />
+                                    <input type="hidden" id="accountid" class="form-control number" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Opening Balance
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtopen" asp-for="bankimport.OpeningBal" class="form-control" name="number" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 control-label">Start Date</label>
+                            <div class="input-icon right">
+                                <input id="txtstartdate" class="form-control" size="12" asp-for="bankimport.StartDate" type="text" value="" readonly="readonly">
+                            </div>
+                            <input type="hidden" id="dtp_input2" value="" />
+                            <br />
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 control-label">End Date</label>
+                            <div class="input-icon right">
+                                <input id="txtenddate" class="form-control" size="16" asp-for="bankimport.DateEnd" type="text" value="" readonly="readonly">
+                            </div>
+                            <input type="hidden" id="dtp_input1" value="" />
+                            <br />
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Closing Balance
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtclose" class="form-control number" asp-for="bankimport.ClosingBal" onkeypress="return isNumberKey(event);" name="number" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Calculated Closing Balance
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtcalucatedclose" class="form-control number" asp-for="bankimport.CalClosingBal" name="number" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="reconid" />
+                    <div id="loading-div-background">
+                        <div id="loading-div" class="ui-corner-all">
+                            <div id="loadingbar"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>
+                            <h2 style="color:gray;font-weight:normal;"> Processing, Please wait.........  </h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card-box">
+                                <div class="wizard">
+                                    <div class="card-head">
+                                        <header>Transactions</header>
+                                    </div>
+
+                                    <div class="card-body step active">
+                                        <h3>Bank Statement Import</h3>
+                                        <div>
+                                            <fieldset>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <input type="file" id="fUpload" name="files" />
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input type="button" id="btnUpload" value="Upload" class="btn btn-circle btn-primary" data-type="confirm" />
+                                                        <input type="button" id="btnSave" value="Update" style="display: none" class="btn btn-circle btn-primary" />
+                                                    </div>
+                                                    <div class="col-md-4">
+
+                                                    </div>
+                                                </div>
+                                                <br />
+                                                <div id="dvData"></div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                    <div class="step" style="display: none">
+                                        <h3>Compare collections</h3>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <input type="button" id="btnProcess" value="Process" class="btn btn-circle btn-primary" />
+                                                <input type="button" id="btncomSave" value="Update" style="display: none" class="btn btn-circle btn-primary" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="panel panel-primary">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Banks Only</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <table id="tblbanks" class="table table-striped table-bordered table-hover responsive" width="80%">
+                                                            <thead class="thin-border-bottom">
+                                                                <tr>
+                                                                    <th>Date</th>
+                                                                    <th>Name</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="panel panel-primary">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Collections Only</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <table id="tblcollections" class="table table-striped table-bordered table-hover responsive" width="80%">
+                                                            <thead class="thin-border-bottom">
+                                                                <tr>
+                                                                    <th>Date</th>
+                                                                    <th>Name</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="panel panel-primary">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Both Banks & Collection</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <table id="tblcolbank" class="table table-striped table-bordered table-hover responsive" width="80%">
+                                                            <thead class="thin-border-bottom">
+                                                                <tr>
+                                                                    <th>Date</th>
+                                                                    <th>Name</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="step" style="display: none">
+                                        <h2>Allocate Transaction</h2>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <input type="button" id="btnSaveAll" value="Update" class="btn btn-circle btn-primary" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="panel panel-primary">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Debit Transaction</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <table id="tbldebit" class="table table-striped table-bordered table-hover responsive" width="100%">
+                                                            <thead class="thin-border-bottom">
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Date</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Payer Name</th>
+                                                                    <th>Category</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="panel panel-primary">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Credit Transaction</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <table id="tblcredit" class="table table-striped table-bordered table-hover responsive" width="80%">
+                                                            <thead class="thin-border-bottom">
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Date</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Payer Name</th>
+                                                                    <th>Category</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="step" style="display: none">
+                                        <h2>Transaction Posting </h2>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <input type="button" id="btnSavePost" value="Send Posting Request" class="btn btn-circle btn-primary" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="panel panel-primary">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title"> Transaction Posting</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <table id="tblposting" class="table table-striped table-bordered table-hover responsive" width="100%">
+                                                            <thead class="thin-border-bottom">
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Date</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Payer Name</th>
+                                                                    <th>Description</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="button" class="btn btn-circle btn-primary prev" style="display: none" value="Previous" />
+                                    <input type="button" id="btnNext" class="btn btn-circle btn-primary next" style="display: none" value="Next" />
+                                    <input type="button" id="finish" class="btn btn-circle btn-primary finish" style="display: none" value="Finish" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Hide the "busy" Gif at load:
+            $('#loading-div-background').hide();
+            $("#divProcessing").hide();
+            var options = {};
+            var debtran = null; var dtdebit = null;
+            var cedtran = null; var item = null;
+            options.url = "Create?handler=BankAll";
+            options.type = "GET";
+            options.dataType = "json";
+            options.success = function (data) {
+                data.forEach(function (element) {
+                    $("#bankid").append($("<option> Select bank </option>").val
+                        (element.recperID).html(element.description));
+                });
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+
+            $.ajax(options);
+
+            // THE SCRIPT THAT CHECKS IF THE KEY PRESSED IS A NUMERIC OR DECIMAL VALUE.
+            function isNumber(evt, element) {
+
+                var charCode = (evt.which) ? evt.which : event.keyCode
+
+                if (
+                    (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // “-” CHECK MINUS, AND ONLY ONE.
+                    (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+                    (charCode < 48 || charCode > 57))
+                    return false;
+
+                return true;
+            }
+        });
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            //if (charCode > 31 && (charCode < 48 || charCode > 57))
+            if (
+                (charCode != 45 || $(evt).val().indexOf('-') != -1) &&      // “-” CHECK MINUS, AND ONLY ONE.
+                (charCode != 46 || $(evt).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+                (charCode < 48 || charCode > 57))
+                return false;
+
+            return true;
+        }
+        function parseDate(str) {
+            var mdy = str.split('/');
+            return new Date(mdy[1], mdy[2] - 1, mdy[0]);
+        }
+        $("#bankid").change(function () {
+            $list = $("#accountid");
+            //console.log($list);
+
+            var recon = $("#bankid").val();
+            console.log(recon);
+            $.ajax({
+                url: "Create?handler=SelectByCode",
+                type: "GET",
+                data: { reconileID: $("#bankid").val() },
+                traditional: true,
+                success: function (result) {
+                    console.log(result);
+                    var string = numeral(result.openingBal).format('0,0.00');
+                    //$("#txtopen").val(string);
+                    //result.forEach(function (element) {
+                    $("#txtopen").val(string);
+                    var string2 = numeral(result.closingBal).format('0,0.00');
+                    $("#txtclose").val(string2);
+
+                    $('#txtactname').val(result.accountname);
+                    var d = new Date(result.startdate);
+                    console.log(d.toLocaleDateString('en-GB'));
+                    $("#txtstartdate").val(d.toLocaleDateString('en-GB'));
+                    var d = new Date(result.enddate);
+                    console.log(d.toLocaleDateString('en-GB'));
+                    $("#txtenddate").val(d.toLocaleDateString('en-GB'));
+                    $("#reconid").val(recon)
+                    $("#accountid").val(result.accountID);
+                },
+                error: function () {
+                    //alert("Something went wrong call the police");
+                    $("#msg").html("Error while making Ajax call!");
+                }
+            });
+        });
+        $('.number').text(function () {
+            var str = $(this).html() + '';
+            x = str.split('.');
+            x1 = x[0];
+            x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            $(this).html(x1 + x2);
+        });
+        $("#accountid").change(function () {
+            $listop = $("#txtopen");
+            console.log($listop);
+            console.log($("#accountid").val());
+            $.ajax({
+                url: "Create?handler=AccountBal",
+                type: "GET",
+                data: { accountid: $("#accountid").val() },
+                dataType: "json",
+                traditional: true,
+                success: function (data) {
+                    console.log(data);
+                    var string = numeral(data.openBal).format('0,0.00');
+                    console.log(string);
+                    $("#txtopen").val(string);
+                    console.log(data.startdate);
+                    var d = new Date(data.startdate);
+                    console.log(d.toLocaleDateString('en-GB'));
+                    $("#txtstartdate").val(d.toLocaleDateString('en-GB'));
+
+                }
+            });
+        });
+        $('#btnUpload').on('click', function () {
+
+            if ($("#txtstartdate").val() != "" && $("#txtenddate").val() != "") {
+
+                var st = moment($('#txtstartdate').val(), "DD/MM/YYYY");
+                console.log(st);
+                var en = moment($('#txtenddate').val(), "DD/MM/YYYY");
+                console.log(en);
+                var timediff = en - st;
+                console.log(timediff);
+
+                var days = timediff / (1000 * 60 * 60 * 24);
+                console.log(days);
+
+                if (days <= 0) {
+                    Swal.fire({
+                        type: 'warning',
+                        title: 'Oops...',
+                        text: 'Account End Date Should Not Be Greater Than Accounting Start Date!!!',
+                        footer: ''
+                    })
+                }
+                else {
+                    if ($('#txtclose').val().length == 0) {
+                        Swal.fire({
+                            type: 'warning',
+                            title: 'Oops...',
+                            text: 'Account Closing Balance Must Not Be Empty!!!',
+                            footer: ''
+                        })
+                    }
+                    else {
+
+                        $('#loading-div-background').show();
+
+                        var fileExtension = ['xls', 'xlsx'];
+                        var filename = $('#fUpload').val();
+                        if (filename.length == 0) {
+                            //sweetAlert("File Shouldn't Be Empty!!", "Please select file", "error");
+                            Swal.fire({
+                                type: 'warning',
+                                title: 'Oops...',
+                                text: 'File Should not be Empty!!!',
+                                footer: ''
+                            })
+                            //alert("Please select a file.");
+                            return false;
+                        } else {
+                            var extension = filename.replace(/^.*\./, '');
+                            if ($.inArray(extension, fileExtension) == -1) {
+                                Swal.fire({
+                                    type: 'warning',
+                                    title: 'warning',
+                                    text: 'Please select only excel files !!!',
+                                    footer: ''
+                                })
+                                return false;
+                            }
+                            // Show the "busy" Gif:
+                            //$("#divProcessing").show();
+
+                            var fdata = new FormData();
+                            var fileUpload = $("#fUpload").get(0);
+                            var files = fileUpload.files;
+                            fdata.append(files[0].name, files[0]);
+
+                            Promise.resolve($.ajax({
+                                type: "POST",
+                                url: "Create?handler=Import",
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                                },
+                                data: fdata,
+                                contentType: false,
+                                processData: false,
+                                success: function (response) {
+                                    $('#loading-div-background').hide();
+                                    if (response.length == 0)
+                                        Swal.fire({
+                                            type: 'error',
+                                            title: 'error',
+                                            text: 'Some error occured while uploading!!!',
+                                            footer: ''
+                                        })
+                                    //alert('Some error occured while uploading');
+                                    else {
+
+                                        console.log(response);
+                                        var splitted = response.split("+");
+                                        $('#dvData').html(splitted[0]);
+                                        //console.log(splitted[1]);
+                                        var dbopenbal = splitted[1].replace(/[^0-9.]/g, "");
+                                        console.log(dbopenbal);
+                                        var dbcredit = splitted[2].replace(/[^0-9.]/g, "");
+                                        console.log(dbcredit);
+                                        var dbdebit = splitted[3].replace(/[^0-9.]/g, "");
+                                        console.log(dbdebit);
+                                        console.log(splitted[4]);
+                                        //var dbopebal = $("#txtopen").val().replace(/[^0-9.]/g, "");
+                                        //console.log(dbopebal);
+                                        var dbcredittotal = ((parseFloat(dbopenbal) + parseFloat(dbcredit)).toFixed(2));
+                                        console.log(dbcredittotal);
+                                        var dbresult = dbcredittotal - dbdebit;
+                                        var gf = numeral(dbresult).format('0,0.00')
+                                        console.log(dbresult);
+
+                                        $("#txtcalucatedclose").val(gf);
+                                        $('#btnSave').show();
+
+                                        Swal.fire({
+                                            type: 'success',
+                                            title: 'Reconciliation Solution',
+                                            text: 'Excel uploaded !!!',
+                                            footer: ''
+                                        })
+                                    }
+                                },
+                                error: function (e) {
+                                    $('#loading-div-background').hide();
+                                    $('#dvData').html(e.responseText);
+                                    Swal.fire({
+                                        type: 'error',
+                                        title: 'Error Importing Excel',
+                                        text: e.responseText,
+                                        footer: ''
+                                    })
+                                }
+                            }))
+
+
+                        }
+                    }
+                }
+            }
+            else {
+                $('#loading-div-background').hide();
+                //alert("Please select dates");
+                //return false;
+                Swal.fire({
+                    type: 'warning',
+                    title: 'Oops...',
+                    text: 'Account Date Must Not Be Empty!!!',
+                    footer: ''
+                })
+            }
+
+        });
+        $('#finish').click(function () {
+            $('#loading-div-background').show();
+
+            var options = {};
+            options.url = "Create?handler=PostringRequest";
+            options.type = "POST";
+
+            var objPostingrequest = {};
+            objPostingrequest.reconileID = $("#reconid").val();
+            objPostingrequest.Userid = "aonabote@gmail.com";
+
+            console.log(objPostingrequest);
+
+            options.data = JSON.stringify(objPostingrequest);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.beforeSend = function (xhr) {
+                xhr.setRequestHeader("MY-XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            };
+            options.success = function (msg) {
+                var msgb = msg.table;
+                $('#loading-div-background').hide();
+                for (var i = 0; i < msgb.length; i++) {
+                    retval = msgb[i].returnCode;
+                    //alert(msgb[i].returnMessage);
+                    var msgb = msgb[i].returnMessage;
+                }
+                $('#finish').show();
+                Swal.fire({
+                    type: 'success',
+                    title: 'Reconciliation Solution',
+                    text: msgb,
+                    footer: ''
+                });
+
+            }
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+            Promise.resolve($.ajax(options));
+        });
+        $('#btnSave').click(function () {
+            console.log($("#txtclose").val());
+            console.log($("#txtcalucatedclose").val());
+            var dbcalclose = $("#txtcalucatedclose").val().replace(/[^0-9.]/g, "");
+            var dbclose = $("#txtclose").val().replace(/[^0-9.]/g, "");
+            //console.log(dbopebal);
+            if (dbcalclose == dbclose) {
+                console.log($('#txtenddate').val());
+                var objBankImport = {};
+                objBankImport.accountID = $("#accountid").val();
+                objBankImport.startDate = $("#txtstartdate").val();
+                objBankImport.recperID = $("#reconid").val();
+                objBankImport.openingBal = numeral($("#txtopen").val()).format('0,0.00');
+                objBankImport.dateEnd = $('#txtenddate').val();// new Date($("#txtend").val());
+                objBankImport.closebal = $('#txtcalucatedclose').val();
+                console.log(objBankImport);
+
+                $('#loading-div-background').show();
+
+                Promise.resolve(
+                    $.ajax({
+
+                        type: "POST",
+                        url: "Create?handler=Bankstatement",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        data: JSON.stringify(objBankImport),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (msg) {
+
+                            $("#msg").html(msg);
+                            console.log(msg);
+                            console.log(msg.reconcileid);
+                            console.log(msg.statusId);
+                            console.log(msg.statusMessage);
+                            $('#loading-div-background').hide();
+                            $('#btnNext').show();
+
+                            Swal.fire({
+                                type: 'success',
+                                title: 'Reconciliation Solution',
+                                text: msg.statusMessage,
+                                footer: ''
+                            })
+                        },
+                        error: function (xhr, textStatus, error) {
+                            //$("#msg").html("Error while making Ajax call!");
+                            Swal.fire({
+                                type: error,
+                                title: 'Error Message',
+                                text: xhr.statusText,
+                                footer: ''
+                            })
+                        }
+                    }))
+            }
+            else {
+                Swal.fire({
+                    type: 'warning',
+                    title: 'Oops...',
+                    text: 'Calculated Closing Balance not equal to Bank Statement closing balance!!!',
+                    footer: ''
+                })
+
+            }
+
+        });
+        $('#btnProcess').click(function () {
+            $('#loading-div-background').show();
+            Promise.resolve(
+                $.ajax({
+                    url: "Create?handler=CompareStatement",
+                    type: "GET",
+                    data: { reconileID: $("#reconid").val() },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        console.log(data);
+                        console.log(data.table1);
+                        var cbl = data.table4;
+                        var banks = data.table2;
+                        //get mateched record
+                        var mat = data.table1;
+                        //get collection only
+                        var coll = data.table3;
+                        console.log(coll);
+                        console.log(coll.length);
+                        //get closing balance
+                        if (cbl != undefined || cbl.length > 0) {
+                            //get closing balance
+                            for (var i = 0; i < cbl.length; i++) {
+                                var string = numeral(cbl[i].closingBal).format('0,0.00');
+                                console.log(string);
+                                //   $('#txtclose').val(string);
+                            }
+                        }
+
+                        if (banks != undefined || banks.length > 0) {
+                            $('#tblbanks').DataTable({
+                                data: banks,
+                                "bFilter": false,
+                                "stateSave": true,
+                                "paging": false,
+                                'scrollY': 500,
+                                stateSaveCallback: function (settings, data) {
+                                    localStorage.setItem('Banks_' + settings.sInstance, JSON.stringify(data))
+                                },
+                                stateLoadCallback: function (settings) {
+                                    return JSON.parse(localStorage.getItem('Banks_' + settings.sInstance))
+                                },
+                                columns: [
+                                    {
+                                        data: 'date',
+                                        //render: function (d) {
+                                        //    return moment(d).format("DD/MM/YYYY");
+                                        //},
+                                        width: "10%"
+                                    },
+                                    {
+                                        data: 'amount',
+                                        render: $.fn.dataTable.render.number(",", ".", 2),
+                                        width: "10%"
+                                    }
+                                ]
+                            });
+                        }
+                        //console.log(number_format(186889876.53, 2, '.', ','));
+                        //console.log(coll);
+                        //console.log(coll.length);
+                        if (coll != undefined || coll.length > 0) {
+                            $('#tblcollections').removeAttr('width').DataTable({
+                                data: coll,
+                                "bFilter": false,
+                                "paging": false,
+                                'scrollY': 500,
+                                columnDefs: [
+                                    { width: 200, targets: 0 }
+                                ],
+                                fixedColumns: true,
+                                columns: [
+                                    {
+                                        data: 'cdate',
+                                        //render: function (d) {
+                                        //    return moment(d).format("DD/MM/YYYY");
+                                        //}
+                                        width: "10%"
+                                    },
+                                    {
+                                        data: 'cAmount',
+                                        render: $.fn.dataTable.render.number(",", ".", 2),
+                                        width: "10%"
+                                    }
+                                    //{ data: 'paymentref' }
+                                ]
+                            });
+                        }
+
+                        console.log(mat);
+                        console.log(mat.length);
+                        if (mat != undefined || mat.length > 0) {
+                            $('#tblcolbank').DataTable({
+                                data: mat,
+                                "bFilter": false, 'scrollY': 500,
+                                columns: [
+                                    {
+                                        data: 'date',
+                                        //render: function (d) {
+                                        //    return moment(d).format("DD/MM/YYYY");
+                                        //}
+                                        width: "10%"
+                                    },
+                                    {
+                                        data: 'amount',
+                                        render: $.fn.dataTable.render.number(",", ".", 2),
+                                        width: "10%"
+                                    }
+                                    //{ data: 'paymentref' }
+                                ]
+                            });
+                        }
+                        $('#loading-div-background').hide();
+                        $('#btnNext').hide();
+                        $('#btncomSave').show();
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Reconciliation Solution',
+                            text: 'Compare Successfull !!!',
+                            footer: ''
+                        })
+
+                    },
+                    error: function (e) {
+                        $('#dvData').html(e.responseText);
+                    }
+                }))
+        });
+        $('#btncomSave').click(function () {
+            //alert('Save compare result');
+
+
+            var reconcile = {};
+            reconcile.reconileID = $("#reconid").val();
+            reconcile.closebal = $("#txtcalucatedclose").val();
+
+            console.log(reconcile);
+
+            $('#loading-div-background').show();
+
+            var options = {};
+            options.url = "Create?handler=SaveCompare";
+            options.type = "POST";
+            options.data = JSON.stringify(reconcile);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.beforeSend = function (xhr) {
+                xhr.setRequestHeader("MY-XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            };
+            options.success = function (data) {
+                var msgb = data.table;
+                var deb = data.table1;
+                debtran = data.table2;
+                var ced = data.table3;
+                cedtran = data.table4;
+                //console.log(debtran);
+
+
+                dtdebit = $('#tbldebit').DataTable({
+                    data: deb,
+                    "paging": false,
+                    "info": false,
+                    "bFilter": false,
+                    'scrollY': 700,
+                    "columnDefs": [
+                        {
+                            "targets": [0],
+                            "visible": true,
+                            "searchable": false
+                        }
+                    ],
+                    columns: [
+                        { data: 'bsid' },
+                        {
+                            data: 'bsDate',
+                            render: function (d) {
+                                return moment(d).format("DD/MM/YYYY");
+                            }
+                            //moment().format('L')
+
+                        },
+                        {
+                            data: 'amount',
+                            render: $.fn.dataTable.render.number(",", ".", 2),
+                            width: "10%"
+                        },
+                        { data: 'payerName' },
+                        {
+                            data: 'transID',
+                            render: function (data) { return createSelect(data); }
+
+                        }
+
+                    ]
+                });
+                $('#tblcredit').DataTable({
+                    data: ced,
+                    "paging": false,
+                    "info": false,
+                    "bFilter": false, 'scrollY': 700,
+                    "columnDefs": [
+                        {
+                            "targets": [0],
+                            "visible": true,
+                            "searchable": false
+                        }
+                    ],
+                    columns: [
+                        { data: 'csid' },
+                        {
+                            data: 'csDate', render: function (d) {
+                                return moment(d).format("DD/MM/YYYY");
+                            }
+                        },
+                        {
+                            data: 'cAmount',
+                            render: $.fn.dataTable.render.number(",", ".", 2),
+                            width: "10%"
+                        },
+                        { data: 'cPayerName' },
+                        {
+                            //data: 'CTransID',
+                            data: null,
+                            render: function (data) { return createSelect2(data); }
+
+                        }
+
+                    ]
+                });
+                //$("#reconid").val(msg.reconcileid)
+                $('#btnNext').show();
+                $('#loading-div-background').hide();
+                Swal.fire({
+                    type: 'success',
+                    title: 'Reconciliation Solution',
+                    text: 'Result Saved Successfull !!!',
+                    footer: ''
+                })
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+            Promise.resolve($.ajax(options));
+
+        });
+        $('#btnSaveAll').click(function () {
+            var values = new Array(); var valdebit = new Array();
+            $("#tblcredit tr").each(function () {
+                var tr = $(this);
+                //get id column
+                var idb = $.trim(tr.find('td:eq(0)').html());
+                //console.log(idb);
+                tr.find("td").each(function () {
+                    var select = $(this).find("select");
+                    if (select.val() > 0) {
+                        //write selected value to array with id
+                        values.push({ 'pBSID': idb, 'pTransID': select.val() });
+                    }
+                });
+            })
+
+            $("#tbldebit tr").each(function () {
+                var tr = $(this);
+                //get id column
+                var idb = $.trim(tr.find('td:eq(0)').html());
+                //console.log(idb);
+                tr.find("td").each(function () {
+                    var select = $(this).find("select");
+                    if (select.val() > 0) {
+                        //write selected value to array with id
+                        valdebit.push({ 'pBSID': idb, 'pTransID': select.val() });
+                    }
+                });
+            })
+            console.log(values);
+            console.log(valdebit);
+            $('#loading-div-background').show();
+
+            var options = {};
+            options.url = "Create?handler=AllocateTransaction";
+            options.type = "POST";
+
+            var objAllocate = {};
+            objAllocate.reconileID = $("#reconid").val();
+            objAllocate.Userid = "aonabote@gmail.com";
+            objAllocate.dtDebit = valdebit;
+            objAllocate.dtCredit = values;
+
+            console.log(objAllocate);
+
+            options.data = JSON.stringify(objAllocate);
+            options.contentType = "application/json";
+            options.dataType = "json";
+
+            options.beforeSend = function (xhr) {
+                xhr.setRequestHeader("MY-XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            };
+            options.success = function (msg) {
+                $("#msg").html(msg);
+
+                var retval = null;
+                var msgb = msg.table;
+                var post = msg.table1;
+
+                for (var i = 0; i < msgb.length; i++) {
+                    retval = msgb[i].returnCode;
+                }
+                //console.log(retval);
+                //console.log(post);
+                if (retval == "00") {
+                    $('#tblposting').DataTable({
+                        data: post,
+                        //"paging": false,
+                        //"info": false,
+                        "bFilter": false,
+                        //'scrollY': 700,
+                        "columnDefs": [
+                            {
+                                "targets": [0],
+                                "visible": true,
+                                "searchable": false
+                            }
+                        ],
+                        columns: [
+                            { data: 'bsid' },
+                            {
+                                data: 'bsDate',
+                                render: function (d) {
+                                    return moment(d).format("DD/MM/YYYY");
+                                }
+                            },
+                            {
+                                data: 'amount',
+                                render: $.fn.dataTable.render.number(",", ".", 2),
+                                width: "10%"
+                            },
+                            { data: 'payerName' },
+                            //{
+                            //    data: null,
+                            //    render: function (data) { return createSelect2(data); }
+
+                            //},
+                            { data: 'description' }
+
+                        ]
+                    });
+                    $('#btnNext').show();
+                    $('#btnSavePost').hide();
+                    $('#finish').show();
+                    $('#loading-div-background').hide();
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Reconciliation Solution',
+                        text: 'Saved Successfull !!!',
+                        footer: ''
+                    })
+                }
+
+                //}
+            }
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+            Promise.resolve($.ajax(options));
+        });
+        function getstate(item) {
+            var rows = $("#tblcredit").dataTable().fnGetNodes();
+
+            for (var i = 0; i < rows.length; i++) {
+                // Get HTML of 3rd column (for example)
+                console.log("item:" + i + " id:" + $(rows[i]).find("td:eq(0)").html());
+                /* cache row so don't keep creating new object*/
+                var $row = $(rows[i]);
+                console.log($row.find("td:eq(4) select.states").data())
+                if ($row.find("td:eq(1)").html() == item) {
+                    var state = $row.find("td:eq(4) select.states").data('selcred');
+                    console.log(state)
+                    var optionText = $row.find('option[value="' + state + '"]').text();
+                    console.log(optionText)
+                }
+
+
+                //if ($(rows[i]).find("td:eq(1)").html() == item) {
+                //    console.log($(rows[i]).find("td:eq(4)").div.select.data - selcred);
+                //    return ($(rows[i]).find("td:eq(4)").html());
+                //    console.log($(rows[i]).find("td:eq(4)").html());
+                //}
+            }
+        };
+        // the function creates a select box
+        function createSelect(selItem) {
+            //class="form-control  select2"
+            var sel = "<select><option>Select Transaction Definition</option>";
+            for (var i = 0; i < debtran.length; ++i) {
+                if (debtran[i] == selItem) {
+                    sel += "<option selected value = '" + debtran[0].transID + "' >" + debtran[i].description + "</option>";
+                }
+                else {
+                    sel += "<option  value = '" + debtran[i].transID + "' >" + debtran[i].description + "</option>";
+                }
+            }
+            sel += "</select>";
+            return sel;
+        }
+        function createSelect2(selItem) {
+            var sel = "<select class='selcred'><option value='0'>Select Transaction Definition</option>";
+            for (var i = 0; i < cedtran.length; ++i) {
+                if (cedtran[i] == selItem) {
+                    sel += "<option selected value = '" + cedtran[0].transID + "' >" + cedtran[i].description + "</option>";
+                }
+                else {
+                    sel += "<option  value = '" + cedtran[i].transID + "' >" + cedtran[i].description + "</option>";
+                }
+            }
+            sel += "</select>";
+            return sel;
+        }
+    </script>
+    <script type="text/javascript">
+        $(function () {
+
+            $('.wizard .prev').click(function () {
+                var wizard = $(this).parent('.wizard');
+                $('.step.active', wizard).hide();
+                var currentStep = $('.step.active', wizard);
+                currentStep.hide();
+                currentStep.removeClass('active');
+
+                var newStep = currentStep.prev('.step', wizard);
+                newStep.addClass('active');
+                newStep.show();
+
+                if ($('.step:first', wizard)[0] == newStep[0]) {
+                    $(this).hide();
+                }
+
+                $('.next', wizard).show();
+
+                $('.finish', wizard).hide();
+            });
+
+            $('.wizard .finish').click(function () {
+                var wizard = $(this).parent('.wizard');
+
+                $('.step.active', wizard).hide();
+
+                var currentStep = $('.step.active', wizard);
+                currentStep.hide();
+                currentStep.removeClass('active');
+
+                var newStep = currentStep.next('.step', wizard);
+                newStep.addClass('active');
+                newStep.show();
+
+                if ($('.step:last', wizard)[0] == newStep[0]) {
+                    $(this).show();
+                }
+
+                $('.next', wizard).show();
+            });
+
+            $('.wizard .next').click(function () {
+                var wizard = $(this).parent('.wizard');
+                $('.step.active', wizard).hide();
+                var currentStep = $('.step.active', wizard);
+                currentStep.hide();
+                currentStep.removeClass('active');
+                var newStep = currentStep.next('.step', wizard);
+                newStep.addClass('active');
+                newStep.show();
+
+                if ($('.step:last', wizard)[0] == newStep[0]) {
+                    $(this).hide();
+                    $('.finish', wizard).show();
+                }
+                $('.next', wizard).hide();
+                $('.prev', wizard).show();
+
+            });
+        });
+    </script>
+
+    <!-- data tables -->
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
+    @*<script src="https://cdn.datatables.net/plug-ins/1.10.19/dataRender/datetime.js"></script>*@
+    <!--select2-->
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+
+
+}
