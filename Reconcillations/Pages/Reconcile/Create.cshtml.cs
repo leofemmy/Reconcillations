@@ -19,22 +19,24 @@ namespace Reconcillations.Pages.Reconcile
     {
         ITransactionRepository _transactionRepository;
 
-        private IHostingEnvironment  _hostingEnvironment;
+        private IHostEnvironment _hostingEnvironment;
 
         public SelectList BankSelectList { get; set; }
 
         [BindProperty]
         public Entity.ReconcilePeriod reconcilePeriod { get; set; }
 
-        public CreateModel(IHostingEnvironment  hostingEnvironment, ITransactionRepository transactionRepository)
+        public CreateModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
 
             _hostingEnvironment = hostingEnvironment;
         }
+      
         public void OnGet()
         {
         }
+      
         public IActionResult OnGetSelectByCode(string bankcode)
         {
             List<Entity.Account> _accounts = (from g in
@@ -42,12 +44,14 @@ namespace Reconcillations.Pages.Reconcile
                                               select g).ToList();
             return new JsonResult(_accounts);
         }
+       
         public IActionResult OnGetBankAll()
         {
             List<Banklist> data = (from d in _transactionRepository.GeBanklists()
                                    select d).ToList();
             return new JsonResult(data);
         }
+        
         [HttpPost]
         public IActionResult OnPostValidateDate([FromBody] JObject reconciledays)
         {
@@ -85,6 +89,7 @@ namespace Reconcillations.Pages.Reconcile
             }
             return new JsonResult(responseInfo);
         }
+       
         public IActionResult OnPostRecords([FromBody] JObject reconcile)
         {
             //CreateReconciledate

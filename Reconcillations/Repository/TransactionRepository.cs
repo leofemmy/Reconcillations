@@ -3177,6 +3177,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+       
         public DataSet FinishedReconcile(long reconcileId, string UsersId)
         {
             DataSet dtresult = new DataSet();
@@ -3250,6 +3251,7 @@ namespace Reconcillations.Repository
             }
             return dtresult;
         }
+       
         public DataSet PostingRequestSent(long reconcileId, string UsersId)
         {
 
@@ -3324,6 +3326,7 @@ namespace Reconcillations.Repository
             }
             return dtresult;
         }
+       
         public DataTable viewException(Entity.Exceptions exception)
         {
             DataTable dtresult = new DataTable();
@@ -3409,6 +3412,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+        
         public DataTable ViewBanksCollection(Summarys sumbanks)
         {
             DataTable dtresult = new DataTable();

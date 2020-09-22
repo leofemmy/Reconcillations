@@ -19,12 +19,12 @@ namespace Reconcillations.Pages.Approval
     {
         ITransactionRepository _transactionRepository;
 
-        private IHostingEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
+        private IHostEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
 
         [BindProperty]
         public List<Requesntsent> _translist { get; set; }
        
-        public IndexModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
+        public IndexModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
         {
             _transactionRepository = transactionRepository;
 

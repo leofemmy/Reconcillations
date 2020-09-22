@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Reconcillations.Entity;
 using Reconcillations.Repository;
@@ -20,14 +21,14 @@ namespace Reconcillations.Pages
     {
         ITransactionRepository _transactionRepository;
 
-        IHostingEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
+        IHostEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
 
         public SelectList PostingSelectlist { get; set; }
         [BindProperty]
         public Postinglist pstlist { get; set; }
 
 
-        public ReclassificationModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
+        public ReclassificationModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
         {
             _transactionRepository = transactionRepository;
 

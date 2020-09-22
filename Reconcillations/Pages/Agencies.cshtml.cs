@@ -7,6 +7,7 @@ using DevExpress.XtraReports.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
 using Reconcillations.Entity;
 using Reconcillations.Reports;
@@ -17,13 +18,13 @@ namespace Reconcillations.Pages
 
     public class AgenciesModel : PageModel
     {
-        ITransactionRepository _transactionRepository; IHostingEnvironment _hostingEnvironment;
+        ITransactionRepository _transactionRepository; IHostEnvironment _hostingEnvironment;
         public XtraReport Report { get; set; }
 
         [BindProperty]
         public Summarys summarys { get; set; }
 
-        public AgenciesModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
+        public AgenciesModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
 

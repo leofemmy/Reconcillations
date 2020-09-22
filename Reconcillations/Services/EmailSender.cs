@@ -15,8 +15,8 @@ namespace Reconcillations.Services
     {
         private readonly EmailSettings _emailSettings;
 
-        private readonly IHostingEnvironment  _env;
-        public EmailSender(IOptions<EmailSettings> emailSettings, IHostingEnvironment  env)
+        private readonly IHostEnvironment _env;
+        public EmailSender(IOptions<EmailSettings> emailSettings, IHostEnvironment env)
         {
             _emailSettings = emailSettings.Value;
             _env = env;

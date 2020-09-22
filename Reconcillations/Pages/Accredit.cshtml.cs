@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
 using Reconcillations.Entity;
 using Reconcillations.Repository;
@@ -18,12 +19,12 @@ namespace Reconcillations.Pages
     {
         ITransactionRepository _transactionRepository;
 
-        private IHostingEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
+        private IHostEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
 
         [BindProperty]
         public List<ModifyRecords> _translist { get; set; }
 
-        public AccreditModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
+        public AccreditModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
         {
             _transactionRepository = transactionRepository;
 
