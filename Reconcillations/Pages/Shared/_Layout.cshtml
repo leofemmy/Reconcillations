@@ -161,6 +161,31 @@
                             </li>
                         }
 
+                        <li class="nav-item">
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                <i class="material-icons">description</i>
+                                <span class="title">Normalise</span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "I"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Normalise" class="nav-link ">
+                                            <span class="title">Normalise</span>
+                                        </a>
+                                    </li>
+                                }
+                                @if ((session.GetString("UserType") == "P") || (session.GetString("UserType") == "SA"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Normalise/NApproval" class="nav-link ">
+                                            <span class="title">Normalise Approval</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
                         @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "P") || (session.GetString("UserType") == "I"))
                         {
                             <li class="nav-item">

@@ -1,0 +1,400 @@
+﻿@page
+@model Reconcillations.Pages.Normalise.IndexModel
+@{
+    Layout = "Shared/_Layout"; ;
+    ViewData["Title"] = "Normalise Record";
+}
+@section header
+{
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="~/smile/assets/plugins/numeral/numeral.min.js"></script>
+}
+<div class="page-bar">
+    @*@HttpContext.Session.GetString("UserEmail")*@
+    <div class="page-title-breadcrumb">
+        <div class=" pull-left">
+            <div class="page-title">Normalise Record  </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    @Html.AntiForgeryToken()
+    <div id="dvsearch" class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <h3>Enter Payment Reference Number / Reference Number </h3>
+            <div class="card-body" id="bar-parent">
+                <div class="form-body">
+                    <div class="form-group row">
+                        <div class="col-md-8">
+                            <input class="control-label col-md-12" type="text" id="idsearch" placeholder="Enter Payment Reference Number / Reference Number">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="button" id="btnSearch" value="Search" class="btn btn-circle btn-primary">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dvmodify" class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <div class="card-head">
+                <header>Normalise Record Details</header>
+            </div>
+            <div class="card-body" id="bar-parent2">
+                <form method="post" class="form-horizontal">
+                    <div class="form-body">
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Payment Ref. Number
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtref" class="form-control" contenteditable="false" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Payer ID
+                                @*<span class="required"> * </span>*@
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtpayerid" class="form-control" contenteditable="false" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Payer Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtpayername" class="form-control" contenteditable="false" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Amount
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtamount" class="form-control" contenteditable="false" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Slip Number
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtslip" class="form-control" contenteditable="false" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Payment Date
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtdate" class="form-control" contenteditable="false" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Agency Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <select id="Agencyid" class="form-control select2">
+                                        <option value="">Select Agency</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                RevenueName
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+
+                                    <select id="revenueid" class="form-control select2">
+                                        <option value="">Select Revenue</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="offset-md-3 col-md-9">
+                                @*<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"><i class="glyphicon glyphicon-plus"></i> Update </button>*@
+                                <input type="button" id="btnNormRec" value="Request Normalise" class="mdl-button mdl-js-button mdl-button--raised btn btn-circle btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#dvmodify").hide();
+            var options = {};
+            options.url = "Normalise/Index?handler=AgencyAll";
+            options.type = "GET";
+            options.dataType = "json";
+            options.success = function (data) {
+                data.forEach(function (element) {
+                    $("#Agencyid").append($("<option> Select Agency </option>").val
+                        (element.agencyId).html(element.agencyName));
+                });
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+
+            $.ajax(options);
+        });
+
+        $("#Agencyid").change(function () {
+            var agency = $("#Agencyid").val();
+
+            console.log(agency);
+
+            $.ajax({
+                url: "Normalise/Index?handler=RevenueByid",
+                type: "GET",
+                data: { agancyid: $("#Agencyid").val() },
+                traditional: true,
+                success: function (result) {
+                    console.log(result);
+                    result.forEach(function (element) {
+                        $("#revenueid").append($("<option> Select Revenue </option>").val
+                            (element.revenueCode).html(element.revenueName));
+                    });
+                },
+                error: function () {
+                    //alert("Something went wrong call the police");
+                    $("#msg").html("Error while making Ajax call!");
+                }
+            });
+        });
+
+        $('#btnSearch').click(function () {
+            var referno = {};
+
+            if ($('#idsearch').val().length != 0) {
+
+                referno.referno = $('#idsearch').val();
+
+                console.log(referno);
+
+                $.ajax({
+                    url: "Normalise/Index?handler=Search",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(referno),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    //dataType: "json",
+                    //traditional: true,
+                    success: function (data) {
+
+                        var db = data;
+
+                        var retval = null;
+
+                        var retmsg = null;
+
+                        var msgb = data.table;
+                        var post = data.table1;
+
+                        console.log(post);
+
+                        for (var i = 0; i < msgb.length; i++) {
+                            retval = msgb[i].returnCode;
+                            retmsg = msgb[i].returnMessage;
+                        }
+                        if (retval == "00") {
+
+                            for (var i = 0; i < post.length; i++) {
+
+                                var payref = post[i].paymentRefNumber;
+
+                                //var gf = numeral(post[i].amount).format('0,0.00');
+                                var stdate = post[i].paymentDate;
+                                console.log(post[i].paymentRefNumber);
+                                $("#txtref").val(payref);
+                                $("#txtpayerid").val(post[i].payerID);
+                                $("#txtpayername").val(post[i].payername);
+                                $("#txtslip").val(post[i].chequeNumber);
+                                //$("#txtdate").val(stdate.toLocaleDateString('en-GB'));
+                                $("#txtamount").val(numeral(post[i].amount).format('0,0.00'));
+
+                            }
+
+                            $("#dvsearch").hide();
+                            $("#dvmodify").show();
+                        } else {
+                            Swal.fire({
+                                type: 'info',
+                                title: 'Reconciliation Solution',
+                                text: retmsg,
+                                footer: ''
+                            });
+                        }
+                    },
+                    error: function (e) {
+                        //$('#loading-div-background').hide();
+                        //$('#dvData').html(e.responseText);
+                        Swal.fire({
+                            type: 'error',
+                            title: e.statusText,
+                            text: e.responseText,
+                            footer: ''
+                        })
+                    }
+                });
+            }
+        });
+
+        $('#btnNormRec').click(function () {
+
+            var retval = null;
+            var dbdata = null;
+
+            var retmsg = null;
+
+            if ($('#txtpayername').val().length == 0) {
+                Swal.fire({
+                    type: 'info',
+                    title: 'Reconciliation Solution',
+                    text: 'Payer name is Empty',
+                    footer: ''
+                });
+            } else if ($('#Agencyid').val().length == 0) {
+                Swal.fire({
+                    type: 'info',
+                    title: 'Reconciliation Solution',
+                    text: 'Agency name is empty',
+                    footer: ''
+                });
+            } else if ($('#revenueid').val().length == 0) {
+                Swal.fire({
+                    type: 'info',
+                    title: 'Reconciliation Solution',
+                    text: 'Revenue name is empty',
+                    footer: ''
+                });
+            } else {
+                var objnormrec = {};
+                objnormrec.useremail = $("#accountid").val();
+                objnormrec.payername = $("#txtpayername").val();
+                objnormrec.paymentref = $("#txtref").val();
+                objnormrec.agencyname = $("#Agencyid option:selected").text();
+                objnormrec.agencycode = $("#Agencyid").val();
+                objnormrec.revenuename = $("#revenueid option:selected").text();
+                objnormrec.revenuecode = $("#revenueid").val();
+
+                console.log(objnormrec);
+
+
+                $.ajax({
+                    url: "Normalise/Index?handler=NormaliseRec",
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(objnormrec),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (result) {
+
+                        console.log(result);
+
+                        dbdata = result.table;
+
+                        console.log(dbdata);
+
+                        for (var i = 0; i < dbdata.length; i++) {
+                            retval = dbdata[i].returnCode;
+                            retmsg = dbdata[i].returnMessage;
+                        }
+
+                        if (retval == "00") {
+                            Swal.fire({
+                                type: 'succes',
+                                title: 'Reconciliation Solution',
+                                text: retmsg,
+                                footer: ''
+                            });
+                        } else {
+                            Swal.fire({
+                                type: 'info',
+                                title: 'Reconciliation Solution',
+                                text: retmsg,
+                                footer: ''
+                            });
+                        }
+                    },
+                    error: function (xhr, textStatus, error) {
+                        //$("#msg").html("Error while making Ajax call!");
+                        Swal.fire({
+                            type: error,
+                            title: 'Error Message',
+                            text: xhr.statusText,
+                            footer: ''
+                        })
+                    }
+                });
+            }
+        });
+
+    </script>
+    <!-- data tables -->
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+    <!--select2-->
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}

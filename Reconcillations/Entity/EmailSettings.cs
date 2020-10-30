@@ -47,6 +47,24 @@ namespace Reconcillations.Entity
 
         public decimal ClosingBal { get; set; }
     }
+
+    public class NormaliseRec
+    {
+        public string useremail { get; set; }
+
+        public string payername { get; set; }
+
+        public string paymentref { get; set; }
+
+        public string agencyname { get; set; }
+
+        public string agencycode { get; set; }
+
+        public string revenuename { get; set; }
+
+        public string revenuecode { get; set; }
+    }
+
     public class BankImport
     {
         public string AccountID { get; set; }
@@ -57,6 +75,7 @@ namespace Reconcillations.Entity
         public DateTime DateEnd { get; set; }
         public long RecperID { get; set; }
     }
+
     public class Pass
     {
         [Required(ErrorMessage = "Email is required")]
@@ -152,36 +171,62 @@ namespace Reconcillations.Entity
         public string BankName { get; set; }
 
         public DateTime StartDate { get; set; }
+
         public DateTime EndDate { get; set; }
+
         public Int64 AccountID { get; set; }
+
         public Int64 StagesID { get; set; }
+
         public double OpeningBal { get; set; }
+
         public double ClosingBal { get; set; }
+
         public bool IsClosed { get; set; }
+
         public string Symbol { get; set; }
+
         public string Stages { get; set; }
+
         public string Currency { get; set; }
     }
+
     public class Account
     {
         public double AccountID { get; set; }
+
         public string AccountName { get; set; }
     }
+
+    public class Revenuelist
+    {
+        public string RevenueCode { get; set; }
+
+        public string RevenueName { get; set; }
+    }
+
     public class Reconcileperiodid
     {
         public decimal OpeningBal { get; set; }
+
         public DateTime startdate { get; set; }
+
         public DateTime enddate { get; set; }
+
         public string accountname { get; set; }
+
         public decimal ClosingBal { get; set; }
+
         public decimal AccountID { get; set; }
     }
+
     public class AccountBal
     {
         public double OpenBal { get; set; }
 
         public DateTime Startdate { get; set; }
     }
+
     public class Summarys
     {
         [Required(ErrorMessage = "Please choose Start date.")]
@@ -292,6 +337,19 @@ namespace Reconcillations.Entity
         public int days { get; set; }
     }
 
+    public class Normalisereclists
+    {
+        public string PaymentRefNumber { get; set; }
+        public string payername { get; set; }
+        public decimal Amount { get; set; }
+        public string AgencyName { get; set; }
+        public string AgencyCode { get; set; }
+        public string RevenueName { get; set; }
+        public string RevenueCode { get; set; }
+        public string NewPayerName { get; set; }
+        public string NormalisedBy { get; set; }
+        public DateTime NormaliseDate { get; set; }
+    }
     public class ModifyRecords
     {
         public long ModifyID { get; set; }
@@ -367,6 +425,13 @@ namespace Reconcillations.Entity
     public class Categorys
     {
         public DataTable dbvalue { get; set; }
+    }
+
+    public class Normalise
+    {
+        public string RefNumb { get; set; }
+
+        public string reasons { get; set; }
     }
 
     public class Disapprove
@@ -523,6 +588,12 @@ namespace Reconcillations.Entity
     {
         public long RecperID { get; set; }
         public string Description { get; set; }
+    }
+
+    public class Agency
+    {
+        public Int64 AgencyId { get; set; }
+        public string AgencyName { get; set; }
     }
     public class element
     {

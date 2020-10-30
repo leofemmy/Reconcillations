@@ -112,12 +112,7 @@ namespace Reconcillations.Pages.ImpBank
 
         public IActionResult OnGetSelectByCode(long reconileID)
         {
-            //List<Entity.Account> _accounts = (from g in
-            //        _transactionRepository.GetAccountslList(bankcode)
-            //                                  select g).ToList();
-            //List<Reconcileperiodid> _reconcile = new List<Reconcileperiodid>();
-
-            var _reconcile = _transactionRepository.GetReconcileid(reconileID);
+          var _reconcile = _transactionRepository.GetReconcileid(reconileID);
 
             Reconcileperiodid reconciles = new Reconcileperiodid
             {

@@ -79,10 +79,13 @@ namespace Reconcillations.Repository
 
         AccountBal GetAccountBalance(long Accountid);
 
+        List<Agency> GetAgencylist();
+
         ResponseMessage<BankImport> Savebankstatement(BankImport bankImport, System.Data.DataTable dts);
 
         List<TransactionList> GeTransactionLists();
 
+        List<Normalisereclists> GetNormalisereclists();
 
         List<Postinglist> GetAllPostingRequesting();
 
@@ -100,9 +103,16 @@ namespace Reconcillations.Repository
 
         DataSet AllocateModify(string userid, DataTable dbvalues);
 
+        DataSet SearchReconcilizedRecord(string referencenumber);
+
         DataSet PostingRequestSent(long reconcileId, string UsersId);
 
         DataSet CategoryCheck(DataTable dbvalues);
+
+        DataSet DisapproveNormalise(string userid, string modifyid, string strreasons);
+
+        DataSet SaveNormaliseRecord(string usermail, string paymentref, string payername, string agencyname,
+            string agencycode, string revenuename, string revenusecode);
 
         DataTable viewException(Entity.Exceptions exception);
 
@@ -148,6 +158,10 @@ namespace Reconcillations.Repository
 
         ResponseInfo Deletereconciletransactionlist(long reconcileId);
 
+        ResponseInfo ApproveNormaliseRecord(string Refnumb, string usermail);
+
         List<Requesntsent> GetRequestsentlist();
+
+        List<Revenuelist> GetRevenuelist(long agancyid);
     }
 }

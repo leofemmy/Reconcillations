@@ -78,9 +78,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("#idview").hide();
-
-
-
+        
             var dtdebit = null;
             var options = {};
             options.url = "Accredit?handler=ModifyAll";
@@ -172,6 +170,7 @@
             $.ajax(options);
 
         });
+
         $('#validate').click(function () {
             var strOtp = {};
 
@@ -242,6 +241,7 @@
                 });
             }
         });
+
         function ApproveRec(ModifyID) {
 
             Swal.fire({

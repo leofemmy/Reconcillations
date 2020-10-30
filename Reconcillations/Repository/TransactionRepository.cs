@@ -81,6 +81,7 @@ namespace Reconcillations.Repository
 
             return elements;
         }
+
         public List<Transaction> GetTransactions()
         {
             var connectionString = this.GetConnection();
@@ -144,6 +145,7 @@ namespace Reconcillations.Repository
 
             return _transaction;
         }
+
         public IEnumerable<ActionType> GetActionTypes()
         {
             var connectionString = this.GetConnection();
@@ -196,6 +198,7 @@ namespace Reconcillations.Repository
 
             return actpes;
         }
+
         public IEnumerable<Entity.Type> GetTypes()
         {
             var connectionString = this.GetConnection();
@@ -248,6 +251,7 @@ namespace Reconcillations.Repository
 
             return elements;
         }
+
         public int AddBankAccount(Bank bank)
         {
             var connectionString = this.GetConnection();
@@ -312,6 +316,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public int ResetUserPassword(string email, string pass, string guidid)
         {
             var connectionString = this.GetConnection(); int count = 0;
@@ -372,6 +377,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public int UserConfirmation(string email, string code, string pass, string guidid)
         {
             var connectionString = this.GetConnection(); int count = 0;
@@ -433,6 +439,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public int UpdateUserActivationCode(string email, string code)
         {
             var connectionString = this.GetConnection();
@@ -497,6 +504,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public int ValidateEmailAddress(fpass fpass)
         {
             var connectionString = this.GetConnection();
@@ -559,6 +567,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public int AddUserAccount(CUsers _users, string stractivationCode)
         {
             var connectionString = this.GetConnection();
@@ -623,6 +632,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public int AddTransaction(Transaction transaction)
         {
             var connectionString = this.GetConnection();
@@ -681,6 +691,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public int EditTransaction(Transaction transaction)
         {
             var connectionString = this.GetConnection();
@@ -742,6 +753,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public Transaction GetTransactionID(long id)
         {
             var connectionString = this.GetConnection();
@@ -808,6 +820,7 @@ namespace Reconcillations.Repository
             return _transact;
 
         }
+
         public List<Currency> GetCurrencies()
         {
             var connectionString = this.GetConnection();
@@ -861,6 +874,63 @@ namespace Reconcillations.Repository
             }
             return _currencies;
         }
+
+        public List<Revenuelist> GetRevenuelist(long agancyid)
+        {
+            var connectionString = this.GetConnection();
+
+            List<Revenuelist> revenuelist = new List<Revenuelist>();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand(string.Format("SELECT RevenueCode,RevenueName FROM dbo.vwRevenuelist WHERE AgencyId={0} ORDER BY RevenueName asc",
+                        agancyid), con);
+
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    con.Open();
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+
+                    //con.Open();
+
+                    //SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        Revenuelist reve = new Revenuelist
+                        {
+                            RevenueName = rdr["RevenueName"].ToString(),
+                            RevenueCode = rdr["RevenueCode"].ToString()
+                        };
+                        revenuelist.Add(reve);
+                    }
+
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Get revenue list ");
+                    loggers.Information(JsonConvert.SerializeObject(revenuelist));
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Get Brevenue list- {e.Message}");
+            }
+            return revenuelist;
+        }
+
         public Reconcileperiodid GetReconcileid(long id)
         {
             var connectionString = this.GetConnection();
@@ -922,6 +992,7 @@ namespace Reconcillations.Repository
 
             return _accounts;
         }
+
         public List<Account> GetAccountslList(string bankcode)
         {
             var connectionString = this.GetConnection();
@@ -977,6 +1048,7 @@ namespace Reconcillations.Repository
 
             return _accounts;
         }
+
         public List<Postinglist> GetReconciledClosed()
         {
             var connectionString = this.GetConnection();
@@ -1030,6 +1102,7 @@ namespace Reconcillations.Repository
             }
             return postinglists;
         }
+
         public List<Postinglist> GetAllPostingRequesting()
         {
             var connectionString = this.GetConnection();
@@ -1083,6 +1156,7 @@ namespace Reconcillations.Repository
             }
             return postinglists;
         }
+
         public List<BankTypecode> GetBankTypecodes()
         {
             var connectionString = this.GetConnection();
@@ -1137,6 +1211,7 @@ namespace Reconcillations.Repository
 
             return _banklists;
         }
+
         public List<Accountlists> GetAccountlists()
         {
             var connectionString = this.GetConnection();
@@ -1193,6 +1268,7 @@ namespace Reconcillations.Repository
 
             return _definitionlists;
         }
+
         public List<Definitionlist> GetTransactionDefinitionlist()
         {
             var connectionString = this.GetConnection();
@@ -1249,6 +1325,67 @@ namespace Reconcillations.Repository
 
             return _definitionlists;
         }
+
+        public List<Agency> GetAgencylist()
+        {
+            var connectionString = this.GetConnection();
+
+            List<Agency> _banklists = new List<Agency>();
+            try
+            {
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                response.Clear();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    //SqlCommand cmd = new SqlCommand("spGetReconcilePeriod", con)
+                    //{
+                    //    CommandType = CommandType.StoredProcedure
+                    //};
+                    SqlCommand cmd = new SqlCommand(string.Format("SELECT AgencyId,AgencyName FROM dbo.vwAgencylist ORDER BY AgencyName asc"), con);
+
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    con.Open();
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        Agency banklist = new Agency
+                        {
+                            AgencyId = Convert.ToInt64(rdr["AgencyId"].ToString()),
+                            AgencyName = rdr["AgencyName"].ToString()
+                        };
+                        _banklists.Add(banklist);
+                    }
+
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Get Bank ");
+                    loggers.Information(JsonConvert.SerializeObject(_banklists));
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Get Bank thrown an error - {ex.Message}");
+            }
+            return _banklists;
+        }
+
         public List<Postinglist> GetRecocileperiod()
         {
             var connectionString = this.GetConnection();
@@ -1303,6 +1440,7 @@ namespace Reconcillations.Repository
 
             return _banklists;
         }
+
         public List<Banklist> GeBanklists()
         {
             var connectionString = this.GetConnection();
@@ -1357,6 +1495,7 @@ namespace Reconcillations.Repository
 
             return _banklists;
         }
+
         public List<Usertypelist> GetUsertypelist()
         {
             var connectionString = this.GetConnection();
@@ -1411,6 +1550,73 @@ namespace Reconcillations.Repository
 
             return usertypelists;
         }
+
+        public List<Normalisereclists> GetNormalisereclists()
+        {
+            var connectionString = this.GetConnection();
+
+            List<Normalisereclists> _modifylists = new List<Normalisereclists>();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    SqlCommand cmd = new SqlCommand("spGetMormaliserecordlist", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    con.Open();
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        Normalisereclists modify = new Normalisereclists
+                        {
+
+                            PaymentRefNumber = rdr["PaymentRefNumber"].ToString(),
+                            Amount = Convert.ToDecimal(rdr["Amount"].ToString()),
+                            payername = rdr["payername"].ToString(),
+                            AgencyCode = rdr["AgencyCode"].ToString(),
+                            RevenueName = rdr["RevenueName"].ToString(),
+                            RevenueCode = rdr["RevenueCode"].ToString(),
+                            NewPayerName = rdr["NewPayerName"].ToString(),
+                            AgencyName = rdr["AgencyName"].ToString(),
+                            NormalisedBy = rdr["NormalisedBy"].ToString(),
+                            NormaliseDate = Convert.ToDateTime(rdr["NormaliseDate"].ToString())
+                        };
+
+                        _modifylists.Add(modify);
+
+                    }
+
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Get Request sent List ");
+                    loggers.Information(JsonConvert.SerializeObject(_modifylists));
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Get Request sent List thrown an error - {ex.Message}");
+            }
+
+            return _modifylists;
+        }
+
         public List<ModifyRecords> GetModifyRecords()
         {
             var connectionString = this.GetConnection();
@@ -1472,6 +1678,7 @@ namespace Reconcillations.Repository
 
             return _modifylists;
         }
+
         public List<Requesntsent> GetRequestsentlist()
         {
             var connectionString = this.GetConnection();
@@ -1539,6 +1746,7 @@ namespace Reconcillations.Repository
 
             return _banklists;
         }
+
         public List<RequestApprove> GetRequestApprove()
         {
             var connectionString = this.GetConnection();
@@ -1605,6 +1813,7 @@ namespace Reconcillations.Repository
 
             return _banklists;
         }
+
         public List<Reconcilelist> Getrecocilelists()
         {
             var connectionString = this.GetConnection();
@@ -1668,6 +1877,7 @@ namespace Reconcillations.Repository
 
             return _banklists;
         }
+
         public List<TransactionList> GeTransactionLists()
         {
             var connectionString = this.GetConnection();
@@ -1735,6 +1945,7 @@ namespace Reconcillations.Repository
 
             return _banklists;
         }
+
         public AccountBal GetAccountBalance(long Accountid)
         {
             var connectionString = this.GetConnection();
@@ -1789,6 +2000,7 @@ namespace Reconcillations.Repository
             }
             return _acctbal;
         }
+
         public List<AccountBal> GetAccountBals(double Accountid)
         {
             var connectionString = this.GetConnection();
@@ -1845,6 +2057,7 @@ namespace Reconcillations.Repository
 
             return _acctbal;
         }
+
         public List<Bank> GetBanklistList()
         {
             var connectionString = this.GetConnection();
@@ -1906,6 +2119,7 @@ namespace Reconcillations.Repository
 
             return _banks;
         }
+
         public List<UsersList> GetUserAccountlist()
         {
             var connectionString = this.GetConnection();
@@ -1966,6 +2180,7 @@ namespace Reconcillations.Repository
 
             return _userlist;
         }
+
         public int DisableTransction(int id)
         {
             var connectionString = this.GetConnection();
@@ -2027,6 +2242,7 @@ namespace Reconcillations.Repository
 
             return count;
         }
+
         public ResponseInfo<ReconcilePeriod> CreateReconciledate(ReconcilePeriod reconcilePeriod)
         {
             Entity.ResponseInfo<ReconcilePeriod> responses = new Entity.ResponseInfo<ReconcilePeriod>();
@@ -2118,6 +2334,7 @@ namespace Reconcillations.Repository
             }
             return responses;
         }
+
         public Entity.ResponseInfo<Reconcileday> Validatereconciledate(Reconcileday reconcliedays)
         {
             Entity.ResponseInfo<Reconcileday> responses = new Entity.ResponseInfo<Reconcileday>();
@@ -2275,6 +2492,95 @@ namespace Reconcillations.Repository
 
 
             return count;
+        }
+
+        public DataSet SaveNormaliseRecord(string usermail, string paymentref, string payername, string agencyname,
+            string agencycode, string revenuename, string revenusecode)
+        {
+            DataSet dtresult = new DataSet();
+
+            var connectionString = this.GetConnection();
+
+            dtresult.Clear();
+
+            try
+            {
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+                    else
+                    {
+                        con.Open();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spNormaliserecord", con);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@useremail", usermail);
+                    cmd.Parameters.AddWithValue("@paymentref", paymentref);
+                    cmd.Parameters.AddWithValue("@payername", payername);
+                    cmd.Parameters.AddWithValue("@agencyname", agencyname);
+                    cmd.Parameters.AddWithValue("@agencycode", agencycode);
+                    cmd.Parameters.AddWithValue("@revenuename", revenuename);
+                    cmd.Parameters.AddWithValue("@revenuecode", revenusecode);
+
+
+                    cmd.CommandTimeout = 0;
+                    response.Clear();
+                    _adp = new SqlDataAdapter(cmd);
+                    _adp.Fill(response);
+
+                    if (response.Tables[0].Rows[0]["returnCode"].ToString() == "00")
+                    {
+                        dtresult = response;
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    else
+                    {
+                        dtresult = response;
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    con.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                      .WriteTo.MSSqlServer(connectionString, "Logs")
+                      .CreateLogger();
+                logger.Fatal($"Normalise thrown an error - {e.Message}");
+            }
+
+            return dtresult;
         }
 
         public int SaveBankmport(DataTable dts, long RecperID)
@@ -2949,6 +3255,83 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
+        public DataSet DisapproveNormalise(string userid, string Refnumb, string strreasons)
+        {
+            DataSet dtresult = new DataSet();
+
+            dtresult.Clear();
+
+            var connectionString = this.GetConnection();
+
+            try
+            {
+                SqlDataAdapter _adp;
+                DataSet response = new DataSet();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spDoDisapproveNormaliserec", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Refnumber", Refnumb);
+                    cmd.Parameters.AddWithValue("@Userid", userid);
+                    cmd.Parameters.AddWithValue("@reason", strreasons);
+
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+                    response.Clear();
+                    _adp = new SqlDataAdapter(cmd);
+                    _adp.Fill(response);
+
+                    if (response.Tables[0].Rows[0]["returnCode"].ToString() == "00")
+                    {
+                        dtresult = response;
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    else
+                    {
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    con.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                                                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                                                    .CreateLogger();
+                logger.Fatal($"Normalise approval thrown an error - {e.Message}");
+            }
+
+            return dtresult;
+        }
+
         public DataSet Disapprovemodify(string userid, long modifyid, string strreasons)
         {
             DataSet dtresult = new DataSet();
@@ -3101,6 +3484,89 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
+        public DataSet SearchReconcilizedRecord(string referencenumber)
+        {
+            DataSet dtresult = new DataSet();
+
+            dtresult.Clear();
+
+            var connectionString = this.GetConnection();
+
+            try
+            {
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("SearchReconcliedRecords", con);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@strRefNumber", referencenumber);
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+
+                    response.Clear();
+
+                    _adp = new SqlDataAdapter(cmd);
+
+                    _adp.Fill(response);
+
+                    if (response.Tables[0].Rows[0]["returnCode"].ToString() == "00")
+                    {
+                        dtresult = response;
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information("Search Reconcilized Record");
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    else
+                    {
+                        dtresult = response;
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    con.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                                                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                                                    .CreateLogger();
+                logger.Fatal($"Search Reconcilized Record - {e.Message}");
+            }
+
+            return dtresult;
+        }
+
         public DataSet AllocateTransaction(long reconcileId, string UsersId)
         {
             DataSet dtresult = new DataSet();
@@ -3177,7 +3643,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
-       
+
         public DataSet FinishedReconcile(long reconcileId, string UsersId)
         {
             DataSet dtresult = new DataSet();
@@ -3251,7 +3717,7 @@ namespace Reconcillations.Repository
             }
             return dtresult;
         }
-       
+
         public DataSet PostingRequestSent(long reconcileId, string UsersId)
         {
 
@@ -3326,7 +3792,7 @@ namespace Reconcillations.Repository
             }
             return dtresult;
         }
-       
+
         public DataTable viewException(Entity.Exceptions exception)
         {
             DataTable dtresult = new DataTable();
@@ -3412,7 +3878,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
-        
+
         public DataTable ViewBanksCollection(Summarys sumbanks)
         {
             DataTable dtresult = new DataTable();
@@ -3485,6 +3951,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
         public DataTable Viewdetails(string strrevenue, DateTime dtstart, DateTime dtenddate)
         {
             DataTable dtresult = new DataTable();
@@ -3557,6 +4024,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
         public DataTable ViewAgencydetails(string strAgency, DateTime dtstart, DateTime dtenddate)
         {
             DataTable dtresult = new DataTable();
@@ -3629,6 +4097,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
         public DataTable ViewVaricesAgencies(Summarys sumagency)
         {
             DataTable dtresult = new DataTable();
@@ -3701,6 +4170,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
         public DataTable ViewMonth(Summarys sumagency)
         {
             DataTable dtresult = new DataTable();
@@ -3773,6 +4243,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
         public DataTable ViewAgencies(Summarys sumagency)
         {
             DataTable dtresult = new DataTable();
@@ -3845,6 +4316,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
         public DataTable ViewSummary(Summarys marsy)
         {
             DataTable dtresult = new DataTable();
@@ -3930,6 +4402,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
         public DataTable ViewPostingRequest(long reconcileId)
         {
             DataTable dtresult = new DataTable();
@@ -4007,6 +4480,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
         public UsersList GetUserid(long userid)
         {
             UsersList usersList = new UsersList();
@@ -4074,6 +4548,7 @@ namespace Reconcillations.Repository
 
             return usersList;
         }
+
         public Bank GetBankAccountId(long accountid)
         {
             var connectionString = this.GetConnection();
@@ -4143,6 +4618,7 @@ namespace Reconcillations.Repository
 
             return _bank;
         }
+
         public int EditUsersAccount(UsersList users)
         {
             var connectionString = this.GetConnection();
@@ -4208,6 +4684,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public int EditBankAccunt(Bank bank)
         {
             var connectionString = this.GetConnection();
@@ -4273,6 +4750,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public string Insertusertoken(string emailaddress)
         {
             DataSet dtresult = new DataSet();
@@ -4353,12 +4831,11 @@ namespace Reconcillations.Repository
             }
             return strtoken;
         }
+
         public string validateuserotp(string emailaddress, string strtoken)
         {
 
             string count = String.Empty;
-
-
 
             var connectionString = this.GetConnection();
 
@@ -4438,6 +4915,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public string posttransactionapproval(string emailaddress, double reconcileId)
         {
             string count = String.Empty;
@@ -4520,6 +4998,7 @@ namespace Reconcillations.Repository
             }
             return count;
         }
+
         public DataTable ViewBankAllocation(long reconcileId)
         {
             DataTable dtresult = new DataTable();
@@ -4597,6 +5076,7 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
         public DataTable Viewunpostedcollection(long reconcileId)
         {
             DataTable dtresult = new DataTable();
@@ -4674,6 +5154,88 @@ namespace Reconcillations.Repository
 
             return dtresult;
         }
+
+        public ResponseInfo ApproveNormaliseRecord(string modifyid, string usermail)
+        {
+            ResponseInfo responses = new ResponseInfo();
+
+            var connectionString = this.GetConnection();
+
+            try
+            {
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spDoApproveNormaliseRec", con);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+
+                    cmd.Parameters.AddWithValue("@Refnumber", modifyid);
+
+                    cmd.Parameters.AddWithValue("@Userid", usermail);
+
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+
+                    response.Clear();
+
+                    _adp = new SqlDataAdapter(cmd);
+
+                    _adp.Fill(response);
+
+                    if (response.Tables[0].Rows[0]["returnCode"].ToString() != "00")
+                    {
+
+                        responses.StatusCode = response.Tables[0].Rows[0]["returnCode"].ToString();
+                        responses.StatusMessage = response.Tables[0].Rows[0]["returnMessage"].ToString();
+
+                    }
+                    else
+                    {
+                        responses.StatusCode = response.Tables[0].Rows[0]["returnCode"].ToString();
+                        responses.StatusMessage = response.Tables[0].Rows[0]["returnMessage"].ToString();
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+
+                    con.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                responses.StatusCode = e.HResult.ToString();
+                responses.StatusMessage = e.Message.ToString();
+
+
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Normalise Approve thrown an error - {e.Message}");
+            }
+            return responses;
+        }
+
         public ResponseInfo ApproveReclassified(long modifyid, string usermail)
         {
             ResponseInfo responses = new ResponseInfo();
@@ -4754,6 +5316,7 @@ namespace Reconcillations.Repository
             }
             return responses;
         }
+
         public ResponseInfo RequestComplet(long reconcileId, string usermail)
         {
             ResponseInfo responses = new ResponseInfo();
@@ -4838,6 +5401,7 @@ namespace Reconcillations.Repository
             }
             return responses;
         }
+
         public ResponseInfo DeleteReconcileperiod(long reconcileId)
         {
             ResponseInfo responses = new ResponseInfo();
@@ -4917,6 +5481,7 @@ namespace Reconcillations.Repository
             }
             return responses;
         }
+
         public ResponseInfo Deletereconciletransactionlist(long reconcileId)
         {
             ResponseInfo responses = new ResponseInfo();

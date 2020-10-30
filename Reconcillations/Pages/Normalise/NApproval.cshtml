@@ -1,0 +1,427 @@
+﻿@page
+@model Reconcillations.Pages.Normalise.NApprovalModel
+@{
+    Layout = "Shared/_Layout"; ;
+    ViewData["Title"] = "Normalise Record Authorization";
+}
+@section header
+{ <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="page-bar">
+    @*@HttpContext.Session.GetString("UserEmail")*@
+    <div class="page-title-breadcrumb">
+        <div class=" pull-left">
+            <div class="page-title">Normalise Record Authorization </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+
+    <div id="dvtoken" class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <h3>Enter the OTP sent to your registered Email address: </h3>  @HttpContext.Session.GetString("UserEmail")
+            <div class="card-body" id="bar-parent">
+                <div class="form-body">
+                    <div class="form-group row">
+                        <div class="col-md-8">
+                            <input class="control-label col-md-12" type="text" id="idtoken" placeholder=" Enter OTP Sent to your Email Address">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="button" id="validate" value="Validate OTP" class="btn btn-circle btn-primary">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div id="idview" class="col-md-12">
+            <div class="card card-topline-red">
+                <div class="card-head">
+                    <header>List of Normalise Enteries </header>
+                </div>
+                <div class="card-body ">
+                    <table id="example" class="table table-striped table-bordered nowrap" cellspacing="0" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left; width:15%">Ref Number</th>
+                                <th style="text-align: left; width:15%">old Name</th>
+                                <th style="text-align: left; width:20%">New  Name</th>
+                                <th style="text-align: left; width:10%">Amount</th>
+                                <th style="text-align: left; width:20%">Agency Name</th>
+                                <th style="text-align: left; width:20%">Revenue Name</th>
+                                <th>Normalised By</th>
+                                <th>Normalise Date</th>
+                                <th>Approve</th>
+                                <th>Disapprove</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#idview").hide();
+
+            loadgridview();
+
+        });
+
+        $('#validate').click(function () {
+            var strOtp = {};
+
+            if ($('#idtoken').val().length != 0) {
+
+                strOtp.strOtp = $('#idtoken').val();
+
+                console.log(strOtp);
+
+                $.ajax({
+                    url: "NApproval?handler=Validteotp",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(strOtp),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    //dataType: "json",
+                    //traditional: true,
+                    success: function (data) {
+                        console.log(data);
+                        if (data === "00") {
+
+                            Swal.fire({
+                                type: 'success',
+                                title: 'success',
+                                text: 'OTP Validated Successfull',
+                                footer: ''
+                            });
+
+                            $('#dvtoken').hide();
+                            //$('#btntoken').hide();
+                            $("#validate").hide();
+                            $('#idview').show();
+
+                        } else {
+                            Swal.fire({
+                                type: 'Error',
+                                title: 'Error',
+                                text: 'Error occur Validating OTP to your provided!',
+                                footer: ''
+                            });
+
+                        }
+
+                    },
+                    error: function (e) {
+                        //$('#loading-div-background').hide();
+                        //$('#dvData').html(e.responseText);
+                        Swal.fire({
+                            type: 'error',
+                            title: e.statusText,
+                            text: e.responseText,
+                            footer: ''
+                        })
+                    }
+                });
+            } else {
+                Swal.fire({
+                    type: 'Error',
+                    title: 'Error',
+                    text: 'Kindly provide OTP send to your email address!',
+                    footer: ''
+                });
+            }
+        });
+
+        function loadgridview() {
+            var dtdebit = null;
+            var options = {};
+            options.url = "NApproval?handler=ModifyAll";
+            options.type = "GET";
+            options.dataType = "json";
+            options.success = function (data) {
+                console.log(data);
+
+                var db = data;
+
+                console.log(data);
+
+                if (db != undefined || db.length > 0) {
+                    var table = $('#example').DataTable({
+                        data: db,
+                        "bAutoWidth": false,
+                        "paging": false,
+                        "info": false,
+                        "bFilter": false,
+                        'scrollY': 700,
+                        "columnDefs": [
+                            {
+                                "sWidth": "10%",
+                                "targets": [0],
+                                "visible": false,
+                                "searchable": false
+                            }
+                        ],
+                        columns: [
+                            {
+                                data: 'paymentRefNumber',
+                                width: "10%"
+                            },
+                            {
+                                data: 'payername',
+                                width: "10%"
+                            },
+                            {
+                                data: 'newPayerName',
+                                width: "10%"
+                            },
+                            {
+                                data: 'amount',
+                                render: $.fn.dataTable.render.number(",", ".", 2),
+                                width: "10%"
+                            },
+                            {
+                                data: 'agencyName',
+                                width: "20%"
+                            },
+                            {
+                                data: 'revenueName',
+                                width: "20%"
+                            },
+                            {
+                                data: 'normalisedBy',
+                                width: "20%"
+                            },
+                            {
+                                data: 'normaliseDate',
+                                render: function (d) {
+                                    return moment(d).format("DD/MM/YYYY");
+                                },
+                                width: "10%"
+                            },
+                            {
+                                "render": function (data, type, full, meta) {
+                                    return "<a href='#' class='btn btn-info' onclick=ApproveRec('" + full.paymentRefNumber + "'); >Approve</a>";
+                                }
+                            },
+                            {
+                                data: null,
+                                render: function (data, type, row) {
+                                    return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.paymentRefNumber + "'); >Disapprove</a>";
+                                }
+                            }
+                        ]
+                    });
+                    //table.column
+
+                }
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+
+
+            $.ajax(options);
+        }
+
+        function DeleteData(paymentRefNumber) {
+            swal({
+                title: "Disapprove",
+                text: "Proved Reason's",
+                type: "input",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                animation: "slide-from-top",
+                inputAttributes: { autocapitalize: 'off' },
+                inputPlaceholder: "Write something"
+            },
+                function (inputValue) {
+                    if (inputValue === false) return false;
+
+                    if (inputValue === "") {
+                        swal.showInputError("You need to write something!");
+                        return false
+                    } else {
+
+                        Disapprec(paymentRefNumber, inputValue);
+                        // console.log(returnValue.toString());
+                        //swal("Reconciliation Solution", returnValue.toString(), "success");
+
+                    }
+
+
+                });
+
+        }
+
+
+        function Disapprec(value1, value2) {
+
+            var objModify = {};
+            objModify.refNumb = value1;
+            objModify.reasons = value2;
+
+            console.log(objModify);
+
+            var options = {};
+            options.url = "NApproval?handler=Disapprove";
+            options.type = "POST";
+            options.data = JSON.stringify(objModify);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.beforeSend = function (xhr) {
+                xhr.setRequestHeader("MY-XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            };
+            options.success = function (msg) {
+                $("#msg").html(msg);
+
+                var retval = null;
+                var retmsg = null;
+                var msgb = msg.table;
+
+                for (var i = 0; i < msgb.length; i++) {
+                    retval = msgb[i].returnCode;
+                    retmsg = msgb[i].returnMessage;
+                }
+                if (retval == "00") {
+                    // swal("Reconciliation Solution", retmsg.toString(), "success");
+                    //return retmsg.toString()
+
+                    Swal.fire(
+                        'Approved!',
+                        retmsg.toString(),
+                        'success'
+                    )
+                } else {
+                    Swal.fire(
+                        'Approved!',
+                        retmsg.toString(),
+                        'success'
+                    )
+                }
+                loadgridview();
+            };
+            options.error = function () {
+                $("#msg").html("Error while making Ajax call!");
+            };
+            $.ajax(options);
+
+        }
+
+        function ApproveRec(paymentRefNumber) {
+
+            var retval = null; var cres = null;
+
+            var retmsg = null;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Approve normalise entry !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, approve it!'
+            }).then((result) => {
+                if (result.value) {
+
+                    var objModify = {};
+                    objModify.refNumb = paymentRefNumber;
+                    objModify.reasons = null;
+
+                    console.log(objModify);
+
+                    var options = {};
+                    options.url = "NApproval?handler=Approves";
+                    options.type = "POST";
+                    options.data = JSON.stringify(objModify);
+                    options.contentType = "application/json";
+                    options.dataType = "json";
+                    options.beforeSend = function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    };
+                    options.success = function (data) {
+                        console.log(data);
+                        //$("#msg").html(msg);
+
+                        loadgridview();
+                        cres = data.table;
+
+                        for (var i = 0; i < cres.length; i++) {
+                            retval = cres[i].statusCode;
+                            retmsg = cres[i].statusMessage;
+                        }
+                        if (retval == "00") {
+                            // swal("Reconciliation Solution", retmsg.toString(), "success");
+                            Swal.fire(
+                                'success',
+                                retmsg.toString(),
+                                'success'
+                            )
+                            //return retmsg.toString()
+
+                        } else {
+                            Swal.fire(
+                                'Info',
+                                retmsg.toString(),
+                                'success'
+                            )
+                        }
+                     
+                    };
+                    options.error = function () {
+                        $("#msg").html("Error while making Ajax call!");
+
+                        Swal.fire(
+                            'Info',
+                            "Error while making Ajax call!",
+                            'success'
+                        )
+                    };
+                    $.ajax(options);
+
+                }
+            })
+
+
+            //if (confirm("Do you want to Approve ?")) {
+            //    console.log(ModifyID)
+            //}
+            //else {
+            //    return false;
+            //}
+        };
+    </script>
+    < !--data tables-- >
+    <script src="~/smile/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+    <!--select2-->
+    <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
+    <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+}
