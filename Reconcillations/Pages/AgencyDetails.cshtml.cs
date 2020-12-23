@@ -19,7 +19,9 @@ namespace Reconcillations.Pages
     public class AgencyDetailsModel : PageModel
     {
         ITransactionRepository _transactionRepository; IHostEnvironment _hostingEnvironment;
+
         public XtraReport Report { get; set; }
+
         public Summarys summarys { get; set; }
 
         public AgencyDetailsModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
@@ -28,11 +30,13 @@ namespace Reconcillations.Pages
 
             _hostingEnvironment = hostingEnvironment;
         }
+       
         public void OnGet()
         {
        
 
         }
+       
         public async Task<IActionResult> OnPostLoading([FromBody] JObject objBankImport)
         {
             //HttpContext.Session.SetString("AgencyName", e.Brick.text());
@@ -64,6 +68,7 @@ namespace Reconcillations.Pages
             Report = createreport(dt);
 
         }
+       
         XtraReport createreport(DataTable dts)
         {
 

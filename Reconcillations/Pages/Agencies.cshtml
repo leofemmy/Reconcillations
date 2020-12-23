@@ -34,15 +34,14 @@
                     contentType: "application/json",
                     dataType: "json",
                     success: function (msg) {
-                        //alert(msg.statusMessage);
+                      
                         if (msg == true) {
                             window.location.href = "AgencyDetails";
                         }
-                        //window.location = "AgencyDetails";
+                       
                     },
                     error: function (xhr, textStatus, error) {
-                        //alert(xhr.statusText);
-                    }
+                   }
                 });
             }
         }

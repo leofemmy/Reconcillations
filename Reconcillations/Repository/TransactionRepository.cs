@@ -4025,6 +4025,79 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
+        public DataTable viewBankdetails(string accountnumber, DateTime dtstart, DateTime dtenddate)
+        {
+            DataTable dtresult = new DataTable();
+
+            dtresult.Clear();
+
+            var connectionString = this.GetConnection();
+
+            try
+            {
+                string sqlquery = string.Format("SELECT * from vwCollectionDetails where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AccountNumber='{2}' ORDER BY  PayerName ASC, RevenueName ASC", dtstart, dtenddate, accountnumber.Trim().ToString());
+
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                response.Clear();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand(sqlquery, con);
+
+                    cmd.CommandType = CommandType.Text;
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+
+                    response.Clear();
+
+                    _adp = new SqlDataAdapter(cmd);
+
+                    _adp.Fill(response);
+
+                    //dtresult = response.Tables[0];
+
+                    if (response.Tables[0] != null && response.Tables[0].Rows.Count > 0)
+                    {
+                        dtresult = response.Tables[0];
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information("summary bank details View sucessfully");
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        //loggers.Information(response.Tables[0]);
+                        loggers.Information(serializeReponse);
+                    }
+
+                    con.Close();
+                }
+
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                  .WriteTo.MSSqlServer(connectionString, "Logs")
+                  .CreateLogger();
+                logger.Fatal($"View bank details Report thrown an error - {e.Message}");
+            }
+
+            return dtresult;
+        }
+
         public DataTable ViewAgencydetails(string strAgency, DateTime dtstart, DateTime dtenddate)
         {
             DataTable dtresult = new DataTable();
@@ -5215,7 +5288,7 @@ namespace Reconcillations.Repository
                         var loggers = new LoggerConfiguration()
                             .WriteTo.MSSqlServer(connectionString, "Logs")
                             .CreateLogger();
-                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(responses.StatusMessage);
                         loggers.Information(serializeReponse);
                     }
 

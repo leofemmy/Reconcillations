@@ -165,6 +165,10 @@
 
                 console.log(data);
 
+                $('#example').dataTable({
+                    "bDestroy": true
+                }).fnDestroy();
+
                 if (db != undefined || db.length > 0) {
                     var table = $('#example').DataTable({
                         data: db,
@@ -172,6 +176,7 @@
                         "paging": false,
                         "info": false,
                         "bFilter": false,
+                        "bDestroy": true,
                         'scrollY': 700,
                         "columnDefs": [
                             {
@@ -238,7 +243,6 @@
             options.error = function () {
                 $("#msg").html("Error while making Ajax call!");
             };
-
 
             $.ajax(options);
         }
@@ -378,7 +382,7 @@
                                 'success',
                                 retmsg.toString(),
                                 'success'
-                            )
+                            );
                             //return retmsg.toString()
 
                         } else {
@@ -386,23 +390,23 @@
                                 'Info',
                                 retmsg.toString(),
                                 'success'
-                            )
+                            );
                         }
-                     
+
                     };
                     options.error = function () {
-                        $("#msg").html("Error while making Ajax call!");
+                        //$("#msg").html("Error while making Ajax call!");
 
                         Swal.fire(
                             'Info',
                             "Error while making Ajax call!",
                             'success'
-                        )
+                        );
                     };
                     $.ajax(options);
 
-                }
-            })
+                };
+            });
 
 
             //if (confirm("Do you want to Approve ?")) {

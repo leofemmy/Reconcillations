@@ -638,6 +638,7 @@ namespace Reconcillations.Pages.ImpBank
 
             return this.Content(sb.ToString());
         }
+       
         //public ActionResult OnPostBankstatement([FromBody] BankImport objBankImport)
         public ActionResult OnPostBankstatement([FromBody] JObject objBankImport)
         {

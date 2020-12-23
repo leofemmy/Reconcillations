@@ -4,8 +4,10 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using DevExpress.XtraReports.UI;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json.Linq;
 using Reconcillations.Entity;
 using Reconcillations.Reports;
 using Reconcillations.Repository;
@@ -30,9 +32,14 @@ namespace Reconcillations.Pages
         public void OnGet()
         {
         }
+
         public void OnPost()
         {
             var _summary = summarys;
+
+            HttpContext.Session.SetString("StartDate", _summary.Startdate.ToString());
+
+            HttpContext.Session.SetString("EndDate", _summary.Enddate.ToString());
 
             Console.WriteLine(_summary);
 
@@ -46,6 +53,7 @@ namespace Reconcillations.Pages
 
 
         }
+        
         XtraReport createreport(DataTable dts)
         {
 
@@ -55,5 +63,25 @@ namespace Reconcillations.Pages
             report.CreateDocument();
             return report;
         }
+
+        public async Task<IActionResult> OnPostLoading([FromBody] JObject objBankImport)
+        {
+
+            if (!string.IsNullOrWhiteSpace(objBankImport.ToString()))
+            {
+                foreach (var item in objBankImport)
+                {
+                    Console.WriteLine(item.Key + " " + item.Value.ToString());
+
+                    if (item.Key.ToString() == "agencyname")
+                    {
+                        HttpContext.Session.SetString("AgencyName", item.Value.ToString());
+                    }
+                }
+            }
+
+            return new JsonResult(true);
+        }
+
     }
 }

@@ -68,7 +68,7 @@ namespace Reconcillations.Pages
 
         public async Task<IActionResult> OnPostLoading([FromBody] JObject objBankImport)
         {
-            //HttpContext.Session.SetString("AgencyName", e.Brick.text());
+          
             if (!string.IsNullOrWhiteSpace(objBankImport.ToString()))
             {
                 foreach (var item in objBankImport)
@@ -77,12 +77,11 @@ namespace Reconcillations.Pages
 
                     if (item.Key.ToString() == "agencyname")
                     {
-                        //_bankrecod.AccountID = item.Value.ToString();
                         HttpContext.Session.SetString("AgencyName", item.Value.ToString());
                     }
                 }
             }
-            // return RedirectToPage("./AgencyDetails");
+
             return new JsonResult(true);
         }
 

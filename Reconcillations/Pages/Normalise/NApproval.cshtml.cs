@@ -48,7 +48,12 @@ namespace Reconcillations.Pages.Normalise
 
         public ActionResult OnPostApproves([FromBody] Entity.Normalise approve)
         {
-            ResponseInfo respone = _transactionRepository.ApproveNormaliseRecord(approve.RefNumb, HttpContext.Session.GetString("UserEmail"));
+            ResponseInfo respone = null;
+
+            if (!string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserEmail").ToString()))
+            {
+                respone = _transactionRepository.ApproveNormaliseRecord(approve.RefNumb, HttpContext.Session.GetString("UserEmail"));
+            }
 
             return new JsonResult(respone);
         }
@@ -58,7 +63,12 @@ namespace Reconcillations.Pages.Normalise
 
             DataSet dstresult = new DataSet();
 
-            dstresult = _transactionRepository.DisapproveNormalise(HttpContext.Session.GetString("UserEmail"), disapprove.RefNumb, disapprove.reasons);
+            if (!string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserEmail").ToString()))
+            {
+
+                dstresult = _transactionRepository.DisapproveNormalise(HttpContext.Session.GetString("UserEmail"),
+                    disapprove.RefNumb, disapprove.reasons);
+            }
 
             return new JsonResult(dstresult);
         }

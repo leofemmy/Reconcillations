@@ -12,6 +12,38 @@
     <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
     <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
+    <script type="text/javascript" id="script">
+        function previewClick(s, e) {
+            if (e.Brick.text() != null) {
+                var stragency = e.Brick.text();
+                console.log(stragency);
+                var objBankImport = {};
+                objBankImport.agencyname = e.Brick.text();
+                console.log(objBankImport);
+                $.ajax({
+
+                    type: "POST",
+                    url: "Banks?handler=Loading",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(objBankImport),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (msg) {
+
+                        if (msg == true) {
+                            window.location.href = "BankDetails";
+                        }
+
+                    },
+                    error: function (xhr, textStatus, error) {
+                    }
+                });
+            }
+        }
+    </script>
 }
 <div class="row">
     <div class="col-md-12 col-sm-12">
@@ -47,7 +79,14 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            @(Html.DevExpress().WebDocumentViewer("WebDocumentViewer").Height("1000px").Bind(Model.Report))
+                            @*@(Html.DevExpress().WebDocumentViewer("WebDocumentViewer").Height("1000px").Bind(Model.Report))*@
+                            @{
+                                var documentViewer = Html.DevExpress().WebDocumentViewer("WebDocumentViewer")
+                                    .Height("1000px")
+                                    .Bind(Model.Report)
+                                    .ClientSideEvents(configure => { configure.PreviewClick("previewClick"); }); ;
+                            }
+                            @documentViewer
                         </div>
                     </div>
                 </form>

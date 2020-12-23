@@ -124,6 +124,8 @@ namespace Reconcillations.Repository
 
         DataTable Viewdetails(string strrevenue, DateTime dtstart, DateTime dtenddate);
 
+        DataTable viewBankdetails(string accountnumber, DateTime dtstart, DateTime dtenddate);
+
         DataTable ViewVaricesAgencies(Summarys sumagency);
 
         DataTable ViewBankAllocation(long reconcileId);
