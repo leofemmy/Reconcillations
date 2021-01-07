@@ -4,14 +4,17 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using Reconcillations.Repository;
 using Newtonsoft.Json.Linq;
 using Reconcillations.Entity;
+using Reconcillations.Reports;
+using Reconcillations.Repository;
+using Reconcillations.Services;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Reconcillations.Pages.Normalise
@@ -22,6 +25,17 @@ namespace Reconcillations.Pages.Normalise
 
         private IHostEnvironment _hostingEnvironment;
 
+        public SelectList AccountSelectlist { get; set; }
+
+        [BindProperty]
+        public NorRec norrec { get; set; }
+
+        [BindProperty]
+        public Entity.Exceptions bankimport { get; set; }
+
+        [BindProperty]
+        public Accountlists actlist { get; set; }
+
         public IndexModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
@@ -31,12 +45,25 @@ namespace Reconcillations.Pages.Normalise
 
         public void OnGet()
         {
+            var dat = (from d in _transactionRepository.GetAccountlists()
+                       select d).ToList();
+
+            AccountSelectlist = new SelectList(dat, "AccountID", "AccountName");
+
+            HttpContext.Session.Set("actlist", dat);
         }
 
         public IActionResult OnGetAgencyAll()
         {
             List<Agency> data = (from d in _transactionRepository.GetAgencylist()
                                  select d).ToList();
+            return new JsonResult(data);
+        }
+
+        public IActionResult OnGetAccountlist()
+        {
+            List<Accountlists> data = (from d in _transactionRepository.GetAccountlists()
+                                       select d).ToList();
             return new JsonResult(data);
         }
 
@@ -122,6 +149,42 @@ namespace Reconcillations.Pages.Normalise
             }
 
             return new JsonResult(dstnorm);
+        }
+
+        public IActionResult OnPostGetRecord([FromBody] JObject objexception)
+        {
+            var _bankrecod = bankimport;
+
+            if (!string.IsNullOrWhiteSpace(objexception.ToString()))
+            {
+                foreach (var item in objexception)
+                {
+                    Console.WriteLine(item.Key + " " + item.Value.ToString());
+
+                    if (item.Key.ToString() == "accountID")
+                    {
+                        _bankrecod.AccountID = Convert.ToInt64(item.Value.ToString());
+                    }
+                    else if (item.Key.ToString() == "startdate")
+                    {
+                        //_recondays.Startdate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                        _bankrecod.Startdate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                    }
+                    else if (item.Key.ToString() == "transID")
+                    {
+                        _bankrecod.TransID = Convert.ToInt64(item.Value.ToString());
+                    }
+                    else if (item.Key.ToString() == "enddate")
+                    {
+                        _bankrecod.Enddate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    }
+
+                }
+            }
+            DataTable dt = _transactionRepository.viewExceptionNor(_bankrecod);
+
+            return new JsonResult(dt);
         }
         //NormaliseRec
     }

@@ -16,6 +16,7 @@ namespace Reconcillations.Entity
         public string Sender { get; set; }
         public string Password { get; set; }
     }
+
     public class ReconcilePeriod
     {
         [StringLength(60, MinimumLength = 3), Display(Name = "Period Name")]
@@ -76,6 +77,49 @@ namespace Reconcillations.Entity
         public long RecperID { get; set; }
     }
 
+    public class NorRec
+    {
+        public string RefNo
+        {
+            get; set;
+        }
+
+        public string Payerid
+        {
+            get; set;
+        }
+
+        [Required(ErrorMessage = "Email is required")]
+        public string PayerName
+        {
+            get; set;
+        }
+
+        public double Amount
+        {
+            get; set;
+        }
+
+        public string SlipNo
+        {
+            get; set;
+        }
+
+        public DateTime PaymentDate
+        {
+            get; set;
+        }
+
+        public Int32 AgencyID
+        {
+            get; set;
+        }
+
+        public string RevenueCode
+        {
+            get; set;
+        }
+    }
     public class Pass
     {
         [Required(ErrorMessage = "Email is required")]
@@ -553,26 +597,15 @@ namespace Reconcillations.Entity
         [Display(Name = "Start Date")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        //[CustomAdmissionDate(ErrorMessage = "Admission Date must be less than or equal to Today's Date.")]
+       
         public DateTime Startdate { get; set; }
 
         [Required(ErrorMessage = "Please choose end date.")]
         [Display(Name = "End Date")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        //[CustomAdmissionDate(ErrorMessage = "Admission Date must be less than or equal to Today's Date.")]
         public DateTime Enddate { get; set; }
-        //[Required(ErrorMessage = "Start Date")]
-        //[Display(Name = "Start Date")]
-        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        //[DataType(DataType.Date)]
-        //public DateTime StartDate { get; set; }
-
-        //[Required(ErrorMessage = "End Date")]
-        //[Display(Name = "End Date")]
-        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        //[DataType(DataType.Date)]
-        //public DateTime EndDate { get; set; }
+      
     }
     public class Accountlists
     {

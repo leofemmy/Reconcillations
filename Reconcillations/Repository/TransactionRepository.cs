@@ -3793,6 +3793,78 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
+        public DataTable viewExceptionNor(Entity.Exceptions exception)
+        {
+            DataTable dtresult = new DataTable();
+
+            dtresult.Clear();
+
+            var connectionString = this.GetConnection();
+
+            try
+            {
+                string sqlquery = string.Format("select * from vwTransactionDefiniations where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AccountID={2} and TransID={3} AND PaymentRefNumber NOT IN  (SELECT PaymentRefNumber FROM Reconcile.Normalise WHERE IsNormalised = 1 AND IsNormaliseApproved = 1)", exception.Startdate, exception.Enddate, exception.AccountID, exception.TransID);
+
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                response.Clear();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand(sqlquery, con);
+
+                    cmd.CommandType = CommandType.Text;
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+
+                    response.Clear();
+
+                    _adp = new SqlDataAdapter(cmd);
+
+                    _adp.Fill(response);
+
+                    //dtresult = response.Tables[0];
+
+                    if (response.Tables[0] != null && response.Tables[0].Rows.Count > 0)
+                    {
+                        dtresult = response.Tables[0];
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information("summary view sucessfully");
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        //loggers.Information(response.Tables[0]);
+                        loggers.Information(serializeReponse);
+                    }
+                    con.Close();
+                }
+
+            }
+            catch (System.Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                  .WriteTo.MSSqlServer(connectionString, "Logs")
+                  .CreateLogger();
+                logger.Fatal($"View Summary Report thrown an error - {e.Message}");
+            }
+
+            return dtresult;
+        }
+
         public DataTable viewException(Entity.Exceptions exception)
         {
             DataTable dtresult = new DataTable();

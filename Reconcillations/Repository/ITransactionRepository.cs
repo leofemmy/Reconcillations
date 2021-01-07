@@ -116,6 +116,8 @@ namespace Reconcillations.Repository
 
         DataTable viewException(Entity.Exceptions exception);
 
+        DataTable viewExceptionNor(Entity.Exceptions exception);
+
         DataTable ViewPostingRequest(long reconcileId); DataSet Disapprovemodify(string userid, long modifyid, string strreasons);
 
         DataTable ViewAgencies(Summarys sumagency); DataTable ViewMonth(Summarys sumagency);

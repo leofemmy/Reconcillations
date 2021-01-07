@@ -1,13 +1,21 @@
 ﻿@page
+@using Microsoft.AspNetCore.Http
+@using Reconcillations.Entity
 @model Reconcillations.Pages.Normalise.IndexModel
 @{
     Layout = "Shared/_Layout"; ;
     ViewData["Title"] = "Normalise Record";
+
+    var postList = httpContextAccessor.HttpContext.Session.GetObject<List<Accountlists>>("actlist");
 }
 @section header
 {
+    <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="~/smile/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css" rel="stylesheet" media="screen">
     <!-- data tables -->
     <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!-- Date Time item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/material-datetimepicker/bootstrap-material-datetimepicker.css" />
     <!-- Sweet Alert item CSS -->
     <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
     <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
@@ -28,53 +36,245 @@
 <div class="row">
     @Html.AntiForgeryToken()
     <div id="dvsearch" class="col-md-12 col-sm-12">
-        <div class="card card-box">
-            <h3>Enter Payment Reference Number / Reference Number </h3>
-            <div class="card-body" id="bar-parent">
-                <div class="form-body">
-                    <div class="form-group row">
-                        <div class="col-md-8">
-                            <input class="control-label col-md-12" type="text" id="idsearch" placeholder="Enter Payment Reference Number / Reference Number">
-                        </div>
+        <div class="card-body" id="bar-parent2">
+            <form>
+                <div class="form-group row">
+                    <label class="col-md-3 control-label">
+                        Start Date <span class="required"> * </span>
+                    </label>
+                    <span class="alert-danger"></span>
+                    @*<div class="col-md-4">
+                            <input asp-for="bankimport.Startdate" id="txtstart" class="form-control">
+                            <span class="alert-danger" asp-validation-for="bankimport.Startdate"></span>
+                        </div>*@
+                    <div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy/mm/dd">
+                        <input id="txtstart" class="form-control" size="12" type="text" value="">
+                        <span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                        <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                    </div>
+                    <input type="hidden" id="dtp_input1" value="" />
+                    <br />
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 control-label">
+                        End Date
+                        <span class="required"> * </span>
+                    </label>
+                    <span class="alert-danger"></span>
+                    @*<div class="col-md-4">
+                            <input asp-for="bankimport.Enddate" id="txtend" class="form-control">
+                            <span class="alert-danger" asp-validation-for="bankimport.Enddate"></span>
+                        </div>*@
+                    <div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy/mm/dd">
+                        <input id="txtend" class="form-control" size="12" type="text" value="">
+                        <span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                        <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                    </div>
+                    <input type="hidden" id="dtp_input2" value="" />
+                    <br />
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Bank Account to Normalise
+                        <span class="required"> * </span>
+                        <span class="alert-danger" asp-validation-for="bankimport.AccountID"></span>
+                    </label>
+                    <div class="col-md-4">
+                        <select asp-for="bankimport.AccountID" id="postid" class="form-control select2"
+                                asp-items="@(new SelectList(postList, "AccountID", "AccountName"))">
+                            @if (postList != null)
+                            {
+                                <option value="">-- Select Bank Account Name --</option>
+                            }
+                        </select>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <input type="button" id="btnSearch" value="Search" class="btn btn-circle btn-primary">
+                <div class="form-group">
+                    <div class="control-label col-md-9">
+                        <input type="button" id="btnview" value="View record to Normalise " class="btn btn-circle  mdl-button--raised mdl-js btn-primary">
                     </div>
+                </div>
 
+            </form>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-body ">
+                <div class="table-scrollable">
+                    <table id="tblView" class="table table-striped table-bordered table-hover responsive" style="width: 75%;">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th> Reference Number</th>
+                                <th> Date </th>
+                                <th> Description </th>
+                                <th> Amount </th>
+                                <th>Normalise</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-    <div id="dvmodify" class="col-md-12 col-sm-12">
-        <div class="card card-box">
-            <div class="card-head">
-                <header>Normalise Record Details</header>
+    <!--<div id="dvmodify" class="col-md-12 col-sm-12">
+    <div class="card card-box">
+    <div class="card-head">
+        <header>Normalise Record Details</header>
+    </div>
+    <div class="card-body" id="bar-parent2">
+    <form method="post" class="form-horizontal">
+    <div class="form-body">
+    <div class="form-group row">
+        <label class="control-label col-md-3">
+            Payment Ref. Number
+        </label>
+        <div class="col-md-4">
+            <div class="input-icon right">
+                <i class="fa"></i>
+                <input type="text" id="txtref" class="form-control" contenteditable="false" readonly="readonly" />
             </div>
-            <div class="card-body" id="bar-parent2">
+        </div>
+    </div>
+    <div class="form-group row">
+    <label class="control-label col-md-3">
+    Payer ID-->
+    @*<span class="required"> * </span>*@
+    <!--</label>
+    <div class="col-md-4">
+        <div class="input-icon right">
+            <i class="fa"></i>
+            <input type="text" id="txtpayerid" class="form-control" contenteditable="false" readonly="readonly" />
+        </div>
+    </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-3">
+            Payer Name
+            <span class="required"> * </span>
+        </label>
+        <div class="col-md-4">
+            <div class="input-icon right">
+                <i class="fa"></i>
+                <input type="text" id="txtpayername" class="form-control" contenteditable="false" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-3">
+            Amount
+        </label>
+        <div class="col-md-4">
+            <div class="input-icon right">
+                <i class="fa"></i>
+                <input type="text" id="txtamount" class="form-control" contenteditable="false" readonly="readonly" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-3">
+            Slip Number
+        </label>
+        <div class="col-md-4">
+            <div class="input-icon right">
+                <i class="fa"></i>
+                <input type="text" id="txtslip" class="form-control" contenteditable="false" readonly="readonly" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-3">
+            Payment Date
+        </label>
+        <div class="col-md-4">
+            <div class="input-icon right">
+                <i class="fa"></i>
+                <input type="text" id="txtdate" class="form-control" contenteditable="false" readonly="readonly" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-3">
+            Agency Name
+            <span class="required"> * </span>
+        </label>
+        <div class="col-md-4">
+            <div class="input-icon right">
+                <i class="fa"></i>
+                <select id="Agencyid" class="form-control select2">
+                    <option value="">Select Agency</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-3">
+            RevenueName
+            <span class="required"> * </span>
+        </label>
+        <div class="col-md-4">
+            <div class="input-icon right">
+                <i class="fa"></i>
+
+                <select id="revenueid" class="form-control select2">
+                    <option value="">Select Revenue</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+    <div class="offset-md-3 col-md-9">-->
+    @*<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"><i class="glyphicon glyphicon-plus"></i> Update </button>*@
+    <!--<input type="button" id="btnNormRec" value="Request Normalise" class="mdl-button mdl-js-button mdl-button--raised btn btn-circle btn-primary" />
+    </div>
+    </div>
+    </div>
+    </form>
+    </div>
+    </div>
+    </div>-->
+</div>
+
+
+<!-- The Modal -->
+<div class="modal" id="EditModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Normalise Record Details</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
                 <form method="post" class="form-horizontal">
                     <div class="form-body">
                         <div class="form-group row">
                             <label class="control-label col-md-3">
                                 Payment Ref. Number
                             </label>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtref" class="form-control" contenteditable="false" readonly="readonly" />
+                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3">
                                 Payer ID
-                                @*<span class="required"> * </span>*@
                             </label>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtpayerid" class="form-control" contenteditable="false" readonly="readonly" />
+                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -83,10 +283,11 @@
                                 Payer Name
                                 <span class="required"> * </span>
                             </label>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtpayername" class="form-control" contenteditable="false" />
+                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -94,10 +295,11 @@
                             <label class="control-label col-md-3">
                                 Amount
                             </label>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtamount" class="form-control" contenteditable="false" readonly="readonly" />
+                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -105,10 +307,11 @@
                             <label class="control-label col-md-3">
                                 Slip Number
                             </label>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtslip" class="form-control" contenteditable="false" readonly="readonly" />
+                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -116,10 +319,11 @@
                             <label class="control-label col-md-3">
                                 Payment Date
                             </label>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtdate" class="form-control" contenteditable="false" readonly="readonly" />
+                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -128,12 +332,13 @@
                                 Agency Name
                                 <span class="required"> * </span>
                             </label>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 <div class="input-icon right">
                                     <i class="fa"></i>
-                                    <select id="Agencyid" class="form-control select2">
+                                    <select id="Agencyid" class="form-control select2" style="width: 260px">
                                         <option value="">Select Agency</option>
                                     </select>
+                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -142,28 +347,39 @@
                                 RevenueName
                                 <span class="required"> * </span>
                             </label>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 <div class="input-icon right">
                                     <i class="fa"></i>
 
-                                    <select id="revenueid" class="form-control select2">
+                                    <select id="revenueid" class="form-control select2" style="width: 260px">
                                         <option value="">Select Revenue</option>
                                     </select>
+                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="offset-md-3 col-md-9">
-                                @*<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"><i class="glyphicon glyphicon-plus"></i> Update </button>*@
-                                <input type="button" id="btnNormRec" value="Request Normalise" class="mdl-button mdl-js-button mdl-button--raised btn btn-circle btn-primary" />
+
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                @*<input type="button" id="btnNormRec" value="Request Normalise" class="mdl-button mdl-js-button mdl-button--raised btn btn-circle btn-primary" />*@
+                <button type="submit" id="btnNormRec" class="mdl-button mdl-js-button mdl-button--raised btn btn-circle btn-primary">Request Normalise</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
         </div>
     </div>
 </div>
+
+
+
 @section Scripts
 {
     <script type="text/javascript">
@@ -171,6 +387,7 @@
         $(document).ready(function () {
             $("#dvmodify").hide();
             var options = {};
+
             options.url = "Normalise/Index?handler=AgencyAll";
             options.type = "GET";
             options.dataType = "json";
@@ -292,34 +509,175 @@
             }
         });
 
-        $('#btnNormRec').click(function () {
+        $('#btnview').click(function () {
 
+            console.log($("#txtend").val());
+
+            console.log($("#postid").val());
+
+            if ($('#txtstart').val().length == 0) {
+                Swal.fire({
+                    type: 'info',
+                    title: 'Reconciliation Solution',
+                    text: 'Start Date is Empty',
+                    footer: ''
+                });
+            } else if ($('#txtend').val().length == 0) {
+                Swal.fire({
+                    type: 'info',
+                    title: 'Reconciliation Solution',
+                    text: 'End Date is empty',
+                    footer: ''
+                });
+            } else if ($('#postid').val().length == 0) {
+                Swal.fire({
+                    type: 'info',
+                    title: 'Reconciliation Solution',
+                    text: 'Bank Account name is empty',
+                    footer: ''
+                });
+            } else {
+
+                var st = moment($('#txtstart').val(), "YYYY/MM/DD");
+                console.log(st);
+
+                var ends = moment($('#txtend').val(), "YYYY/MM/DD");
+                console.log(ends);
+
+                //$("#txtstartdate").val()
+
+                var objexception = {};
+
+                objexception.startdate = $('#txtstart').val();
+                objexception.enddate = $('#txtend').val();
+                objexception.transID = 15;
+                objexception.accountID = $('#postid').val();
+
+                console.log(objexception);
+
+                $.ajax({
+                    url: "Normalise/Index?handler=GetRecord",
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(objexception),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (result) {
+
+                        $('#tblView').dataTable().fnClearTable();
+                        $('#tblView').dataTable().fnDraw();
+                        $('#tblView').dataTable().fnDestroy();
+
+                        console.log(result);
+
+                        if (result != undefined || result.length > 0) {
+                            $('#tblView').removeAttr('width').DataTable({
+                                data: result,
+                                //"bFilter": false,
+                                //"stateSave": true,
+                                //"paging": false,
+                                //'scrollY': 500,
+                                //"columnDefs": [
+                                //    {
+                                //        "targets": [0],
+                                //        "visible": false,
+                                //        "searchable": false
+                                //    },
+                                //    {
+                                //        "targets": [4],
+                                //        "data": 'paymentRefNumber'
+                                //        //"render": function (data, type, full) { }
+                                //    }
+                                //],
+                                columns: [
+                                    {
+                                        render: function (data, type, row, meta) {
+                                            return meta.row + meta.settings._iDisplayStart + 1;
+                                        }
+                                    },
+                                    {
+                                        data: 'paymentRefNumber'
+
+                                    },
+                                    {
+                                        data: 'bsDate',
+                                        render: function (d) {
+                                            return moment(d).format("DD/MM/YYYY");
+                                        },
+                                        width: "10%"
+                                    },
+                                    {
+                                        data: 'payerName'
+
+                                    },
+                                    {
+                                        data: 'amount',
+                                        render: $.fn.dataTable.render.number(",", ".", 2),
+                                        width: "10%"
+                                    },
+                                    {
+                                        "data": null,
+                                        "defaultContent": '<input type="button" id="btnEdit" class="btn btn-primary" value="Normalise" />'
+                                    }
+
+
+                                ]
+                            });
+
+                        }
+                    },
+                    error: function (xhr, textStatus, error) {
+                        //$("#msg").html("Error while making Ajax call!");
+                        Swal.fire({
+                            type: error,
+                            title: 'Error Message',
+                            text: xhr.statusText,
+                            footer: ''
+                        })
+                    }
+                });
+            }
+
+
+        });
+
+
+        $('#btnNormRec').click(function (e) {
+            e.preventDefault();
             var retval = null;
             var dbdata = null;
 
             var retmsg = null;
 
             if ($('#txtpayername').val().length == 0) {
-                Swal.fire({
-                    type: 'info',
-                    title: 'Reconciliation Solution',
-                    text: 'Payer name is Empty',
-                    footer: ''
-                });
+                alert('Payer name is Empty');
+
+                //Swal.fire({
+                //    type: 'info',
+                //    title: 'Reconciliation Solution',
+                //    text: 'Payer name is Empty',
+                //    footer: ''
+                //});
+                return;
             } else if ($('#Agencyid').val().length == 0) {
-                Swal.fire({
-                    type: 'info',
-                    title: 'Reconciliation Solution',
-                    text: 'Agency name is empty',
-                    footer: ''
-                });
+                alert('Agency name is empty');
+                //Swal.fire({
+                //    type: 'info',
+                //    title: 'Reconciliation Solution',
+                //    text: 'Agency name is empty',
+                //    footer: ''
+                //});
             } else if ($('#revenueid').val().length == 0) {
-                Swal.fire({
-                    type: 'info',
-                    title: 'Reconciliation Solution',
-                    text: 'Revenue name is empty',
-                    footer: ''
-                });
+                alert('Revenue name is empty');
+                //Swal.fire({
+                //    type: 'info',
+                //    title: 'Reconciliation Solution',
+                //    text: 'Revenue name is empty',
+                //    footer: ''
+                //});
             } else {
                 var objnormrec = {};
                 objnormrec.useremail = $("#accountid").val();
@@ -357,12 +715,113 @@
                         }
 
                         if (retval == "00") {
-                            Swal.fire({
-                                type: 'succes',
-                                title: 'Reconciliation Solution',
-                                text: retmsg,
-                                footer: ''
-                            });
+                            alert(retmsg);
+                            //Swal.fire({
+                            //    type: 'succes',
+                            //    title: 'Reconciliation Solution',
+                            //    text: retmsg,
+                            //    footer: ''
+                            //});
+                        } else {
+                            alert(retmsg);
+                            //Swal.fire({
+                            //    type: 'info',
+                            //    title: 'Reconciliation Solution',
+                            //    text: retmsg,
+                            //    footer: ''
+                            //});
+                        }
+                    },
+                    error: function (xhr, textStatus, error) {
+                        //$("#msg").html("Error while making Ajax call!");
+                        alert(xhr.statusText);
+                        //Swal.fire({
+                        //    type: error,
+                        //    title: 'Error Message',
+                        //    text: xhr.statusText,
+                        //    footer: ''
+                        //})
+                    }
+                });
+            }
+        });
+
+        $('body').on('click',
+            '[id*=btnEdit]',
+            function () {
+                var data = $(this).parents('tr').find('td');
+                var id = data.eq(1).html();
+                var pname = data.eq(3).html();
+                var pdate = data.eq(2).html();
+                var pamount = data.eq(4).html();
+
+                console.log(id);
+                //$('[id*=txtId]').val(id);
+                //$('[id*=txtName]').val(name);
+                //$("#txtref").val(id);
+
+                ////$("#txtref").val(payref);
+                ////$("#txtpayerid").val(post[i].payerID);
+                //$("#txtpayername").val(pname);
+                ////$("#txtslip").val(post[i].chequeNumber);
+                ////$("#txtdate").val(stdate.toLocaleDateString('en-GB'));
+                //$("#txtamount").val(numeral(pamount).format('0,0.00'));
+
+                var referno = {};
+
+                referno.referno = id;
+
+                console.log(referno);
+
+                $.ajax({
+                    url: "Normalise/Index?handler=Search",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(referno),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    //dataType: "json",
+                    //traditional: true,
+                    success: function (data) {
+
+                        var db = data;
+
+                        var retval = null;
+
+                        var retmsg = null;
+
+                        var msgb = data.table;
+                        var post = data.table1;
+
+                        console.log(post);
+
+                        for (var i = 0; i < msgb.length; i++) {
+                            retval = msgb[i].returnCode;
+                            retmsg = msgb[i].returnMessage;
+                        }
+                        if (retval == "00") {
+
+                            for (var i = 0; i < post.length; i++) {
+
+                                var payref = post[i].paymentRefNumber;
+
+                                //var gf = numeral(post[i].amount).format('0,0.00');
+                                var stdate = post[i].paymentDate;
+                                console.log(post[i].paymentRefNumber);
+                                $("#txtref").val(payref);
+                                $("#txtpayerid").val(post[i].payerID);
+                                $("#txtpayername").val(post[i].payername);
+                                $("#txtslip").val(post[i].chequeNumber);
+                                $("#txtdate").val(pdate);
+                                $("#txtamount").val(numeral(post[i].amount).format('0,0.00'));
+
+                            }
+                            $('#EditModal').modal("show");
+                            //$("#dvsearch").hide();
+                            //$("#dvmodify").show();
                         } else {
                             Swal.fire({
                                 type: 'info',
@@ -372,18 +831,19 @@
                             });
                         }
                     },
-                    error: function (xhr, textStatus, error) {
-                        //$("#msg").html("Error while making Ajax call!");
+                    error: function (e) {
+                        //$('#loading-div-background').hide();
+                        //$('#dvData').html(e.responseText);
                         Swal.fire({
-                            type: error,
-                            title: 'Error Message',
-                            text: xhr.statusText,
+                            type: 'error',
+                            title: e.statusText,
+                            text: e.responseText,
                             footer: ''
                         })
                     }
                 });
-            }
-        });
+
+            });
 
     </script>
     <!-- data tables -->
@@ -397,4 +857,7 @@
     <!--select2-->
     <script src="~/smile/assets/plugins/select2/js/select2.js"></script>
     <script src="~/smile/assets/js/pages/select2/select2-init.js"></script>
+    <!-- Date Time Picker -->
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script src="~/smile/assets/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker-init.js" charset="UTF-8"></script>
 }

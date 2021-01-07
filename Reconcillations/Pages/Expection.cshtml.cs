@@ -28,13 +28,17 @@ namespace Reconcillations.Pages
         //private IHostingEnvironment  _hostingEnvironment;
 
         public XtraReport Report { get; set; }
+
         public SelectList AccountSelectlist { get; set; }
+
         public SelectList definitionlist { get; set; }
 
         [BindProperty]
         public Entity.Exceptions bankimport { get; set; }
+
         [BindProperty]
         public Accountlists actlist { get; set; }
+
         [BindProperty]
         public Definitionlist _definitionlist { get; set; }
 
