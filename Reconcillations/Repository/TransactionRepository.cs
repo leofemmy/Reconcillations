@@ -4180,7 +4180,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select * from vwRevenueCollection where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AgencyName='{2}'", dtstart, dtenddate, strAgency.Trim().ToString());
+                string sqlquery = string.Format("select  AgencyCode, AgencyName, RevenueCode,RevenueName,SUM(Amount) Amount,StartDate,EndDate from vwRevenueCollection where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AgencyName='{2}' GROUP BY AgencyCode,AgencyName, RevenueCode,RevenueName,StartDate,EndDate", dtstart, dtenddate, strAgency.Trim().ToString());
 
                 SqlDataAdapter _adp;
 
