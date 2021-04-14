@@ -3,6 +3,12 @@
 @{
     Layout = null;
     ViewData["Title"] = "Log In";
+
+    var session = httpContextAccessor.HttpContext.Session;
+    var suname = session.GetString("Usernames");
+    var useremail = session.GetString("UserEmail");
+
+    //HttpContext.Session.SetString("FirstLogin", "1");
 }
 
 <!-- google font -->
@@ -13,8 +19,6 @@
 <!-- start js include path -->
 <script src="~/smile/assets/plugins/jquery/jquery.min.js"></script>
 <!-- Sweet Alert item CSS -->
-@*<link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">*@
-@*<script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>*@
 <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
 <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
 <!-- bootstrap -->
@@ -26,19 +30,11 @@
 
 @*body of the page*@
 
-@if (!string.IsNullOrWhiteSpace(Model.Message))
-{
-    <script type="text/javascript">
-                    //alert("@Model.Message");
-                  Swal.fire({
-                        type: 'warning',
-                        title: 'Warning Message',
-                        text: "@Model.Message",
-                        footer: ''
-                 })
 
-    </script>
-}
+@*@if (TempData[IndexModel.MessageKey] is string message)
+    {
+        <p>@message</p>
+    }*@
 <div class="form-title">
     <h1>Login </h1>
 </div>
@@ -60,25 +56,104 @@
             <div class="forgetPassword">
                 <a class="txt-info" href="~/Account/forgot_password">Forgot your password?</a>
             </div>
-            @if (ViewData["Message"] != null)
+            <!--@if (ViewData["Message"] != null)
+        {
+            <script type="text/javascript">-->
+            @*@Html.Raw(TempData["notification"])*@
+            <!--Swal.fire({
+                    type: 'success',
+                    title: 'Success',
+                    text: ViewData ["Message"],
+                    footer: ''
+                })
+            </script>
+        }-->
+        </form>
+        @*@if (ViewData["Mess"] != null)
+        {
+            var hj = @Html.Raw(ViewData["Mess"]);
+            <script>
+                Swal.fire({
+                    type: 'success',
+                    title: 'Success',
+                    text: hj,
+                    footer: ''
+                })
+            </script>
+        }*@
+        @*@if (ViewData["JavaScript"] != null)
+        {
+            <script>
+                    @Html.Raw(ViewData["JavaScript"])
+            </script>
+        }*@
+
+        @if (!string.IsNullOrWhiteSpace(Model.MessageCode))
+        {
+
+            @if (Model.MessageCode == "0")
             {
                 <script type="text/javascript">
-            @*@Html.Raw(TempData["notification"])*@
-            Swal.fire({
-                            type: 'success',
-                            title: 'Success',
-                            text: ViewData ["Message"],
-                            footer: ''
-                        })
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Reconciliation Solution',
+                        text: "@Model.Message",
+                        footer: ''
+                    })
+
+                </script>
+                <script>
+                    @Html.Raw(ViewData["JavaScript"])
                 </script>
             }
-        </form>
+            @if (Model.MessageCode == "-1")
+            {
+                <script type="text/javascript">
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Reconciliation Solution',
+                        text: "@Model.Message",
+                        footer: ''
+                    })
+
+                </script>
+
+            }
+            @if (Model.MessageCode == "1")
+            {
+                <script type="text/javascript">
+                    Swal.fire({
+                        type: 'warning',
+                        title: 'Reconciliation Solution',
+                        text: "@Model.Message",
+                        footer: ''
+                    })
+
+                </script>
+
+            }
+        }
+
+        @*@if (!string.IsNullOrWhiteSpace(Model.Message))
+        {
+            <script type="text/javascript">
+            alert("@Model.Message");
+            Swal.fire({
+                type: 'success',
+                title: 'Reconciliation Solution',
+                text: "@Model.Message",
+                footer: ''
+            })
+
+            </script>
+        }*@
     </div>
 </div>
 
 <!-- Sweet Alert -->
 @*<script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>*@
+<!-- Sweet Alert -->
 <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
 <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
 <script src="~/smile/assets/js/pages/extra_pages/pages.js"></script>

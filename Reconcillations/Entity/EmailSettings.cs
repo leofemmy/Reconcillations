@@ -51,19 +51,44 @@ namespace Reconcillations.Entity
 
     public class NormaliseRec
     {
-        public string useremail { get; set; }
+        public string useremail
+        {
+            get; set;
+        }
 
-        public string payername { get; set; }
+        public string payername
+        {
+            get; set;
+        }
 
-        public string paymentref { get; set; }
+        public string paymentref
+        {
+            get; set;
+        }
 
-        public string agencyname { get; set; }
+        public string agencyname
+        {
+            get; set;
+        }
 
-        public string agencycode { get; set; }
+        public string agencycode
+        {
+            get; set;
+        }
 
-        public string revenuename { get; set; }
+        public string revenuename
+        {
+            get; set;
+        }
 
-        public string revenuecode { get; set; }
+        public string revenuecode
+        {
+            get; set;
+        }
+        public string Address
+        {
+            get; set;
+        }
     }
 
     public class BankImport
@@ -91,6 +116,11 @@ namespace Reconcillations.Entity
 
         [Required(ErrorMessage = "Email is required")]
         public string PayerName
+        {
+            get; set;
+        }
+
+        public string Address
         {
             get; set;
         }
@@ -235,6 +265,12 @@ namespace Reconcillations.Entity
         public string Currency { get; set; }
     }
 
+    public class SearchUser
+    {
+        public string UserName { get; set; }
+
+        public string Email { get; set; }
+    }
     public class Account
     {
         public double AccountID { get; set; }

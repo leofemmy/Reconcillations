@@ -29,7 +29,8 @@ namespace Reconcillations.Pages.Account
         [BindProperty(SupportsGet = true)]
         public Cuserpass cuserpass { get; set; }
 
-        public string testid; string _userid; string _userCode;
+        public string testid; 
+        //string _userid; string _userCode;
 
         public IActionResult OnGet(string userId, string code)
         {

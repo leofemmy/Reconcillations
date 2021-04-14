@@ -7,7 +7,9 @@
 @section header{
     <!-- data tables -->
     <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
 }
 <div class="row">
     <div class="col-md-12">
@@ -54,7 +56,6 @@
                                         @sno
                                     </h5>
                                 </td>
-                                @*<td onclick="myFunction(this)" class="view-message "><h5>@items.RecperID</h5></td>*@
                                 <td onclick="myFunction(this)" class="view-message "><h5>@items.BankName</h5></td>
                                 <td onclick="myFunction(this)" class="center view-message "><h5>@items.AccountName</h5></td>
                                 <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.OpeningBal)</h5></td>
@@ -63,16 +64,12 @@
                                 <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
                                 <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>
                                 <td onclick="myFunction(this)" class="view-message "><h5>@items.Stages</h5></td>
-                                @*<td onclick="myFunction(this)" class="view-message "><h5>@items.IsClosed</h5></td>*@
-
                                 <td>
                                     <form method="post">
                                         <span class="btn-group pull-right" style="margin-top: 5px">
-                                            @*<a class="btn btn-primary" asp-page="/Bank/Edit" asp-route-id="@items.RecperID" style="background-color: green; height: 29px; margin-top: -1px;">
-                                                    <i class="fa fa-pencil"></i>
-                                                </a>*@
-                                            <button type="submit" class="btn btn-outline-warning btn-xs" data-toggle="Delete" asp-page-handler="Delete" asp-route-id="@items.RecperID" style="height: 27px; margin-top: 0px;"
-                                                    onclick="return confirm('Are you sure to disable these Account ?');">
+                                            <button type="submit" class="btn btn-outline-warning btn-xs" asp-page-handler="Delete" asp-route-id="@items.RecperID" style="height: 27px; margin-top: 0px;" title="Clear Transaction"
+                                                    onclick="return confirm('Are you sure to clear this transaction ?');">
+                                                @*onclick="Disable(@items.RecperID)"*@
                                                 <i class="fa fa-trash-o "></i>
                                             </button>
 
@@ -89,9 +86,24 @@
 </div>
 
 @section Scripts
-    {    <!-- data tables -->
+{ <!-- data tables -->
     <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
     <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+
+    <script>
+        function Disable(id) {
+            //alert(id);
+            Swal.fire({
+                type: 'success',
+                title: 'Reconciliation Solution',
+                text: id,
+                footer: ''
+            })
+        }
+    </script>
 
 }

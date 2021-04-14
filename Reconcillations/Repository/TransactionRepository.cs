@@ -9,6 +9,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using NPOI.SS.Formula.Functions;
 
 namespace Reconcillations.Repository
 {
@@ -1333,7 +1334,7 @@ namespace Reconcillations.Repository
             List<Agency> _banklists = new List<Agency>();
             try
             {
-                SqlDataAdapter _adp;
+                //SqlDataAdapter _adp;
 
                 DataSet response = new DataSet();
 
@@ -2421,6 +2422,87 @@ namespace Reconcillations.Repository
             return responses;
         }
 
+        public int dorestebankstatemen(long reconcileId)
+        {
+            int count = 0;
+
+            DataSet dtresult = new DataSet();
+
+            dtresult.Clear();
+
+            var connectionString = this.GetConnection();
+
+            try
+            {
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spResetBankStatment", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@RecperID", reconcileId);
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+                    response.Clear();
+                    _adp = new SqlDataAdapter(cmd);
+                    _adp.Fill(response);
+
+                    if (response.Tables[0].Rows[0]["returnCode"].ToString() == "00")
+                    {
+                        dtresult = response;
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information("Reclassified record found sucessfully");
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                        count = 1;
+                    }
+                    else
+                    {
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+
+                        count = -1;
+                    }
+                    con.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                                     .WriteTo.MSSqlServer(connectionString, "Logs")
+                                     .CreateLogger();
+                logger.Fatal($"Save Bank Statement thrown an error - {e.Message}");
+            }
+            return count;
+        }
+
         public int SaveAllocatetrans(DataTable dts)
         {
             var count = 0;
@@ -2428,6 +2510,7 @@ namespace Reconcillations.Repository
             var connectionString = this.GetConnection();
 
             DataTable dtsnew = dts;
+
 
 
             try
@@ -2457,6 +2540,8 @@ namespace Reconcillations.Repository
                         sqlBulkCopy.ColumnMappings.Add("AllocateBy", "AllocateBy");
                         sqlBulkCopy.ColumnMappings.Add("AllocateDate", "AllocateDate");
 
+                        sqlBulkCopy.BatchSize = 1000000;
+                        sqlBulkCopy.BulkCopyTimeout = 0;
                         //con.Open();
                         sqlBulkCopy.WriteToServer(dtsnew);
 
@@ -2495,7 +2580,7 @@ namespace Reconcillations.Repository
         }
 
         public DataSet SaveNormaliseRecord(string usermail, string paymentref, string payername, string agencyname,
-            string agencycode, string revenuename, string revenusecode)
+            string agencycode, string revenuename, string revenusecode, string address)
         {
             DataSet dtresult = new DataSet();
 
@@ -2531,6 +2616,7 @@ namespace Reconcillations.Repository
                     cmd.Parameters.AddWithValue("@agencycode", agencycode);
                     cmd.Parameters.AddWithValue("@revenuename", revenuename);
                     cmd.Parameters.AddWithValue("@revenuecode", revenusecode);
+                    cmd.Parameters.AddWithValue("@addresss", address);
 
 
                     cmd.CommandTimeout = 0;
@@ -2599,6 +2685,8 @@ namespace Reconcillations.Repository
             }
 
             dtsnew.AcceptChanges();
+
+            int gh = dorestebankstatemen(RecperID);
 
             try
             {
@@ -3793,6 +3881,113 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
+        public Int32 UpdateUserlog(string usermailaddress, Int32 blFlag)
+        {
+            DataSet dtresult = new DataSet();
+
+            Int32 intcount = 0;
+
+            dtresult.Clear(); SqlDataAdapter _adp;
+
+            var connectionString = this.GetConnection();
+
+            string sqlquery = string.Format("UPDATE Reconcile.[User] SET Flag={0} where EmailAddress='{1}'", blFlag, usermailaddress);
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                if (con.State != ConnectionState.Closed)
+                {
+                    con.Close();
+                }
+
+                SqlCommand cmd = new SqlCommand(sqlquery, con);
+
+                con.Open();
+
+                cmd.ExecuteNonQuery();
+
+                //cmd.CommandType = CommandType.Text;
+
+                intcount = 1;
+
+                //cmd.CommandTimeout = 0;
+
+                //_adp = new SqlDataAdapter(cmd);
+
+                //_adp.Fill(dtresult);
+            }
+
+            return intcount;
+        }
+
+        public DataSet SearchUserbyEmial(string useremail)
+        {
+            DataSet dtresult = new DataSet();
+
+
+            dtresult.Clear(); SqlDataAdapter _adp;
+
+            var connectionString = this.GetConnection();
+
+            string sqlquery = string.Format("SELECT UPPER(Surname) +' '+ Firstname AS Username,EmailAddress from  Reconcile.[User] where EmailAddress='{0}' AND Flag=1", useremail);
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                if (con.State != ConnectionState.Closed)
+                {
+                    con.Close();
+                }
+
+                SqlCommand cmd = new SqlCommand(sqlquery, con);
+
+                cmd.CommandType = CommandType.Text;
+
+                con.Open();
+
+                cmd.CommandTimeout = 0;
+
+                _adp = new SqlDataAdapter(cmd);
+
+                _adp.Fill(dtresult);
+            }
+
+            return dtresult;
+
+        }
+
+        public DataSet CheckUserid(string usermailaddress)
+        {
+            DataSet dtresult = new DataSet();
+
+            dtresult.Clear(); SqlDataAdapter _adp;
+
+            var connectionString = this.GetConnection();
+
+            string sqlquery = string.Format("SELECT * from  Reconcile.[User] where EmailAddress='{0}'", usermailaddress);
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                if (con.State != ConnectionState.Closed)
+                {
+                    con.Close();
+                }
+
+                SqlCommand cmd = new SqlCommand(sqlquery, con);
+
+                cmd.CommandType = CommandType.Text;
+
+                con.Open();
+
+                cmd.CommandTimeout = 0;
+
+                _adp = new SqlDataAdapter(cmd);
+
+                _adp.Fill(dtresult);
+            }
+
+            return dtresult;
+        }
+
         public DataTable viewExceptionNor(Entity.Exceptions exception)
         {
             DataTable dtresult = new DataTable();
@@ -4243,6 +4438,79 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
+        public DataTable viewReversedTransaction(string accountnumber, DateTime dtstart, DateTime dtenddate)
+        {
+            DataTable dtresult = new DataTable();
+
+            dtresult.Clear();
+
+            var connectionString = this.GetConnection();
+
+            try
+            {
+                string sqlquery = string.Format("select  * from vwreversedtransaction where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AccountNumber='{2}' ", dtstart, dtenddate, accountnumber.Trim().ToString());
+
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                response.Clear();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand(sqlquery, con);
+
+                    cmd.CommandType = CommandType.Text;
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+
+                    response.Clear();
+
+                    _adp = new SqlDataAdapter(cmd);
+
+                    _adp.Fill(response);
+
+                    //dtresult = response.Tables[0];
+
+                    if (response.Tables[0] != null && response.Tables[0].Rows.Count > 0)
+                    {
+                        dtresult = response.Tables[0];
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information("vwreversedtransaction View sucessfully");
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        //loggers.Information(response.Tables[0]);
+                        loggers.Information(serializeReponse);
+                    }
+
+                    con.Close();
+                }
+
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                  .WriteTo.MSSqlServer(connectionString, "Logs")
+                  .CreateLogger();
+                logger.Fatal($"View vwreversedtransaction Report thrown an error - {e.Message}");
+            }
+
+            return dtresult;
+        }
+
         public DataTable ViewVaricesAgencies(Summarys sumagency)
         {
             DataTable dtresult = new DataTable();
@@ -4399,7 +4667,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select * from vwAgencyCollection where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}'", sumagency.Startdate, sumagency.Enddate);
+                string sqlquery = string.Format("SELECT AgencyCode,AgencyName,SUM(Amount) Amount,StartDate,EndDate from vwAgencyCollection where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' GROUP BY  AgencyCode,AgencyName,StartDate,EndDate", sumagency.Startdate, sumagency.Enddate);
 
                 SqlDataAdapter _adp;
 

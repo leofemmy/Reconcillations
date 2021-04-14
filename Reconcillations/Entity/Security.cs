@@ -23,6 +23,7 @@ namespace Reconcillations.Entity
             }
             return sb.ToString();
         }
+       
         public static string GenerateToken()
         {
             //otp = Convert.ToString(rand.Next(10000, 1000000));
@@ -34,6 +35,7 @@ namespace Reconcillations.Entity
 
             return token;
         }
+        
         public static string GetRawTarget(HttpRequest request)
         {
             var httpRequestFeature = request.HttpContext.Features.Get<IHttpRequestFeature>();

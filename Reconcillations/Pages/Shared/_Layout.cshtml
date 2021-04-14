@@ -66,6 +66,9 @@
             <div class="page-logo">
                 <a href="index.html">
                     <img alt="" src="~/smile/assets/img/logo.png">
+                    @*<span style="font-size: 0.75em">
+                        <img alt="" src="~/smile/assets/img/Reconciliation.png" width="250" height="250">
+                    </span>*@
                     <span class="logo-default">Reconcile</span>
                 </a>
             </div>
@@ -107,24 +110,24 @@
 
                         @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "I"))
                         {
-                            <li class="nav-item">
-                                <a href="~/Transaction" class="nav-link nav-toggle">
-                                    <i class="material-icons">desktop_mac</i>
-                                    <span class="title">Definition Setup</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="~/Bank" class="nav-link nav-toggle">
-                                    <i class="material-icons">desktop_mac</i>
-                                    <span class="title">Account Set Up</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="~/Reconcile" class="nav-link nav-toggle">
-                                    <i class="material-icons">grain</i>
-                                    <span class="title">Period Setup</span>
-                                </a>
-                            </li>
+                            @*<li class="nav-item">
+                                    <a href="~/Transaction" class="nav-link nav-toggle">
+                                        <i class="material-icons">desktop_mac</i>
+                                        <span class="title">Definition Setup</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="~/Bank" class="nav-link nav-toggle">
+                                        <i class="material-icons">desktop_mac</i>
+                                        <span class="title">Account Set Up</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="~/Reconcile" class="nav-link nav-toggle">
+                                        <i class="material-icons">grain</i>
+                                        <span class="title">Period Setup</span>
+                                    </a>
+                                </li>*@
                             <li class="nav-item">
                                 <a href="~/ImpBank" class="nav-link nav-toggle">
                                     <i class="material-icons">event</i>
@@ -144,23 +147,34 @@
                                 </a>
                             </li>
                         }
-                        @if ((session.GetString("UserType") == "P") || (session.GetString("UserType") == "SA"))
-                        {
-                            <li class="nav-item">
-                                <a href="~/Approval" class="nav-link nav-toggle">
-                                    <i class="material-icons">widgets</i>
-                                    <span class="title"> Approve Reconcile</span>
-                                </a>
-                            </li>
 
-                            <li class="nav-item">
-                                <a href="~/Accredit" class="nav-link nav-toggle">
-                                    <i class="material-icons">event</i>
-                                    <span class="title"> Approve Reclassification</span>
-                                </a>
-                            </li>
-                        }
+                        <li class="nav-item">
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                <i class="material-icons">store</i>
+                                <span class="title">Approval</span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                @if ((session.GetString("UserType") == "P") || (session.GetString("UserType") == "SA"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Accredit" class="nav-link nav-toggle">
+                                            <i class="material-icons">event</i>
+                                            <span class="title"> Reclassification Approve </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="~/Approval" class="nav-link nav-toggle">
+                                            <i class="material-icons">widgets</i>
+                                            <span class="title">Reconcile Approve </span>
+                                        </a>
+                                    </li>
 
+
+                                }
+
+                            </ul>
+                        </li>
                         <li class="nav-item">
                             <a href="javascript:;" class="nav-link nav-toggle">
                                 <i class="material-icons">subtitles</i>
@@ -186,6 +200,38 @@
                                 }
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                <i class="material-icons">store</i>
+                                <span class="title">Setting / Set Up</span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+
+                                @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "I"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Transaction" class="nav-link nav-toggle">
+                                            <i class="material-icons">desktop_mac</i>
+                                            <span class="title">Definition Setup</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="~/Bank" class="nav-link nav-toggle">
+                                            <i class="material-icons">desktop_mac</i>
+                                            <span class="title">Account Set Up</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="~/Reconcile" class="nav-link nav-toggle">
+                                            <i class="material-icons">grain</i>
+                                            <span class="title">Period Setup</span>
+                                        </a>
+                                    </li>
+                                }
+
+                            </ul>
+                        </li>
                         @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "P") || (session.GetString("UserType") == "I"))
                         {
                             <li class="nav-item">
@@ -205,11 +251,11 @@
                                             <span class="title">Exception Reports</span>
                                         </a>
                                     </li>
-                                    @*<li class="nav-item">
-                                            <a href="~/Chat" class="nav-link ">
-                                                <span class="title">Monthly Chat</span>
-                                            </a>
-                                        </li>*@
+                                    <li class="nav-item">
+                                        <a href="~/Reversed" class="nav-link ">
+                                            <span class="title">Reversed Transaction</span>
+                                        </a>
+                                    </li>
                                     <li class="nav-item">
                                         <a href="~/Months" class="nav-link ">
                                             <span class="title">Month Comparison</span>
@@ -244,30 +290,75 @@
                                 </ul>
                             </li>
                         }
-                        @if ((session.GetString("UserType") == "A") || (session.GetString("UserType") == "SA"))
-                        {
-                            <li class="nav-item">
-                                <a href="~/Users" class="nav-link nav-toggle">
-                                    <i class="material-icons">list</i>
-                                    <span class="title">Manage User</span>
-                                </a>
-                            </li>
-                        }
-                        @if ((session.GetString("UserType") == "A") || (session.GetString("UserType") == "SA") || (session.GetString("UserType") == "P") || (session.GetString("UserType") == "I"))
-                        {
-                            <li class="nav-item">
-                                <a href="~/Change" class="nav-link nav-toggle">
-                                    <i class="material-icons">event</i>
-                                    <span class="title">Change Password</span>
-                                </a>
-                            </li>
-                        }
                         <li class="nav-item">
-                            <a href="~/index" class="nav-link nav-toggle">
-                                <i class="material-icons">timeline</i>
-                                <span class="title">Log Out</span>
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                <i class="material-icons">store</i>
+                                <span class="title">System</span>
+                                <span class="arrow"></span>
                             </a>
+                            <ul class="sub-menu">
+                                @if ((session.GetString("UserType") != "I"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Users" class="nav-link nav-toggle">
+                                            <i class="material-icons">list</i>
+                                            <span class="title">Manage User</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="~/Reset" class="nav-link nav-toggle">
+                                            <i class="material-icons">list</i>
+                                            <span class="title">Log In Reset</span>
+                                        </a>
+                                    </li>
+                                }
+                                @if ((session.GetString("UserType") == "A") || (session.GetString("UserType") == "SA") || (session.GetString("UserType") == "P") || (session.GetString("UserType") == "I"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Change" class="nav-link nav-toggle">
+                                            <i class="material-icons">event</i>
+                                            <span class="title">Change Password</span>
+                                        </a>
+                                    </li>
+                                }
+                                <li class="nav-item">
+                                    <a href="~/LogOut" class="nav-link nav-toggle">
+                                        <i class="material-icons">timeline</i>
+                                        <span class="title">Log Out</span>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
+                        @*@if ((session.GetString("UserType") != "I"))
+                            {
+                                <li class="nav-item">
+                                    <a href="~/Users" class="nav-link nav-toggle">
+                                        <i class="material-icons">list</i>
+                                        <span class="title">Manage User</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="~/Reset" class="nav-link nav-toggle">
+                                        <i class="material-icons">list</i>
+                                        <span class="title">Log In Reset</span>
+                                    </a>
+                                </li>
+                            }
+                            @if ((session.GetString("UserType") == "A") || (session.GetString("UserType") == "SA") || (session.GetString("UserType") == "P") || (session.GetString("UserType") == "I"))
+                            {
+                                <li class="nav-item">
+                                    <a href="~/Change" class="nav-link nav-toggle">
+                                        <i class="material-icons">event</i>
+                                        <span class="title">Change Password</span>
+                                    </a>
+                                </li>
+                            }*@
+                        @*<li class="nav-item">
+                                <a href="~/LogOut" class="nav-link nav-toggle">
+                                    <i class="material-icons">timeline</i>
+                                    <span class="title">Log Out</span>
+                                </a>
+                            </li>*@
                     </ul>
                 </div>
             </div>
@@ -290,8 +381,8 @@
             Copyright &copy;
             <script type="text/javascript">
                 document.write("2007 - " + new Date().getFullYear());
-            </script> Reconcillation
-            <a href="mailto:info@icmaservices.com" target="_top" class="makerCss">ICMA Professional Services</a>
+            </script> Reconcile Solution
+            <a href="mailto:info@icmaservices.com" target="_top" class="makerCss">ICMA Professional Services</a> All rights reserved.
         </div>
         <div class="scroll-to-top">
             <i class="icon-arrow-up"></i>

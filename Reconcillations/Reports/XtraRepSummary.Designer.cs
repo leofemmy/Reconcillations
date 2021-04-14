@@ -76,6 +76,7 @@ namespace Reconcillations.Reports {
             this.calGenerate = reportInitializer.GetCalculatedField("calGenerate");
             this.calculatedField2 = reportInitializer.GetCalculatedField("calculatedField2");
             this.calRevenue = reportInitializer.GetCalculatedField("calRevenue");
+            this.calPrevCreditReversed = reportInitializer.GetCalculatedField("calPrevCreditReversed");
         }
         private DevExpress.XtraReports.UI.TopMarginBand TopMargin;
         private DevExpress.XtraReports.UI.BottomMarginBand BottomMargin;
@@ -134,5 +135,6 @@ namespace Reconcillations.Reports {
         private DevExpress.XtraReports.UI.CalculatedField calGenerate;
         private DevExpress.XtraReports.UI.CalculatedField calculatedField2;
         private DevExpress.XtraReports.UI.CalculatedField calRevenue;
+        private DevExpress.XtraReports.UI.CalculatedField calPrevCreditReversed;
     }
 }

@@ -43,10 +43,6 @@
                         Start Date <span class="required"> * </span>
                     </label>
                     <span class="alert-danger"></span>
-                    @*<div class="col-md-4">
-                            <input asp-for="bankimport.Startdate" id="txtstart" class="form-control">
-                            <span class="alert-danger" asp-validation-for="bankimport.Startdate"></span>
-                        </div>*@
                     <div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy/mm/dd">
                         <input id="txtstart" class="form-control" size="12" type="text" value="">
                         <span class="input-group-addon"><span class="fa fa-remove"></span></span>
@@ -61,10 +57,6 @@
                         <span class="required"> * </span>
                     </label>
                     <span class="alert-danger"></span>
-                    @*<div class="col-md-4">
-                            <input asp-for="bankimport.Enddate" id="txtend" class="form-control">
-                            <span class="alert-danger" asp-validation-for="bankimport.Enddate"></span>
-                        </div>*@
                     <div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy/mm/dd">
                         <input id="txtend" class="form-control" size="12" type="text" value="">
                         <span class="input-group-addon"><span class="fa fa-remove"></span></span>
@@ -274,7 +266,7 @@
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtpayerid" class="form-control" contenteditable="false" readonly="readonly" />
-                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
+                                    <span asp-validation-for="norrec.Payerid" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -287,7 +279,7 @@
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtpayername" class="form-control" contenteditable="false" />
-                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
+                                    <span asp-validation-for="norrec.PayerName" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -299,7 +291,19 @@
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtamount" class="form-control" contenteditable="false" readonly="readonly" />
-                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
+                                    <span asp-validation-for="norrec.Amount" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3">
+                                Address
+                            </label>
+                            <div class="col-md-7">
+                                <div class="input-icon right">
+                                    <i class="fa"></i>
+                                    <input type="text" id="txtaddress" class="form-control" contenteditable="false" />
+                                    <span asp-validation-for="norrec.Address" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -311,7 +315,7 @@
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtslip" class="form-control" contenteditable="false" readonly="readonly" />
-                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
+                                    <span asp-validation-for="norrec.SlipNo" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -323,7 +327,7 @@
                                 <div class="input-icon right">
                                     <i class="fa"></i>
                                     <input type="text" id="txtdate" class="form-control" contenteditable="false" readonly="readonly" />
-                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
+                                    <span asp-validation-for="norrec.PaymentDate" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -338,7 +342,7 @@
                                     <select id="Agencyid" class="form-control select2" style="width: 260px">
                                         <option value="">Select Agency</option>
                                     </select>
-                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
+                                    <span asp-validation-for="norrec.AgencyID" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -354,7 +358,7 @@
                                     <select id="revenueid" class="form-control select2" style="width: 260px">
                                         <option value="">Select Revenue</option>
                                     </select>
-                                    <span asp-validation-for="norrec.RefNo" class="text-danger"></span>
+                                    <span asp-validation-for="norrec.RevenueCode" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -687,6 +691,7 @@
                 objnormrec.agencycode = $("#Agencyid").val();
                 objnormrec.revenuename = $("#revenueid option:selected").text();
                 objnormrec.revenuecode = $("#revenueid").val();
+                objnormrec.address = $("#txtaddress").val();
 
                 console.log(objnormrec);
 

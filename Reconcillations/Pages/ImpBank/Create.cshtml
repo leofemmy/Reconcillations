@@ -96,6 +96,7 @@
                                     <i class="fa"></i>
                                     <input type="text" id="txtclose" class="form-control number" asp-for="bankimport.ClosingBal" onkeypress="return isNumberKey(event);" name="number" readonly="readonly" />
                                 </div>
+
                             </div>
                         </div>
                         <div class="form-group row">
@@ -107,6 +108,7 @@
                                     <i class="fa"></i>
                                     <input type="text" id="txtcalucatedclose" class="form-control number" asp-for="bankimport.CalClosingBal" name="number" readonly="readonly" />
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -166,6 +168,7 @@
                                                                 <tr>
                                                                     <th>Date</th>
                                                                     <th>Name</th>
+                                                                    <th>Description</th>
                                                                 </tr>
                                                             </thead>
                                                         </table>
@@ -222,7 +225,7 @@
                                                         <h3 class="panel-title">Debit Transaction</h3>
                                                     </div>
                                                     <div class="panel-body">
-                                                        <table id="tbldebit" class="table table-striped table-bordered table-hover responsive" width="100%">
+                                                        <table id="tbldebit" class="table table-striped table-bordered table-hover responsive" width="80px">
                                                             <thead class="thin-border-bottom">
                                                                 <tr>
                                                                     <th>ID</th>
@@ -351,10 +354,12 @@
 
             return true;
         }
+
         function parseDate(str) {
             var mdy = str.split('/');
             return new Date(mdy[1], mdy[2] - 1, mdy[0]);
         }
+
         $("#bankid").change(function () {
             $list = $("#accountid");
             //console.log($list);
@@ -391,6 +396,7 @@
                 }
             });
         });
+
         $('.number').text(function () {
             var str = $(this).html() + '';
             x = str.split('.');
@@ -402,6 +408,7 @@
             }
             $(this).html(x1 + x2);
         });
+
         $("#accountid").change(function () {
             $listop = $("#txtopen");
             console.log($listop);
@@ -425,6 +432,7 @@
                 }
             });
         });
+
         $('#btnUpload').on('click', function () {
 
             if ($("#txtstartdate").val() != "" && $("#txtenddate").val() != "") {
@@ -491,7 +499,8 @@
                             var files = fileUpload.files;
                             fdata.append(files[0].name, files[0]);
 
-                            Promise.resolve($.ajax({
+                            //Promise.resolve(
+                            $.ajax({
                                 type: "POST",
                                 url: "Create?handler=Import",
                                 beforeSend: function (xhr) {
@@ -517,23 +526,35 @@
                                         var splitted = response.split("+");
                                         $('#dvData').html(splitted[0]);
                                         //console.log(splitted[1]);
-                                        var dbopenbal = splitted[1].replace(/[^0-9.]/g, "");
-                                        console.log(dbopenbal);
+                                        var dbclose = splitted[1].replace(/[^0-9.]/g, "");
+                                        console.log(dbclose);
+
                                         var dbcredit = splitted[2].replace(/[^0-9.]/g, "");
                                         console.log(dbcredit);
+                                        var string1 = numeral(dbclose).format('0,0.00');
+                                        console.log(string1);
+
                                         var dbdebit = splitted[3].replace(/[^0-9.]/g, "");
                                         console.log(dbdebit);
-                                        console.log(splitted[4]);
+                                        //console.log(splitted[4]);
                                         //var dbopebal = $("#txtopen").val().replace(/[^0-9.]/g, "");
                                         //console.log(dbopebal);
-                                        var dbcredittotal = ((parseFloat(dbopenbal) + parseFloat(dbcredit)).toFixed(2));
-                                        console.log(dbcredittotal);
-                                        var dbresult = dbcredittotal - dbdebit;
-                                        var gf = numeral(dbresult).format('0,0.00')
-                                        console.log(dbresult);
+                                        /// console.log(Number.parseFloat(dbopenbal).toFixed(2));
+                                        //var op = parseFloat(Number(dbopenbal).toFixed(2));
+                                        //console.log(op);
+                                        //var cd = parseFloat((dbcredit).toFixed(2));
+                                        //console.log(cd);
+                                        //var db = parseFloat((dbdebit).toFixed(2));
+                                        //console.log(db);
+                                        //var dbcredittotal = ((parseFloat(dbopenbal) + parseFloat(dbcredit)).toFixed(2));
+                                        //console.log(dbcredittotal);
+                                        //var dbresult = dbcredittotal - dbdebit;
+                                        //var gf = numeral(dbresult).format('0,0.00');
+                                        //console.log(dbresult);
 
-                                        $("#txtcalucatedclose").val(gf);
+                                        $("#txtcalucatedclose").val(string1);
                                         $('#btnSave').show();
+
 
                                         Swal.fire({
                                             type: 'success',
@@ -553,7 +574,7 @@
                                         footer: ''
                                     })
                                 }
-                            }))
+                            })
 
 
                         }
@@ -573,6 +594,7 @@
             }
 
         });
+
         $('#finish').click(function () {
             $('#loading-div-background').show();
 
@@ -615,6 +637,7 @@
             };
             Promise.resolve($.ajax(options));
         });
+
         $('#btnSave').click(function () {
             console.log($("#txtclose").val());
             console.log($("#txtcalucatedclose").val());
@@ -685,135 +708,134 @@
             }
 
         });
+
         $('#btnProcess').click(function () {
             $('#loading-div-background').show();
-            Promise.resolve(
-                $.ajax({
-                    url: "Create?handler=CompareStatement",
-                    type: "GET",
-                    data: { reconileID: $("#reconid").val() },
-                    datatype: "json",
-                    traditional: true,
-                    success: function (data) {
-                        console.log(data);
-                        console.log(data.table1);
-                        var cbl = data.table4;
-                        var banks = data.table2;
-                        //get mateched record
-                        var mat = data.table1;
-                        //get collection only
-                        var coll = data.table3;
-                        console.log(coll);
-                        console.log(coll.length);
+            //Promise.resolve(
+            $.ajax({
+                url: "Create?handler=CompareStatement",
+                type: "GET",
+                data: { reconileID: $("#reconid").val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    console.log(data);
+                    console.log(data.table1);
+                    var cbl = data.table4;
+                    var banks = data.table2;
+                    //get mateched record
+                    var mat = data.table1;
+                    //get collection only
+                    var coll = data.table3;
+                    console.log(coll);
+                    console.log(coll.length);
+                    //get closing balance
+                    if (cbl != undefined || cbl.length > 0) {
                         //get closing balance
-                        if (cbl != undefined || cbl.length > 0) {
-                            //get closing balance
-                            for (var i = 0; i < cbl.length; i++) {
-                                var string = numeral(cbl[i].closingBal).format('0,0.00');
-                                console.log(string);
-                                //   $('#txtclose').val(string);
-                            }
+                        for (var i = 0; i < cbl.length; i++) {
+                            var string = numeral(cbl[i].closingBal).format('0,0.00');
+                            console.log(string);
+                            //   $('#txtclose').val(string);
                         }
-
-                        if (banks != undefined || banks.length > 0) {
-                            $('#tblbanks').DataTable({
-                                data: banks,
-                                "bFilter": false,
-                                "stateSave": true,
-                                "paging": false,
-                                'scrollY': 500,
-                                stateSaveCallback: function (settings, data) {
-                                    localStorage.setItem('Banks_' + settings.sInstance, JSON.stringify(data))
-                                },
-                                stateLoadCallback: function (settings) {
-                                    return JSON.parse(localStorage.getItem('Banks_' + settings.sInstance))
-                                },
-                                columns: [
-                                    {
-                                        data: 'date',
-                                        //render: function (d) {
-                                        //    return moment(d).format("DD/MM/YYYY");
-                                        //},
-                                        width: "10%"
-                                    },
-                                    {
-                                        data: 'amount',
-                                        render: $.fn.dataTable.render.number(",", ".", 2),
-                                        width: "10%"
-                                    }
-                                ]
-                            });
-                        }
-                        //console.log(number_format(186889876.53, 2, '.', ','));
-                        //console.log(coll);
-                        //console.log(coll.length);
-                        if (coll != undefined || coll.length > 0) {
-                            $('#tblcollections').removeAttr('width').DataTable({
-                                data: coll,
-                                "bFilter": false,
-                                "paging": false,
-                                'scrollY': 500,
-                                columnDefs: [
-                                    { width: 200, targets: 0 }
-                                ],
-                                fixedColumns: true,
-                                columns: [
-                                    {
-                                        data: 'cdate',
-                                        //render: function (d) {
-                                        //    return moment(d).format("DD/MM/YYYY");
-                                        //}
-                                        width: "10%"
-                                    },
-                                    {
-                                        data: 'cAmount',
-                                        render: $.fn.dataTable.render.number(",", ".", 2),
-                                        width: "10%"
-                                    }
-                                    //{ data: 'paymentref' }
-                                ]
-                            });
-                        }
-
-                        console.log(mat);
-                        console.log(mat.length);
-                        if (mat != undefined || mat.length > 0) {
-                            $('#tblcolbank').DataTable({
-                                data: mat,
-                                "bFilter": false, 'scrollY': 500,
-                                columns: [
-                                    {
-                                        data: 'date',
-                                        //render: function (d) {
-                                        //    return moment(d).format("DD/MM/YYYY");
-                                        //}
-                                        width: "10%"
-                                    },
-                                    {
-                                        data: 'amount',
-                                        render: $.fn.dataTable.render.number(",", ".", 2),
-                                        width: "10%"
-                                    }
-                                    //{ data: 'paymentref' }
-                                ]
-                            });
-                        }
-                        $('#loading-div-background').hide();
-                        $('#btnNext').hide();
-                        $('#btncomSave').show();
-                        Swal.fire({
-                            type: 'success',
-                            title: 'Reconciliation Solution',
-                            text: 'Compare Successfull !!!',
-                            footer: ''
-                        })
-
-                    },
-                    error: function (e) {
-                        $('#dvData').html(e.responseText);
                     }
-                }))
+
+                    if (banks != undefined || banks.length > 0) {
+                        $('#tblbanks').DataTable({
+                            data: banks,
+                            "bFilter": false,
+                            "stateSave": true,
+                            "paging": false,
+                            'scrollY': 500,
+                            stateSaveCallback: function (settings, data) {
+                                localStorage.setItem('Banks_' + settings.sInstance, JSON.stringify(data))
+                            },
+                            stateLoadCallback: function (settings) {
+                                return JSON.parse(localStorage.getItem('Banks_' + settings.sInstance))
+                            },
+                            columns: [
+                                {
+                                    data: 'date',
+                                    width: "10%"
+                                },
+                                {
+                                    data: 'amount',
+                                    render: $.fn.dataTable.render.number(",", ".", 2),
+                                    width: "10%"
+                                },
+                                {
+                                    data: 'payerName'
+                                }
+                            ]
+                        });
+                    }
+
+                    if (coll != undefined || coll.length > 0) {
+                        $('#tblcollections').removeAttr('width').DataTable({
+                            data: coll,
+                            "bFilter": false,
+                            "paging": false,
+                            'scrollY': 500,
+                            columnDefs: [
+                                { width: 200, targets: 0 }
+                            ],
+                            fixedColumns: true,
+                            columns: [
+                                {
+                                    data: 'cdate',
+                                    width: "10%"
+                                },
+                                {
+                                    data: 'cAmount',
+                                    render: $.fn.dataTable.render.number(",", ".", 2),
+                                    width: "10%"
+                                }
+                            ]
+                        });
+                    }
+
+                    console.log(mat);
+                    console.log(mat.length);
+                    if (mat != undefined || mat.length > 0) {
+                        $('#tblcolbank').removeAttr('width').DataTable({
+                            data: mat,
+                            "bFilter": false,
+                            'scrollY': 500,
+                            "paging": false,
+                            columnDefs: [
+                                { width: 200, targets: 0 }
+                            ],
+                            fixedColumns: true,
+                            columns: [
+                                {
+                                    data: 'date',
+                                    width: "10%"
+                                },
+                                {
+                                    data: 'amount',
+                                    render: $.fn.dataTable.render.number(",", ".", 2),
+                                    width: "10%"
+                                }
+
+                            ]
+                        });
+                    }
+                    $('#loading-div-background').hide();
+                    $('#btnNext').hide();
+                    $('#btncomSave').show();
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Reconciliation Solution',
+                        text: 'Compare Successfull !!!',
+                        footer: ''
+                    })
+
+                },
+                error: function (e) {
+                    $('#dvData').html(e.responseText);
+                }
+            })
         });
+
         $('#btncomSave').click(function () {
             //alert('Save compare result');
 
@@ -845,27 +867,36 @@
                 //console.log(debtran);
 
 
-                dtdebit = $('#tbldebit').DataTable({
+                dtdebit = $('#tbldebit').removeAttr('width').DataTable({
                     data: deb,
-                    "paging": false,
-                    "info": false,
                     "bFilter": false,
-                    'scrollY': 700,
-                    "columnDefs": [
+                    "paging": false,
+                    'scrollY': 500,
+                    //"columnDefs": [
+                    //    {
+                    //        "targets": [0],
+                    //        "visible": true,
+                    //        "searchable": false
+                    //    }
+                    //],
+                    columnDefs: [
                         {
-                            "targets": [0],
-                            "visible": true,
-                            "searchable": false
+                            targets: [0, 1],
+                            width: "11%"
                         }
                     ],
+                    fixedColumns: true,
                     columns: [
-                        { data: 'bsid' },
+                        {
+                            data: 'bsid',
+                            width: "10%"
+                        },
                         {
                             data: 'bsDate',
                             render: function (d) {
                                 return moment(d).format("DD/MM/YYYY");
-                            }
-                            //moment().format('L')
+                            },
+                            width: "10%"
 
                         },
                         {
@@ -873,16 +904,21 @@
                             render: $.fn.dataTable.render.number(",", ".", 2),
                             width: "10%"
                         },
-                        { data: 'payerName' },
+                        {
+                            data: 'payerName',
+                            width: "10%"
+                        },
                         {
                             data: 'transID',
-                            render: function (data) { return createSelect(data); }
+                            render: function (data) { return createSelect(data); },
+                            width: "10%"
+
 
                         }
 
                     ]
                 });
-                $('#tblcredit').DataTable({
+                $('#tblcredit').removeAttr('width').DataTable({
                     data: ced,
                     "paging": false,
                     "info": false,
@@ -893,7 +929,7 @@
                             "visible": true,
                             "searchable": false
                         }
-                    ],
+                    ], fixedColumns: true,
                     columns: [
                         { data: 'csid' },
                         {
@@ -932,6 +968,7 @@
             Promise.resolve($.ajax(options));
 
         });
+
         $('#btnSaveAll').click(function () {
             var values = new Array(); var valdebit = new Array();
             $("#tblcredit tr").each(function () {
@@ -1053,6 +1090,7 @@
             };
             Promise.resolve($.ajax(options));
         });
+
         function getstate(item) {
             var rows = $("#tblcredit").dataTable().fnGetNodes();
 
@@ -1092,6 +1130,7 @@
             sel += "</select>";
             return sel;
         }
+
         function createSelect2(selItem) {
             var sel = "<select class='selcred'><option value='0'>Select Transaction Definition</option>";
             for (var i = 0; i < cedtran.length; ++i) {

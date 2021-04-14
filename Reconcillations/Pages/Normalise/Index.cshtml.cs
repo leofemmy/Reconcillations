@@ -142,9 +142,13 @@ namespace Reconcillations.Pages.Normalise
                     {
                         _normaliseRec.revenuecode = item.Value.ToString();
                     }
+                    else if (item.Key.ToString() == "address")
+                    {
+                        _normaliseRec.Address = item.Value.ToString();
+                    }
                 }
 
-                dstnorm = _transactionRepository.SaveNormaliseRecord(HttpContext.Session.GetString("UserEmail"), _normaliseRec.paymentref, _normaliseRec.payername, _normaliseRec.agencyname, _normaliseRec.agencycode, _normaliseRec.revenuename, _normaliseRec.revenuecode);
+                dstnorm = _transactionRepository.SaveNormaliseRecord(HttpContext.Session.GetString("UserEmail"), _normaliseRec.paymentref, _normaliseRec.payername, _normaliseRec.agencyname, _normaliseRec.agencycode, _normaliseRec.revenuename, _normaliseRec.revenuecode, _normaliseRec.Address);
 
             }
 

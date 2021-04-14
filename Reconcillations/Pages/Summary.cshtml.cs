@@ -32,9 +32,11 @@ namespace Reconcillations.Pages
 
             _hostingEnvironment = hostingEnvironment;
         }
+        
         public void OnGet()
         {
         }
+       
         XtraReport createreport(DataTable dts)
         {
 
@@ -44,6 +46,7 @@ namespace Reconcillations.Pages
             report.CreateDocument();
             return report;
         }
+        
         public void OnPost()
         {
             var _summary = summarys;

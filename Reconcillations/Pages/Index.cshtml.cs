@@ -24,11 +24,18 @@ namespace Reconcillations.Pages
 
         ITransactionRepository _transactionRepository;
 
-        [TempData] 
+        [TempData]
         public string Message { get; set; }
+
+        [TempData]
+        public string MessageCode { get; set; }
 
         [BindProperty]
         public Pass cuserpass { get; set; }
+
+        public const string MessageKey = nameof(MessageKey);
+
+        private bool blFirstlogin = false;
 
         public IndexModel(ILogger<IndexModel> logger, IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
@@ -39,9 +46,13 @@ namespace Reconcillations.Pages
 
         public void OnGet()
         {
-            var url = Security.GetRawTarget(this.Request);
+            //var url = Security.GetRawTarget(this.Request);
+            if (blFirstlogin)
+            {
+                _transactionRepository.UpdateUserlog(cuserpass.Email, 0);
+            }
         }
-        public async Task<IActionResult> OnPost()
+        public void OnPost()
         {
             Guid userGuid = System.Guid.NewGuid();
 
@@ -65,30 +76,65 @@ namespace Reconcillations.Pages
                     {
                         //assign user detail to session
 
-                        //HttpContext.Session["Useremail"] = cuserpass.Email.ToString();
-                        HttpContext.Session.SetString("UserEmail", cuserpass.Email);
-                        HttpContext.Session.SetString("UserType", dbUserype);
-                        HttpContext.Session.SetString("Usernames", strusername);
+                        DataSet dbCheckUserid = _transactionRepository.CheckUserid(cuserpass.Email);
 
-                        Message = "Login Successfull";
+                        if (dbCheckUserid != null && dbCheckUserid.Tables[0].Rows.Count > 0)
+                        {
+                            Boolean blflag = !string.IsNullOrWhiteSpace(dbCheckUserid.Tables[0].Rows[0]["Flag"].ToString()) ? Convert.ToBoolean(dbCheckUserid.Tables[0].Rows[0]["Flag"].ToString()) : false;
 
-                        _logger.LogInformation(Message);
-                        return RedirectToPage("/Main");
+                            if (blflag)
+                            {
+                                //already log in using another browser
+                                Message = "User have previously log in with another browser, Log out to continue";
+                                MessageCode = "1";
+                            }
+                            else
+                            {
+                           Int32 kj=     _transactionRepository.UpdateUserlog(cuserpass.Email, 1);
+
+                                MessageCode = "0";
+
+                                blFirstlogin = true;
+
+                                //HttpContext.Session["Useremail"] = cuserpass.Email.ToString();
+                                HttpContext.Session.SetString("UserEmail", cuserpass.Email);
+                                HttpContext.Session.SetString("FirstLogin", "1");
+                                HttpContext.Session.SetString("UserType", dbUserype);
+                                HttpContext.Session.SetString("Usernames", strusername);
+
+                                //ViewData["Mess"] = "Login Successfull";
+                                Message = "Login Successfull";
+
+
+                                _logger.LogInformation(Message);
+
+                                TempData[MessageKey] = "Login Successfull!";
+                                //return RedirectToAction(Request.Path);
+
+                                ViewData["JavaScript"] = "window.location = '" + Url.Page("Main") + "'";
+                            }
+
+                        }
+
+                        //  return RedirectToPage("/Main");
                     }
                     else
                     {
+                        //ViewData["Mess"] = "Login Failed due to wrong user ID or Password";
                         Message = "Login Failed due to wrong user ID or Password";
-                        return Page();
+                        MessageCode = "-1";
+                        //  return Page();
                     }
                 }
             }
             else
             {
-                Message = "Login Failed";
-                return Page();
+                ViewData["Mess"] = "Login Failed";
+                Message = "Login Failed"; MessageCode = "-1";
+                // return Page();
             }
-            await Task.CompletedTask;
-            return Page();
+            //await Task.CompletedTask;
+            //return Page();
         }
     }
 }

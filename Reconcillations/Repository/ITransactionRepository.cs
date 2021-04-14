@@ -19,11 +19,15 @@ namespace Reconcillations.Repository
 
         int SaveBankmport(DataTable dts, long RecperID);
 
+        Int32 UpdateUserlog(string usermailaddress, Int32 blFlag);
+
         int SaveAllocatetrans(DataTable dts);
 
         public int EditUsersAccount(UsersList users);
 
         List<Transaction> GetTransactions();
+
+        DataSet SearchUserbyEmial(string useremail);
 
         int ValidateEmailAddress(fpass fpass);
 
@@ -95,6 +99,8 @@ namespace Reconcillations.Repository
 
         DataSet GetUserLogin(string Emailaddress);
 
+        DataSet CheckUserid(string usermailaddress);
+
         DataSet SaveCompareStatement(long reconcileId, double closebal, DataTable dtbank, DataTable dtColl, DataTable dtMatc);
 
         DataSet Reclassified(long reconcileId);
@@ -112,7 +118,7 @@ namespace Reconcillations.Repository
         DataSet DisapproveNormalise(string userid, string modifyid, string strreasons);
 
         DataSet SaveNormaliseRecord(string usermail, string paymentref, string payername, string agencyname,
-            string agencycode, string revenuename, string revenusecode);
+            string agencycode, string revenuename, string revenusecode, string address);
 
         DataTable viewException(Entity.Exceptions exception);
 
@@ -137,6 +143,8 @@ namespace Reconcillations.Repository
         DataTable ViewSummary(Summarys marsy);
 
         DataTable ViewBanksCollection(Summarys sumbanks);
+
+        DataTable viewReversedTransaction(string accountnumber, DateTime dtstart, DateTime dtenddate);
 
         Bank GetBankAccountId(long accountid);
 

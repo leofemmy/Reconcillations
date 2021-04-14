@@ -26,39 +26,26 @@
                     @Html.AntiForgeryToken()
                     <div class="form-group row">
                         <label class="col-md-3 control-label">Start Date <span class="required"> * </span></label>
-                        @*<div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" readonly="readonly">*@
-                        @*<input id="txtstart" class="form-control" asp-for="summarys.Startdate" size="16" type="text" value="">*@
-                        <div class="col-md-4">
+                    <div class="col-md-4">
                             <input asp-for="summarys.Startdate" class="form-control" />
                             <span asp-validation-for="summarys.Startdate" class="text-danger"></span>
                         </div>
-                        @*<span class="input-group-addon"><span class="fa fa-remove"></span></span>
-                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
-                        *@
-                        @*</div>*@
-                        <input type="hidden" id="dtp_input1" value="" />
+                       <input type="hidden" id="dtp_input1" value="" />
                         <br />
                     </div>
                     <div class="form-group row">
                         <label class="col-md-3 control-label">End Date <span class="required"> * </span></label>
-                        @*<div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" readonly="readonly">*@
-                        @*<input id="txtend" class="form-control" asp-for="summarys.Enddate" size="16" type="text" value="">*@
-                        <div class="col-md-4">
+                     <div class="col-md-4">
                             <input asp-for="summarys.Enddate" class="form-control" />
                             <span asp-validation-for="summarys.Enddate" class="text-danger"></span>
                         </div>
-                        @*<span class="input-group-addon"><span class="fa fa-remove"></span></span>
-                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
-                        *@
-                        @*</div>*@
-                        <input type="hidden" id="dtp_input1" value="" />
+                       <input type="hidden" id="dtp_input1" value="" />
                         <br />
                     </div>
                     <div class="form-group">
                         <div class="offset-md-3 col-md-9">
                             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"> View </button>
-                            @*<input type="button" id="btnview" value="View" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" />*@
-                        </div>
+                      </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">

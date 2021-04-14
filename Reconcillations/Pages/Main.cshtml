@@ -6,4 +6,26 @@
 }
 @section header{}
 
-@section Scripts {}
+@section Scripts {
+    @*<script language="JavaScript" type="text/javascript">
+        window.onbeforeunload = confirmExit();
+        function confirmExit() {
+            alert("You are about to exit the system before freezing your declaration! If you leave now and never return to freeze your declaration; then they will not go into effect and you may lose tax deduction, Are you sure you want to leave now?");
+
+            return false;
+        }
+        $(function () {
+            $("a").click(function () {
+                window.onbeforeunload = null;
+            });
+            $("input").click(function () {
+                window.onbeforeunload = null;
+            });
+        });
+            //$(document).ready(function () {
+            //    $(window).bind("beforeunload", function () {
+            //        return confirm("You are about to close the window");
+            //    });
+            //});
+    </script>*@
+}

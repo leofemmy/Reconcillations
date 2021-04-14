@@ -39,6 +39,11 @@ namespace Reconcillations.Pages.ImpBank
         [BindProperty]
         public Reconcillations.Entity.BankImport bankimport { get; set; }
 
+        [BindProperty]
+        [HiddenInput]
+        //I also tried to add [BindProperty] after
+        public decimal Closebal { get; set; }
+
         public CreateModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
@@ -112,7 +117,7 @@ namespace Reconcillations.Pages.ImpBank
 
         public IActionResult OnGetSelectByCode(long reconileID)
         {
-          var _reconcile = _transactionRepository.GetReconcileid(reconileID);
+            var _reconcile = _transactionRepository.GetReconcileid(reconileID);
 
             Reconcileperiodid reconciles = new Reconcileperiodid
             {
@@ -218,84 +223,27 @@ namespace Reconcillations.Pages.ImpBank
                                 // fe.EvaluateInCell(row.GetCell(j));
                                 var gh = row.GetCell(j).ToString();
 
-                                //formula.EvaluateInCell(row.GetCell(j));
-
-                                //NumberEval ne = (NumberEval)row.GetCell(j);
-                                //var g = NPOI.SS.UserModel.CellValue(ne.NumberValue);
-                                //var bh = null; var ght;
-                                //DateTime bh;
-                                //DateTime bh = DateTime.Today;
                                 switch (row.GetCell(j).CellType)
                                 {
 
                                     case NPOI.SS.UserModel.CellType.Numeric:
-                                        //DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
-                                        //if (DateUtil.IsCellDateFormatted(row.GetCell(j)))
-                                        //{
-
-                                        //DateTime date = row.GetCell(j).DateCellValue();
-                                        ////cellWrapper.setValue(date);
-                                        //DateTime bh = Convert.ToDateTime(row.GetCell(j).DateCellValue.ToString());
-                                        ////row.GetCell(j).DateCellValue.ToString("dd/MM/yyyy");
-                                        //}
-                                        //else
-                                        //{
-                                        //    //var ght  cellWrapper.setValue(row.GetCell(j).NumericCellValue());
-                                        //    //string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-                                        //    double ght = Convert.ToDouble(row.GetCell(j).NumericCellValue);
-                                        //}
-
                                         if (DateUtil.IsCellDateFormatted(cell))
                                         {
                                             DateTime date = cell.DateCellValue;
                                             ICellStyle style = cell.CellStyle;
                                             // Excel uses lowercase m for month whereas .Net uses uppercase
                                             string format = style.GetDataFormatString().Replace('m', 'M');
-                                            //return date.ToString(format);
 
-                                            //sb.Append("<td>" + date.ToString(format) + "</td>");
-                                            //dataRow[j] = date.ToString(format);
                                             sb.Append("<td>" + date + "</td>");
                                             dataRow[j] = date;
                                         }
                                         else
                                         {
-                                            //return cell.NumericCellValue.ToString();
+
                                             sb.Append("<td>" + string.Format("{0:N2}", row.GetCell(j).NumericCellValue) + "</td>");
                                             dataRow[j] = string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
                                         }
 
-
-                                        //var bh = DateUtil.IsCellDateFormatted(row.GetCell(j)) ?
-                                        //    row.GetCell(j).DateCellValue.ToString("dd/MM/yyyy") : string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-                                        //row.GetCell(j).NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                                        //var ght = string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-
-                                        //                                            dr[j] = DateUtil.IsCellDateFormatted(gh)
-                                        //? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                                        //: cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                                        //if (HSSFDateUtil.isCellDateFormatted(row.GetCell(j)))
-                                        //{
-
-                                        //   // return df.format(cell.getDateCellValue());
-                                        //sb.Append("<td>" + bh + "</td>");
-                                        //dataRow[j] = bh;
-                                        //}
-                                        //else
-                                        //{
-                                        //    DecimalFormat df = new DecimalFormat("##.###############");
-                                        //    //return df.format(cell.getNumericCellValue());
-                                        //    sb.Append("<td>" + df.format(cell.getNumericCellValue()) + "</td>");
-                                        //    dataRow[j] = df.format(cell.getNumericCellValue());
-                                        //}
-                                        //sb.Append("<td>" + (double)row.GetCell(j).NumericCellValue + "</td>");
-
-
-
-                                        //dataRow[j] = row.GetCell(j).NumericCellValue;
-                                        //var g = NPOI.SS.UserModel.CellValue;
-                                        //string.Format("{0:N}", row.GetCell(j).NumericCellValue);
                                         break;
                                     case NPOI.SS.UserModel.CellType.String:
                                         sb.Append("<td>" + row.GetCell(j).ToString() + "</td>");
@@ -311,280 +259,6 @@ namespace Reconcillations.Pages.ImpBank
 
                     }
 
-                    //if (sFileExtension == ".xls")
-                    //{
-                    //    HSSFWorkbook hssfwb = new HSSFWorkbook(stream); //This will read the Excel 97-2000 formats  
-                    //                                                    //HSSFFormulaEvaluator.EvaluateAllFormulaCells(hssfwb);
-                    //    HSSFFormulaEvaluator formula = new HSSFFormulaEvaluator(hssfwb);
-                    //    sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook  
-                    //    //HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(hssfwb);
-                    //    //workbook.GetCreationHelper().CreateFormulaEvaluator().EvaluateFormulaCell(cell);
-                    //    formula.EvaluateAll();
-
-                    //    IRow headerRow = sheet.GetRow(0); //Get Header Row
-                    //    int cellCount = headerRow.LastCellNum;
-                    //    sb.Append("<table class='table'><tr>");
-                    //    for (int j = 0; j < cellCount; j++)
-                    //    {
-                    //        NPOI.SS.UserModel.ICell cell = headerRow.GetCell(j);
-                    //        if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
-                    //        DataColumn column = new DataColumn(cell.ToString(), typeof(String));
-                    //        tbimport.Columns.Add(column);
-                    //        sb.Append("<th>" + cell.ToString() + "</th>");
-                    //    }
-                    //    sb.Append("</tr>");
-                    //    sb.AppendLine("<tr>");
-
-                    //    for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
-                    //    {
-                    //        IRow row = sheet.GetRow(i);
-
-                    //        DataRow dataRow = tbimport.NewRow();
-
-                    //        if (row == null) continue;
-
-                    //        //if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
-
-                    //        for (int j = row.FirstCellNum; j < cellCount; j++)
-                    //        {
-                    //            var cell = row.GetCell(j);
-
-                    //            if (row.GetCell(j) == null)
-                    //            {
-                    //                sb.Append("<td>" + DBNull.Value + "</td>");
-                    //                dataRow[j] = DBNull.Value;
-                    //            }
-                    //            else
-                    //            {
-                    //                // fe.EvaluateInCell(row.GetCell(j));
-                    //                var gh = row.GetCell(j).ToString();
-
-                    //                formula.EvaluateInCell(row.GetCell(j));
-
-                    //                //NumberEval ne = (NumberEval)row.GetCell(j);
-                    //                //var g = NPOI.SS.UserModel.CellValue(ne.NumberValue);
-                    //                //var bh = null; var ght;
-                    //                //DateTime bh;
-                    //                //DateTime bh = DateTime.Today;
-                    //                switch (row.GetCell(j).CellType)
-                    //                {
-
-                    //                    case NPOI.SS.UserModel.CellType.Numeric:
-                    //                        //DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
-                    //                        //if (DateUtil.IsCellDateFormatted(row.GetCell(j)))
-                    //                        //{
-
-                    //                        //DateTime date = row.GetCell(j).DateCellValue();
-                    //                        ////cellWrapper.setValue(date);
-                    //                        //DateTime bh = Convert.ToDateTime(row.GetCell(j).DateCellValue.ToString());
-                    //                        ////row.GetCell(j).DateCellValue.ToString("dd/MM/yyyy");
-                    //                        //}
-                    //                        //else
-                    //                        //{
-                    //                        //    //var ght  cellWrapper.setValue(row.GetCell(j).NumericCellValue());
-                    //                        //    //string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-                    //                        //    double ght = Convert.ToDouble(row.GetCell(j).NumericCellValue);
-                    //                        //}
-
-                    //                        if (DateUtil.IsCellDateFormatted(cell))
-                    //                        {
-                    //                            DateTime date = cell.DateCellValue;
-                    //                            ICellStyle style = cell.CellStyle;
-                    //                            // Excel uses lowercase m for month whereas .Net uses uppercase
-                    //                            string format = style.GetDataFormatString().Replace('m', 'M');
-                    //                            //return date.ToString(format);
-
-                    //                            sb.Append("<td>" + date.ToString(format) + "</td>");
-                    //                            dataRow[j] = date.ToString(format);
-                    //                        }
-                    //                        else
-                    //                        {
-                    //                            //return cell.NumericCellValue.ToString();
-                    //                            sb.Append("<td>" + string.Format("{0:N2}", row.GetCell(j).NumericCellValue) + "</td>");
-                    //                            dataRow[j] = string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-                    //                        }
-
-
-                    //                        //var bh = DateUtil.IsCellDateFormatted(row.GetCell(j)) ?
-                    //                        //    row.GetCell(j).DateCellValue.ToString("dd/MM/yyyy") : string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-                    //                        //row.GetCell(j).NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                    //                        //var ght = string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-
-                    //                        //                                            dr[j] = DateUtil.IsCellDateFormatted(gh)
-                    //                        //? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                    //                        //: cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                    //                        //if (HSSFDateUtil.isCellDateFormatted(row.GetCell(j)))
-                    //                        //{
-
-                    //                        //   // return df.format(cell.getDateCellValue());
-                    //                        //sb.Append("<td>" + bh + "</td>");
-                    //                        //dataRow[j] = bh;
-                    //                        //}
-                    //                        //else
-                    //                        //{
-                    //                        //    DecimalFormat df = new DecimalFormat("##.###############");
-                    //                        //    //return df.format(cell.getNumericCellValue());
-                    //                        //    sb.Append("<td>" + df.format(cell.getNumericCellValue()) + "</td>");
-                    //                        //    dataRow[j] = df.format(cell.getNumericCellValue());
-                    //                        //}
-                    //                        //sb.Append("<td>" + (double)row.GetCell(j).NumericCellValue + "</td>");
-
-
-
-                    //                        //dataRow[j] = row.GetCell(j).NumericCellValue;
-                    //                        //var g = NPOI.SS.UserModel.CellValue;
-                    //                        //string.Format("{0:N}", row.GetCell(j).NumericCellValue);
-                    //                        break;
-                    //                    case NPOI.SS.UserModel.CellType.String:
-                    //                        sb.Append("<td>" + row.GetCell(j).ToString() + "</td>");
-                    //                        dataRow[j] = row.GetCell(j).ToString();
-                    //                        break;
-                    //                }
-
-                    //            }
-
-                    //        }
-                    //        tbimport.Rows.Add(dataRow);
-                    //        sb.AppendLine("</tr>");
-
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    XSSFWorkbook hssfwb = new XSSFWorkbook(stream); //This will read 2007 Excel format  
-                    //                                                    //XSSFFormulaEvaluator.EvaluateAllFormulaCells(hssfwb);
-                    //    sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook   
-
-                    //    XSSFFormulaEvaluator formula = new XSSFFormulaEvaluator(hssfwb);
-                    //    formula.EvaluateAll();
-
-                    //    //FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-
-                    //    IRow headerRow = sheet.GetRow(0); //Get Header Row
-                    //    int cellCount = headerRow.LastCellNum;
-                    //    sb.Append("<table class='table'><tr>");
-                    //    for (int j = 0; j < cellCount; j++)
-                    //    {
-                    //        NPOI.SS.UserModel.ICell cell = headerRow.GetCell(j);
-                    //        if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
-                    //        DataColumn column = new DataColumn(cell.ToString(), typeof(String));
-                    //        tbimport.Columns.Add(column);
-                    //        sb.Append("<th>" + cell.ToString() + "</th>");
-                    //    }
-                    //    sb.Append("</tr>");
-                    //    sb.AppendLine("<tr>");
-
-                    //    for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
-                    //    {
-                    //        IRow row = sheet.GetRow(i);
-
-                    //        DataRow dataRow = tbimport.NewRow();
-
-                    //        if (row == null) continue;
-
-                    //        //if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
-
-                    //        for (int j = row.FirstCellNum; j < cellCount; j++)
-                    //        {
-                    //            var cell = row.GetCell(j);
-
-                    //            if (row.GetCell(j) == null)
-                    //            {
-                    //                sb.Append("<td>" + DBNull.Value + "</td>");
-                    //                dataRow[j] = DBNull.Value;
-                    //            }
-                    //            else
-                    //            {
-                    //                // fe.EvaluateInCell(row.GetCell(j));
-                    //                var gh = row.GetCell(j).ToString();
-
-                    //                formula.EvaluateInCell(row.GetCell(j));
-
-                    //                //NumberEval ne = (NumberEval)row.GetCell(j);
-                    //                //var g = NPOI.SS.UserModel.CellValue(ne.NumberValue);
-
-                    //                switch (row.GetCell(j).CellType)
-                    //                {
-
-                    //                    case NPOI.SS.UserModel.CellType.Numeric:
-                    //                        //DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
-                    //                        //var bh = DateUtil.IsCellDateFormatted(row.GetCell(j)) ?
-                    //                        //    row.GetCell(j).DateCellValue.ToString("dd/MM/yyyy") : string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-                    //                        ////row.GetCell(j).NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                    //                        //var ght = string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-
-                    //                        ////                                            dr[j] = DateUtil.IsCellDateFormatted(gh)
-                    //                        ////? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                    //                        ////: cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                    //                        ////if (HSSFDateUtil.isCellDateFormatted(row.GetCell(j)))
-                    //                        ////{
-
-                    //                        ////   // return df.format(cell.getDateCellValue());
-                    //                        //sb.Append("<td>" + bh + "</td>");
-                    //                        //dataRow[j] = bh;
-                    //                        //}
-                    //                        //else
-                    //                        //{
-                    //                        //    DecimalFormat df = new DecimalFormat("##.###############");
-                    //                        //    //return df.format(cell.getNumericCellValue());
-                    //                        //    sb.Append("<td>" + df.format(cell.getNumericCellValue()) + "</td>");
-                    //                        //    dataRow[j] = df.format(cell.getNumericCellValue());
-                    //                        //}
-                    //                        //sb.Append("<td>" + (double)row.GetCell(j).NumericCellValue + "</td>");
-
-                    //                        if (DateUtil.IsCellDateFormatted(cell))
-                    //                        {
-                    //                            DateTime date = cell.DateCellValue;
-                    //                            //string.Format("", cell.DateCellValue);
-
-                    //                            ICellStyle style = cell.CellStyle;
-                    //                            // Excel uses lowercase m for month whereas .Net uses uppercase
-                    //                            string format = "dd/MM/yyyy";//style.GetDataFormatString().Replace('m', 'M');
-                    //                            string dvt = date.ToString(format);
-
-                    //                            //if (cell.CellStyle.GetDataFormatString = 14)
-                    //                            //{
-                    //                            //    dateFmt = "dd/mm/yyyy";
-                    //                            //}
-
-                    //                            //System.out.println("dateFmt " + dateFmt);
-
-
-                    //                            //return date.ToString(format);
-
-                    //                            sb.Append("<td>" + date.ToString(format) + "</td>");
-                    //                            dataRow[j] = date.ToString(format);
-                    //                        }
-                    //                        else
-                    //                        {
-                    //                            //return cell.NumericCellValue.ToString();
-                    //                            sb.Append("<td>" + string.Format("{0:N2}", row.GetCell(j).NumericCellValue) + "</td>");
-                    //                            dataRow[j] = string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
-                    //                        }
-
-                    //                        //dataRow[j] = row.GetCell(j).NumericCellValue;
-                    //                        //var g = NPOI.SS.UserModel.CellValue;
-                    //                        //string.Format("{0:N}", row.GetCell(j).NumericCellValue);
-                    //                        break;
-                    //                    case NPOI.SS.UserModel.CellType.String:
-                    //                        sb.Append("<td>" + row.GetCell(j).ToString() + "</td>");
-                    //                        dataRow[j] = row.GetCell(j).ToString();
-                    //                        break;
-                    //                }
-
-                    //            }
-
-                    //        }
-                    //        tbimport.Rows.Add(dataRow);
-                    //        sb.AppendLine("</tr>");
-
-                    //    }
-
-
-                    //}
-
 
                     sb.Append("</table>");
                     tbimport.AcceptChanges();
@@ -594,6 +268,7 @@ namespace Reconcillations.Pages.ImpBank
 
                 decimal dbcredit = 0m; decimal dbopening = 0m;
                 decimal dbdebit = 0m;
+                decimal dbclose = 0m;
 
 
                 var gety = (from DataRow row in tbimport.Rows
@@ -614,7 +289,9 @@ namespace Reconcillations.Pages.ImpBank
                 dbopening = gety.AsEnumerable().FirstOrDefault().Balance;
                 dbcredit = gety.AsEnumerable().Sum(x => x.Credit);
                 dbdebit = gety.AsEnumerable().Sum(x => x.Debit);
-                bankimport.CalClosingBal = dbcredit;
+                dbclose = ((dbopening + dbcredit) - dbdebit);
+                //bankimport.CalClosingBal = dbclose;
+
 
                 /////
                 dt = ConvertToDataTable(gety);
@@ -622,6 +299,8 @@ namespace Reconcillations.Pages.ImpBank
                 sb.Append("+");
                 //sb.AppendFormat("{0}", tbimport);
                 //sb.Append("+");
+                sb.AppendFormat("{0:n2}", dbclose);
+                sb.Append("+");
                 sb.AppendFormat("{0:n2}", dbopening);
                 sb.Append("+");
                 sb.AppendFormat("{0:n2}", dbcredit);
@@ -638,7 +317,7 @@ namespace Reconcillations.Pages.ImpBank
 
             return this.Content(sb.ToString());
         }
-       
+
         //public ActionResult OnPostBankstatement([FromBody] BankImport objBankImport)
         public ActionResult OnPostBankstatement([FromBody] JObject objBankImport)
         {
@@ -685,6 +364,7 @@ namespace Reconcillations.Pages.ImpBank
                 if (TempData.ContainsKey("MyexcelData"))
                 {
                     var hgb = TempData["MyexcelData"];
+
                     var hb = JsonConvert.DeserializeObject(hgb.ToString());
 
                     DataTable dtexcel = (DataTable)JsonConvert.DeserializeObject(hgb.ToString(), (typeof(DataTable)));
@@ -752,7 +432,12 @@ namespace Reconcillations.Pages.ImpBank
                 else
                 {
                     dtbank = (DataTable)JsonConvert.DeserializeObject(bn.ToString(), (typeof(DataTable)));
+
+                    if (dtbank.Columns.Contains("payerName"))
+                        dtbank.Columns.Remove("payerName");
+                    dtbank.AcceptChanges();
                 }
+
 
             }
             if (TempData.ContainsKey("CollectionData"))

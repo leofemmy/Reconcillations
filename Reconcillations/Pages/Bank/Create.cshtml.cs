@@ -16,7 +16,9 @@ namespace Reconcillations.Pages.Bank
         ITransactionRepository _transactionRepository;
 
         public SelectList BankSelectList { get; set; }
+        
         public SelectList CurrencySelectList { get; set; }
+        
         public SelectList Banktypecode { get; set; }
 
         [BindProperty]
@@ -24,13 +26,18 @@ namespace Reconcillations.Pages.Bank
 
         [TempData]
         public string Message { get; set; }
+       
         public Currencys currency { get; set; }
+       
         public BankType bankType { get; set; }
+       
         public Classtypes classtypes { get; set; }
+      
         public CreateModel(ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
         }
+     
         public void OnGet()
         {//load currency into a combo
             var ele = from d in _transactionRepository.GetCurrencies() select d;
@@ -48,12 +55,14 @@ namespace Reconcillations.Pages.Bank
             //PopulateType();
             //PopulateCurrency();
         }
+       
         void PopulateCurrency()
         {
             var ele = from d in _transactionRepository.GetCurrencies() select d;
             CurrencySelectList = new SelectList(ele, "CurrencyID", "CurrencyName");
 
         }
+       
         void PopulateType()
         {
             var ele = from d in _transactionRepository.GeBanklists() select d;
