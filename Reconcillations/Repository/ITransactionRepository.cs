@@ -101,7 +101,7 @@ namespace Reconcillations.Repository
 
         DataSet CheckUserid(string usermailaddress);
 
-        DataSet SaveCompareStatement(long reconcileId, double closebal, DataTable dtbank, DataTable dtColl, DataTable dtMatc);
+        DataSet SaveCompareStatement(long reconcileId, double closebal, DataTable dtbank, DataTable dtColl, DataTable dtMatc, string EmailAddress);
 
         DataSet Reclassified(long reconcileId);
 
@@ -145,6 +145,8 @@ namespace Reconcillations.Repository
         DataTable ViewBanksCollection(Summarys sumbanks);
 
         DataTable viewReversedTransaction(string accountnumber, DateTime dtstart, DateTime dtenddate);
+
+        string posttransactiondisapprove(string emailaddress, double reconcileId);
 
         Bank GetBankAccountId(long accountid);
 

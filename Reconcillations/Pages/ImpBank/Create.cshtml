@@ -635,7 +635,7 @@
             options.error = function () {
                 $("#msg").html("Error while making Ajax call!");
             };
-            Promise.resolve($.ajax(options));
+            $.ajax(options);
         });
 
         $('#btnSave').click(function () {
@@ -657,45 +657,45 @@
 
                 $('#loading-div-background').show();
 
-                Promise.resolve(
-                    $.ajax({
+                /*  Promise.resolve(*/
+                $.ajax({
+                    type: "POST",
+                    url: "Create?handler=Bankstatement",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("MY-XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: JSON.stringify(objBankImport),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (msg) {
 
-                        type: "POST",
-                        url: "Create?handler=Bankstatement",
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader("MY-XSRF-TOKEN",
-                                $('input:hidden[name="__RequestVerificationToken"]').val());
-                        },
-                        data: JSON.stringify(objBankImport),
-                        contentType: "application/json",
-                        dataType: "json",
-                        success: function (msg) {
+                        $("#msg").html(msg);
+                        console.log(msg);
+                        console.log(msg.reconcileid);
+                        console.log(msg.statusId);
+                        console.log(msg.statusMessage);
+                        $('#loading-div-background').hide();
+                        $('#btnNext').show();
 
-                            $("#msg").html(msg);
-                            console.log(msg);
-                            console.log(msg.reconcileid);
-                            console.log(msg.statusId);
-                            console.log(msg.statusMessage);
-                            $('#loading-div-background').hide();
-                            $('#btnNext').show();
-
-                            Swal.fire({
-                                type: 'success',
-                                title: 'Reconciliation Solution',
-                                text: msg.statusMessage,
-                                footer: ''
-                            })
-                        },
-                        error: function (xhr, textStatus, error) {
-                            //$("#msg").html("Error while making Ajax call!");
-                            Swal.fire({
-                                type: error,
-                                title: 'Error Message',
-                                text: xhr.statusText,
-                                footer: ''
-                            })
-                        }
-                    }))
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Reconciliation Solution',
+                            text: msg.statusMessage,
+                            footer: ''
+                        })
+                    },
+                    error: function (xhr, textStatus, error) {
+                        //$("#msg").html("Error while making Ajax call!");
+                        Swal.fire({
+                            type: error,
+                            title: 'Error Message',
+                            text: xhr.statusText,
+                            footer: ''
+                        })
+                    }
+                });
+                //)
             }
             else {
                 Swal.fire({
@@ -859,6 +859,7 @@
                     $('input:hidden[name="__RequestVerificationToken"]').val());
             };
             options.success = function (data) {
+                console.log(data);
                 var msgb = data.table;
                 var deb = data.table1;
                 debtran = data.table2;
@@ -965,7 +966,9 @@
             options.error = function () {
                 $("#msg").html("Error while making Ajax call!");
             };
-            Promise.resolve($.ajax(options));
+            /*    Promise.resolve(*/
+            $.ajax(options);
+            //);
 
         });
 
@@ -1088,7 +1091,9 @@
             options.error = function () {
                 $("#msg").html("Error while making Ajax call!");
             };
-            Promise.resolve($.ajax(options));
+            /*      Promise.resolve(*/
+            $.ajax(options);
+            /* );*/
         });
 
         function getstate(item) {

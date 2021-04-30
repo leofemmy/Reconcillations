@@ -20,6 +20,7 @@ namespace Reconcillations.Pages.Approval
     {
         ITransactionRepository _transactionRepository; private IHostingEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
         public XtraReport Report { get; set; }
+
         public ViewModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
         {
             _transactionRepository = transactionRepository;
@@ -62,6 +63,30 @@ namespace Reconcillations.Pages.Approval
 
 
         }
+
+        public IActionResult OnPostDisapproval()
+        {
+            string retval = string.Empty; double recperiodid = 0;
+
+            //posttransactionapproval
+
+            if (TempData.ContainsKey("ID"))
+            {
+                recperiodid = Convert.ToDouble(TempData["ID"].ToString());
+            }
+
+            if (recperiodid != 0)
+            {
+                string emial = HttpContext.Session.GetString("UserEmail").ToString();
+
+                retval = _transactionRepository.posttransactiondisapprove(emial, recperiodid);
+
+
+            }
+
+            return new JsonResult(retval);
+        }
+      
         XtraReport createreport(DataTable dts)
         {
             XtraRepPostingRequestlist report = new XtraRepPostingRequestlist();

@@ -456,6 +456,7 @@ namespace Reconcillations.Pages.ImpBank
 
 
             }
+            
             if (TempData.ContainsKey("MatchedData"))
             {
                 var md = TempData["MatchedData"];
@@ -476,7 +477,7 @@ namespace Reconcillations.Pages.ImpBank
 
             }
 
-            DataSet dstcompare = _transactionRepository.SaveCompareStatement(reconcile.reconileID, reconcile.closebal, dtbank, dtCD, dtMD);
+            DataSet dstcompare = _transactionRepository.SaveCompareStatement(reconcile.reconileID, reconcile.closebal, dtbank, dtCD, dtMD, HttpContext.Session.GetString("Usernames").ToString());
             return new JsonResult(dstcompare);
         }
 

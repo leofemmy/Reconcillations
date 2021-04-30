@@ -41,9 +41,50 @@
     @section Scripts
     {
         <script type="text/javascript">
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $('#loading-div-background').hide();
-                $('#btnApprove').click(function () {
+                $('#btndisapprove').click(function() {Promise.resolve(
+                    $.ajax({
+                        url: "View?handler=Disapproval",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        //data: JSON.stringify(apprec),
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        //dataType: "json",
+                        //traditional: true,
+                        success: function(data) {
+                            console.log(data);
+                            $('#loading-div-background').hide();
+                            if (data === "00") {
+
+                                Swal.fire({
+                                    type: 'success',
+                                    title: 'success',
+                                    text: 'Transaction Disapprove!',
+                                    footer: ''
+                                });
+
+                                $('#idtoken').hide();
+                                $('#btntoken').hide();
+                                $("#validate").hide();
+                                $('#btnApprove').show();
+                            } else {
+                                Swal.fire({
+                                    type: 'Error',
+                                    title: 'Error',
+                                    text: 'Error occur Approving Reconcile Record!',
+                                    footer: ''
+                                });
+
+                            }
+
+                        }
+                    }))});
+                $('#btnApprove').click(function() {
                     $('#loading-div-background').show();
                     Promise.resolve(
                         $.ajax({
@@ -52,13 +93,13 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             //data: JSON.stringify(apprec),
-                            beforeSend: function (xhr) {
+                            beforeSend: function(xhr) {
                                 xhr.setRequestHeader("MY-XSRF-TOKEN",
                                     $('input:hidden[name="__RequestVerificationToken"]').val());
                             },
                             //dataType: "json",
                             //traditional: true,
-                            success: function (data) {
+                            success: function(data) {
                                 console.log(data);
                                 $('#loading-div-background').hide();
                                 if (data === "00") {
@@ -74,8 +115,7 @@
                                     $('#btntoken').hide();
                                     $("#validate").hide();
                                     $('#btnApprove').show();
-                                }
-                                else {
+                                } else {
                                     Swal.fire({
                                         type: 'Error',
                                         title: 'Error',

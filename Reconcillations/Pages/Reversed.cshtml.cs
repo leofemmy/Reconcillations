@@ -51,6 +51,7 @@ namespace Reconcillations.Pages
             report.CreateDocument();
             return report;
         }
+       
         public async Task<IActionResult> OnPostLoading([FromBody] JObject objBankImport)
         {
 

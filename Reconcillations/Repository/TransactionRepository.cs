@@ -2768,7 +2768,9 @@ namespace Reconcillations.Repository
             {
                 //List<RegResponseInfo<Fecthpayer>> regResponse = new List<RegResponseInfo<Fecthpayer>>();
                 SqlDataAdapter _adp;
+
                 DataSet response = new DataSet();
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     if (con.State != ConnectionState.Closed)
@@ -2777,6 +2779,7 @@ namespace Reconcillations.Repository
                     }
 
                     SqlCommand cmd = new SqlCommand("spSaveBankStatement", con);
+
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@AccountID", bankImport.AccountID);
@@ -3111,7 +3114,7 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
-        public DataSet SaveCompareStatement(long reconcileId, double closebal, DataTable dtbank, DataTable dtColl, DataTable dtMatc)
+        public DataSet SaveCompareStatement(long reconcileId, double closebal, DataTable dtbank, DataTable dtColl, DataTable dtMatc, string EmailAddress)
         {
 
             DataSet dtresult = new DataSet();
@@ -3139,6 +3142,7 @@ namespace Reconcillations.Repository
                     cmd.Parameters.AddWithValue("@ptransctCol", dtColl);
                     cmd.Parameters.AddWithValue("@ptranscMatched", dtMatc);
                     cmd.Parameters.AddWithValue("@ptransctBank", dtbank);
+                    cmd.Parameters.AddWithValue("@Useremail", EmailAddress);
 
                     con.Open();
 
@@ -5272,6 +5276,89 @@ namespace Reconcillations.Repository
                     cmd.Parameters.AddWithValue("@emailaddress", emailaddress);
 
                     cmd.Parameters.AddWithValue("@strtoken", strtoken);
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+                    response.Clear();
+                    _adp = new SqlDataAdapter(cmd);
+                    _adp.Fill(response);
+
+                    if (response.Tables[0].Rows[0]["returnCode"].ToString() == "00")
+                    {
+                        //dtresult = response;
+
+                        count = response.Tables[0].Rows[0]["returnCode"].ToString();
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information("Token Insert sucessfully");
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    else
+                    {
+                        count = response.Tables[0].Rows[0]["returnCode"].ToString();
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    con.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+
+                var logger = new LoggerConfiguration()
+                                                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                                                    .CreateLogger();
+                logger.Fatal($"token inseration thrown an error - {ex.Message}");
+            }
+            return count;
+        }
+
+        public string posttransactiondisapprove(string emailaddress, double reconcileId)
+        {
+            string count = String.Empty;
+
+            var connectionString = this.GetConnection();
+
+            try
+            {
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spPostingTransactionDisapprove", con);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@Useremail", emailaddress);
+
+                    cmd.Parameters.AddWithValue("@recperid", reconcileId);
 
                     con.Open();
 
