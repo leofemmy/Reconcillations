@@ -27,6 +27,7 @@ namespace Reconcillations.Pages.Reconcile
         {
             _translist = _transactionRepository.Getrecocilelists();
         }
+        
         public IActionResult OnPostDelete(long id)
         {
             ResponseInfo responses = new ResponseInfo();

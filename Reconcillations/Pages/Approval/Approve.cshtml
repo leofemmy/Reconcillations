@@ -1,11 +1,11 @@
 ﻿@page
-@using Microsoft.AspNetCore.Http
-@model Reconcillations.Pages.Approval.IndexModel
-@{ Layout = "Shared/_Layout"; ;
+@model Reconcillations.Pages.Approval.ApproveModel
+@{
+    Layout = "Shared/_Layout"; ;
     ViewData["Title"] = " Request Approval";
 }
 @section header
-    {
+{
     <!-- Sweet Alert item CSS -->
     <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
     <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
@@ -34,7 +34,7 @@
             </div>
         </div>
     </div>
-    <form >
+    <form>
         @Html.AntiForgeryToken()
         <div id="dvview" class="col-md-12">
             <div class="card card-topline-red">
@@ -42,67 +42,67 @@
                     <header>Request Approval Lists</header>
                 </div>
                 <div class="card-body ">
-                    <table id="saveStage" class="display" style="width: 100%;">
+                    <table id="saveStage" class="display" style="width:100%;">
                         <thead>
-                        <tr>
-                            @*<th></th>*@
-                            <th>ID</th>
-                            <th>Bank Name</th>
-                            <th>Account Name</th>
-                            <th>Period Name</th>
-                            <th>Opening Bal</th>
-                            <th>Credit</th>
-                            <th>Debit</th>
-                            <th>Closing bal</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            @*<th>Stage</th>*@
-                            <th>Request By</th>
-                            @*<th>Days</th>*@
-                            <th>Action</th>
+                            <tr>
+                                @*<th></th>*@
+                                <th>ID</th>
+                                <th>Bank Name</th>
+                                <th>Account Name</th>
+                                <th>Period Name</th>
+                                <th>Opening Bal</th>
+                                <th>Credit</th>
+                                <th>Debit</th>
+                                <th>Closing bal</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                @*<th>Stage</th>*@
+                                <th>Request By</th>
+                                @*<th>Days</th>*@
+                                <th>Action</th>
 
-                        </tr>
+                            </tr>
                         </thead>
                         <tbody>
-                        @{
-                            int sno = 0;
-                        }
-                        @foreach (var items in Model._translist)
-                        {
-                            <tr>
-                                <td onclick="myFunction(this)" class="view-message ">
-                                    <h5>
-                                        @{ sno++; }
-                                        @sno
-                                    </h5>
-                                </td>
-                                @*<input name="AreChecked" type="checkbox" value="@i" /> @i
-                                    <br />*@
-                                @*<td onclick="myFunction(this)" class="view-message "><h5><input name="chkrecpid" type="checkbox" value=@items.RecperID /></h5></td>*@
-                                @*<td onclick="myFunction(this)" class="view-message "><h5>@items.RecperID</h5></td>*@
-                                <td onclick="myFunction(this)" class="view-message "><h5>@items.BankName</h5></td>
-                                <td onclick="myFunction(this)" class="center view-message "><h5>@items.AccountName</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Description</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.openingbal)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.credit)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.debit)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.closebal)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>
-                                @*<td onclick="myFunction(this)" class="view-message "><h5>@items.Stages</h5></td>*@
-                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Requestby</h5></td>
-                                @*<td onclick="myFunction(this)" class="view-message "><h5>@items.days</h5></td>*@
-                                <td>
-                                    <form method="post">
-                                        <span class="btn-group pull-right" style="margin-top: 5px">
-                                            <a class="btn btn-primary" asp-page="/Approval/View" asp-route-id="@items.RecperID" style="background-color: green; height: 29px; margin-top: -1px;">
-                                                View
-                                            </a>
-                                        </span>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
+                            @{
+                                int sno = 0;
+                            }
+                            @foreach (var items in Model._translist)
+                            {
+                                <tr>
+                                    <td onclick="myFunction(this)" class="view-message ">
+                                        <h5>
+                                            @{ sno++; }
+                                            @sno
+                                        </h5>
+                                    </td>
+                                    @*<input name="AreChecked" type="checkbox" value="@i" /> @i
+                                        <br />*@
+                                    @*<td onclick="myFunction(this)" class="view-message "><h5><input name="chkrecpid" type="checkbox" value=@items.RecperID /></h5></td>*@
+                                    @*<td onclick="myFunction(this)" class="view-message "><h5>@items.RecperID</h5></td>*@
+                                    <td onclick="myFunction(this)" align="left" class="view-message "><h5>@items.BankName</h5></td>
+                                    <td onclick="myFunction(this)" align="left" class="center view-message "><h5>@items.AccountName</h5></td>
+                                    <td onclick="myFunction(this)" style="text-align: left" class="view-message "><h5>@items.Description</h5></td>
+                                    <td onclick="myFunction(this)" align="center" class="view-message "><h5>@string.Format("{0:n2}", items.openingbal)</h5></td>
+                                    <td onclick="myFunction(this)" align="center" class="view-message "><h5>@string.Format("{0:n2}", items.credit)</h5></td>
+                                    <td onclick="myFunction(this)" align="center" class="view-message "><h5>@string.Format("{0:n2}", items.debit)</h5></td>
+                                    <td onclick="myFunction(this)" align="center" class="view-message "><h5>@string.Format("{0:n2}", items.closebal)</h5></td>
+                                    <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
+                                    <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>
+                                    @*<td onclick="myFunction(this)" class="view-message "><h5>@items.Stages</h5></td>*@
+                                    <td onclick="myFunction(this)" class="view-message "><h5>@items.Requestby</h5></td>
+                                    @*<td onclick="myFunction(this)" class="view-message "><h5>@items.days</h5></td>*@
+                                    <td>
+                                        <form method="post">
+                                            <span class="btn-group pull-right" style="margin-top: 5px">
+                                                <a class="btn btn-primary" asp-page="/Approval/View" asp-route-id="@items.RecperID" style="background-color: green; height: 29px; margin-top: -1px;">
+                                                    View
+                                                </a>
+                                            </span>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -118,7 +118,7 @@
             // Hide the "busy" Gif at load:
 
             $("#dvview").hide();
-            
+
             $('#validate').click(function () {
                 var strOtp = {};
 
@@ -129,7 +129,8 @@
                     console.log(strOtp);
 
                     $.ajax({
-                        url: "/Index?handler=Validteotp",
+                        /* url: "Approve?handler=Validteotp",*/
+                        url: "Approve?handler=Validteotp",
                         type: "POST",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -189,7 +190,7 @@
                     });
                 }
             });
-          
+
         });
     </script>
     <!-- Sweet Alert -->

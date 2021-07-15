@@ -37,15 +37,16 @@ namespace Reconcillations.Pages
         {
             var gt = HttpContext.Session.GetString("AgencyName").ToString();
 
+            var perYear = HttpContext.Session.GetString("perYear");
+
+            var perMonths = HttpContext.Session.GetString("perMonth");
+
             var gh = gt.Split("-");
 
             var ngh = gh[0];
 
-            var gtstart = HttpContext.Session.GetString("StartDate");
 
-            var gtend = HttpContext.Session.GetString("EndDate");
-
-            DataTable dt = _transactionRepository.viewBankdetails(ngh.ToString(), Convert.ToDateTime(gtstart), Convert.ToDateTime(gtend));
+            DataTable dt = _transactionRepository.viewBankdetails(ngh.ToString(), Convert.ToInt64(perMonths), Convert.ToInt64(perYear));
 
             Report = createreport(dt);
 

@@ -7,19 +7,50 @@ using DevExpress.XtraReports.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Reconcillations.Entity;
 using Reconcillations.Reports;
 using Reconcillations.Repository;
+using Reconcillations.Services;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 namespace Reconcillations.Pages
 {
     public class MonthsModel : PageModel
     {
         ITransactionRepository _transactionRepository; IHostingEnvironment _hostingEnvironment;
-        public XtraReport Report { get; set; }
+
+        public XtraReport Report
+        {
+            get; set;
+        }
+
+        public SelectList PeriodSelectList
+        {
+            get; set;
+        }
+
+        public SelectList peryear
+        {
+            get; set;
+        }
 
         [BindProperty]
-        public Summarys summarys { get; set; }
+        public Summarys summarys
+        {
+            get; set;
+        }
+
+        [BindProperty]
+        public Periodlist Periodlist
+        {
+            get; set;
+        }
+
+        [BindProperty]
+        public PeriodYear PeriodYear
+        {
+            get; set;
+        }
 
         public MonthsModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
@@ -27,9 +58,18 @@ namespace Reconcillations.Pages
 
             _hostingEnvironment = hostingEnvironment;
         }
+
         public void OnGet()
         {
+            var per = (from e in _transactionRepository.GetPeriodlist() select e).ToList();
+            PeriodSelectList = new SelectList(per, "PeriodMonth", "PeriodName");
+            HttpContext.Session.Set("Periodlist", per);
+
+            var yer = (from y in _transactionRepository.GetPeriodYear() select y).ToList();
+            peryear = new SelectList(yer, "PeridYear", "PeridYear");
+            HttpContext.Session.Set("PeriodYear", yer);
         }
+
         public void OnPost()
         {
             var _summary = summarys;
@@ -48,6 +88,7 @@ namespace Reconcillations.Pages
             }
 
         }
+       
         XtraReport createreport(DataTable dts)
         {
             XtraRepVarianceMonthly report = new XtraRepVarianceMonthly();

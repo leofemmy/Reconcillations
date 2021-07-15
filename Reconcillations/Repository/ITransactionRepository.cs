@@ -23,6 +23,10 @@ namespace Reconcillations.Repository
 
         int SaveAllocatetrans(DataTable dts);
 
+        int DoInsertPushtoReemsRequest(PushExceptRequest piExceptRequest);
+
+        int DoExecuatePushRequesttoReems(PushToReemsExceution reemsExceution);
+
         public int EditUsersAccount(UsersList users);
 
         List<Transaction> GetTransactions();
@@ -77,13 +81,19 @@ namespace Reconcillations.Repository
 
         List<RequestApprove> GetRequestApprove();
 
+        List<Periodlist> GetPeriodlist();
+
         List<AccountBal> GetAccountBals(double Accountid);
 
         List<Reconcilelist> Getrecocilelists();
 
+        List<RequestPushReemList> GetRequestPushReemLists();
+
         AccountBal GetAccountBalance(long Accountid);
 
         List<Agency> GetAgencylist();
+
+        List<PeriodYear> GetPeriodYear();
 
         ResponseMessage<BankImport> Savebankstatement(BankImport bankImport, System.Data.DataTable dts);
 
@@ -92,6 +102,8 @@ namespace Reconcillations.Repository
         List<Normalisereclists> GetNormalisereclists();
 
         List<Postinglist> GetAllPostingRequesting();
+
+        List<PushException> GetPushExceptions();
 
         DataSet FinishedReconcile(long reconcileId, string UsersId);
 
@@ -128,11 +140,11 @@ namespace Reconcillations.Repository
 
         DataTable ViewAgencies(Summarys sumagency); DataTable ViewMonth(Summarys sumagency);
 
-        DataTable ViewAgencydetails(string strAgency, DateTime dtstart, DateTime dtenddate);
+        DataTable ViewAgencydetails(string strAgency, long lngPeriodMonth, long lngPeriodYear);
 
-        DataTable Viewdetails(string strrevenue, DateTime dtstart, DateTime dtenddate);
+        DataTable Viewdetails(string strrevenue, long lngPeriodMonth, long lngPeriodYear);
 
-        DataTable viewBankdetails(string accountnumber, DateTime dtstart, DateTime dtenddate);
+        DataTable viewBankdetails(string accountnumber, long lngPeriodMonth, long lngPeriodYear);
 
         DataTable ViewVaricesAgencies(Summarys sumagency);
 
@@ -144,7 +156,7 @@ namespace Reconcillations.Repository
 
         DataTable ViewBanksCollection(Summarys sumbanks);
 
-        DataTable viewReversedTransaction(string accountnumber, DateTime dtstart, DateTime dtenddate);
+        DataTable viewReversedTransaction(string accountnumber, long lngPeriodMonth, long lngPeriodYear);
 
         string posttransactiondisapprove(string emailaddress, double reconcileId);
 

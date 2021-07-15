@@ -1,5 +1,5 @@
 using System;
-using  System.Data;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,10 +36,13 @@ namespace Reconcillations.Pages
         public void OnPost()
         {
             var gt = HttpContext.Session.GetString("AccountNumber");
-            var gtstart = HttpContext.Session.GetString("StartDate");
-            var gtend = HttpContext.Session.GetString("EndDate");
+            //var gtstart = HttpContext.Session.GetString("StartDate");
+            //var gtend = HttpContext.Session.GetString("EndDate");
+            var pYear = HttpContext.Session.GetString("perYear");
+            var pMonth = HttpContext.Session.GetString("perMonth");
 
-            DataTable dt = _transactionRepository.viewReversedTransaction(gt.ToString(), Convert.ToDateTime(gtstart), Convert.ToDateTime(gtend));
+
+            DataTable dt = _transactionRepository.viewReversedTransaction(gt.ToString(), Convert.ToInt64(pMonth), Convert.ToInt64(pYear));
 
             Report = createreport(dt);
 

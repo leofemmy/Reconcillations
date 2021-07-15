@@ -7,10 +7,12 @@ using DevExpress.XtraReports.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json.Linq;
 using Reconcillations.Entity;
 using Reconcillations.Reports;
 using Reconcillations.Repository;
+using Reconcillations.Services;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Reconcillations.Pages
@@ -18,6 +20,11 @@ namespace Reconcillations.Pages
     public class BanksModel : PageModel
     {
         ITransactionRepository _transactionRepository; IHostingEnvironment _hostingEnvironment;
+
+        public SelectList PeriodSelectList { get; set; }
+
+        public SelectList peryear { get; set; }
+
         public XtraReport Report { get; set; }
 
         [BindProperty]
@@ -29,17 +36,30 @@ namespace Reconcillations.Pages
 
             _hostingEnvironment = hostingEnvironment;
         }
+
         public void OnGet()
         {
+            var per = (from e in _transactionRepository.GetPeriodlist() select e).ToList();
+            PeriodSelectList = new SelectList(per, "PeriodMonth", "PeriodName");
+            HttpContext.Session.Set("Periodlist", per);
+
+            var yer = (from y in _transactionRepository.GetPeriodYear() select y).ToList();
+            peryear = new SelectList(yer, "PeridYear", "PeridYear");
+            HttpContext.Session.Set("PeriodYear", yer);
+
         }
 
         public void OnPost()
         {
             var _summary = summarys;
 
-            HttpContext.Session.SetString("StartDate", _summary.Startdate.ToString());
+            //HttpContext.Session.SetString("StartDate", _summary.Startdate.ToString());
 
-            HttpContext.Session.SetString("EndDate", _summary.Enddate.ToString());
+            //HttpContext.Session.SetString("EndDate", _summary.Enddate.ToString());
+
+            HttpContext.Session.SetString("perYear", _summary.periodYear.ToString());
+
+            HttpContext.Session.SetString("perMonth", _summary.periodMonth.ToString());
 
             Console.WriteLine(_summary);
 
@@ -53,7 +73,7 @@ namespace Reconcillations.Pages
 
 
         }
-        
+
         XtraReport createreport(DataTable dts)
         {
 

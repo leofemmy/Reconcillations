@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DevExpress.AspNetCore;
 using DevExpress.AspNetCore.Reporting;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +21,7 @@ using Microsoft.Extensions.Hosting;
 using Reconcillations.Entity;
 using Reconcillations.Repository;
 using Reconcillations.Services;
+using Serilog;
 
 namespace Reconcillations
 {
@@ -47,6 +52,23 @@ namespace Reconcillations
             //{
             //    options.AutomaticAuthentication = false;
             //});
+            // Add Hangfire services.
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }));
+
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -90,13 +112,14 @@ namespace Reconcillations
                 //options.CookieName = ".Reconciliation";
             });
 
+
             //injcetion of newton soft json for 3.0 reference
 
             services.AddMvcCore().AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobs)
         {
             if (env.IsDevelopment())
             {
@@ -131,6 +154,10 @@ namespace Reconcillations
 
             app.UseRouting();
 
+            app.UseHangfireDashboard();
+
+            RecurringJob.AddOrUpdate(() => DoReemsPush(), Cron.MinuteInterval(2));
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -152,7 +179,7 @@ namespace Reconcillations
             //app.UseRouting();
             //app.UseEndpoints(endpoints =>
             //{
-            //    endpoints.MapRazorPages(); //Routes for pages
+            //    endpoints.MapRazorPages(); //Routes for pagIReconcile_Delta20210607es
             //    endpoints.MapControllers(); //Routes for my API controllers
             //});
             //app.UseEndpoints(endpoints =>
@@ -160,6 +187,56 @@ namespace Reconcillations
             //    endpoints.MapControllerRoute("Default", "{controller=Home}/{action=Index}/{id?}");
             //});
             app.UseMvc();
+        }
+
+        public void DoReemsPush()
+        {
+            //var connectionString = this.GetConnection();
+
+            string connectionString = this.Configuration.GetConnectionString("DefaultConnection");
+            try
+            {
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spdoGetRecordtoReems", con);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+
+                    response.Clear();
+                    _adp = new SqlDataAdapter(cmd);
+                    _adp.Fill(response);
+
+
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Reems Push To Successfully ");
+                  
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+
+                logger.Fatal($"Do Reems Push thrown an error - {e.Message}");
+            }
         }
     }
 }

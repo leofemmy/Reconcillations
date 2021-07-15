@@ -1,7 +1,11 @@
 ﻿@page
 @using DevExpress.AspNetCore
+@using Reconcillations.Entity
 @model Reconcillations.Pages.MonthsModel
 @{
+    var perList = httpContextAccessor.HttpContext.Session.GetObject<List<Periodlist>>("Periodlist");
+		 
+    var yerlist = httpContextAccessor.HttpContext.Session.GetObject<List<PeriodYear>>("PeriodYear");
 }
 @section header
     {
@@ -25,7 +29,7 @@
                     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
                     </asp:ScriptManager>
                     @Html.AntiForgeryToken()
-                    <div class="form-group row">
+                    @*<div class="form-group row">
                         <label class="col-md-3 control-label">Start Date <span class="required"> * </span></label>
                         <div class="col-md-4">
                             <input asp-for="summarys.Startdate" class="form-control" />
@@ -33,8 +37,8 @@
                         </div>
                         <input type="hidden" id="dtp_input1" value="" />
                         <br />
-                    </div>
-                    <div class="form-group row">
+                    </div>*@
+                    @*<div class="form-group row">
                         <label class="col-md-3 control-label">End Date <span class="required"> * </span></label>
                         <div class="col-md-4">
                             <input asp-for="summarys.Enddate" class="form-control" />
@@ -42,6 +46,41 @@
                         </div>
                         <input type="hidden" id="dtp_input1" value="" />
                         <br />
+                    </div>*@
+                    <div class="form-group row">
+                        <label class="control-label col-md-3">
+                            Period
+                            <span class="required"> * </span>
+                            <span class="alert-danger" asp-validation-for="summarys.periodMonth"></span>
+                        </label>
+                        <div class="col-md-4">
+
+                            <select asp-for="summarys.periodMonth" id="periodid" class="form-control select2"
+                                    asp-items="@(new SelectList(perList, "PeriodMonth", "PeriodName"))">
+                                @if (perList != null)
+                                {
+                                    <option value="">-- Select Period  --</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-md-3">
+                            Year
+                            <span class="required"> * </span>
+                            <span class="alert-danger" asp-validation-for="summarys.periodYear"></span>
+                        </label>
+                        @*yerlist*@
+                        <div class="col-md-4">
+
+                            <select asp-for="summarys.periodYear" id="periodyear" class="form-control select2"
+                                    asp-items="@(new SelectList(yerlist, "PeridYear","PeridYear"))">
+                                @if (yerlist != null)
+                                {
+                                    <option value="">-- Select Year  --</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group">
                         <div class="offset-md-3 col-md-9">

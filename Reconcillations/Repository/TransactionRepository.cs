@@ -253,6 +253,131 @@ namespace Reconcillations.Repository
             return elements;
         }
 
+        public int DoExecuatePushRequesttoReems(PushToReemsExceution reemsExceution)
+        {
+            var connectionString = this.GetConnection();
+
+            int count = 0;
+
+            SqlDataAdapter _adp;
+
+            System.Data.DataSet response = new System.Data.DataSet();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spDoUpdatePushRequestReems", con);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@userid ", reemsExceution.Userid);
+                    cmd.Parameters.AddWithValue("@PaymentRefNumber", reemsExceution.PaymentRefNumber);
+                    cmd.Parameters.AddWithValue("@RequestComment", reemsExceution.Comment);
+                    cmd.Parameters.AddWithValue("@bit", reemsExceution.Execution);
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+
+                    response.Clear();
+                    _adp = new SqlDataAdapter(cmd);
+                    _adp.Fill(response);
+
+                    if (response.Tables[0].Rows[0]["returnCode"].ToString() != "00")
+                    {
+                        count = -1;
+                    }
+                    else
+                    {
+                        count = 1;
+                    }
+                    //cmd.ExecuteNonQuery();
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Add Push To Request ");
+                    loggers.Information(JsonConvert.SerializeObject(count));
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Add Push to reems request thrown an error - {e.Message}");
+            }
+            return count;
+        }
+
+        public int DoInsertPushtoReemsRequest(PushExceptRequest piExceptRequest)
+        {
+            var connectionString = this.GetConnection();
+            int count = 0;
+
+            SqlDataAdapter _adp;
+            System.Data.DataSet response = new System.Data.DataSet();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spDoInsertPushtoReemsRequest", con);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@userid", piExceptRequest.Userid);
+                    cmd.Parameters.AddWithValue("@PaymentRefNumber", piExceptRequest.PaymentRefNumber);
+                    cmd.Parameters.AddWithValue("@RequestComment", piExceptRequest.RequestCommet);
+
+                    //cmd.Parameters.AddWithValue("@IsActive", bank.IsActive);
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+
+                    response.Clear();
+                    _adp = new SqlDataAdapter(cmd);
+                    _adp.Fill(response);
+
+                    if (response.Tables[0].Rows[0]["returnCode"].ToString() != "00")
+                    {
+                        count = -1;
+                    }
+                    else
+                    {
+                        count = 1;
+                    }
+                    //cmd.ExecuteNonQuery();
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Add Push To Request ");
+                    loggers.Information(JsonConvert.SerializeObject(count));
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Add Push to reems request thrown an error - {e.Message}");
+            }
+            return count;
+        }
+
         public int AddBankAccount(Bank bank)
         {
             var connectionString = this.GetConnection();
@@ -1213,6 +1338,120 @@ namespace Reconcillations.Repository
             return _banklists;
         }
 
+        public List<PeriodYear> GetPeriodYear()
+        {
+            var connectionString = this.GetConnection();
+
+            List<PeriodYear> _definitionlists = new List<PeriodYear>();
+
+            try
+            {
+                string sqlquery = string.Format("SELECT DISTINCT PeriodYear from Reconcile.ReconcilePeriod WHERE IsClosed = 1 ORDER BY PeriodYear ASC");
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    SqlCommand cmd = new SqlCommand(sqlquery, con)
+                    {
+                        CommandType = CommandType.Text
+                    };
+
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    con.Open();
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        PeriodYear banklist = new PeriodYear
+                        {
+                            PeridYear = Convert.ToInt64(rdr["PeriodYear"].ToString()),
+                            //PeriodName = rdr["PeriodName"].ToString()
+                        };
+                        _definitionlists.Add(banklist);
+                    }
+
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Get Bank ");
+                    loggers.Information(JsonConvert.SerializeObject(_definitionlists));
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Get Bank thrown an error - {ex.Message}");
+            }
+
+            return _definitionlists;
+        }
+
+        public List<Periodlist> GetPeriodlist()
+        {
+            var connectionString = this.GetConnection();
+
+            List<Periodlist> _definitionlists = new List<Periodlist>();
+
+            try
+            {
+                string sqlquery = string.Format("SELECT DISTINCT PeriodName,PeriodMonth from Reconcile.ReconcilePeriod WHERE IsClosed = 1 ORDER BY PeriodMonth ASC");
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    SqlCommand cmd = new SqlCommand(sqlquery, con)
+                    {
+                        CommandType = CommandType.Text
+                    };
+
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    con.Open();
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        Periodlist banklist = new Periodlist
+                        {
+                            PeriodMonth = Convert.ToInt64(rdr["PeriodMonth"].ToString()),
+                            PeriodName = rdr["PeriodName"].ToString()
+                        };
+                        _definitionlists.Add(banklist);
+                    }
+
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Get Bank ");
+                    loggers.Information(JsonConvert.SerializeObject(_definitionlists));
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Get Bank thrown an error - {ex.Message}");
+            }
+
+            return _definitionlists;
+        }
+
         public List<Accountlists> GetAccountlists()
         {
             var connectionString = this.GetConnection();
@@ -1618,6 +1857,68 @@ namespace Reconcillations.Repository
             return _modifylists;
         }
 
+        public List<RequestPushReemList> GetRequestPushReemLists()
+        {
+            var connectionString = this.GetConnection();
+
+            List<RequestPushReemList> _modifylists = new List<RequestPushReemList>();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    SqlCommand cmd = new SqlCommand("spDoGetPushRequestMade", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    con.Open();
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        RequestPushReemList modify = new RequestPushReemList
+                        {
+                            PaymentDate = Convert.ToDateTime(rdr["PaymentDate"].ToString()),
+                            PaymentRefNumber = rdr["PaymentRefNumber"].ToString(),
+                            payername = rdr["payername"].ToString(),
+                            Amount = Convert.ToDecimal(rdr["Amount"].ToString()),
+                            RevenueName = rdr["RevenueName"].ToString(),
+                            PushToReemsRequestBy = rdr["PushToReemsRequestBy"].ToString(),
+                            PushToReemsRequestOn = Convert.ToDateTime(rdr["PushToReemsRequestOn"].ToString())
+                        };
+
+                        _modifylists.Add(modify);
+
+                    }
+
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Get Request sent List ");
+                    loggers.Information(JsonConvert.SerializeObject(_modifylists));
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Get Request sent List thrown an error - {ex.Message}");
+            }
+
+            return _modifylists;
+        }
+
         public List<ModifyRecords> GetModifyRecords()
         {
             var connectionString = this.GetConnection();
@@ -1748,6 +2049,66 @@ namespace Reconcillations.Repository
             return _banklists;
         }
 
+        public List<PushException> GetPushExceptions()
+        {
+            var connectionString = this.GetConnection();
+
+            List<PushException> _banklists = new List<PushException>();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    SqlCommand cmd = new SqlCommand("spGetPushExceptionRequestlist", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    con.Open();
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        PushException banklist = new PushException
+                        {
+
+                            PaymentRefNumber = rdr["PaymentRefNumber"].ToString(),
+                            payername = rdr["payername"].ToString(),
+                            RevenueName = rdr["RevenueName"].ToString(),
+                            PaymentDate = Convert.ToDateTime(rdr["PaymentDate"].ToString()),
+                            Amount = Convert.ToDecimal(rdr["Amount"].ToString())
+
+                        };
+                        _banklists.Add(banklist);
+                    }
+
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Get Transaction List ");
+                    loggers.Information(JsonConvert.SerializeObject(_banklists));
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Get Transaction List thrown an error - {ex.Message}");
+            }
+
+            return _banklists;
+        }
+
         public List<RequestApprove> GetRequestApprove()
         {
             var connectionString = this.GetConnection();
@@ -1788,7 +2149,9 @@ namespace Reconcillations.Repository
                             debit = Convert.ToDecimal(rdr["Debit"].ToString()),
                             credit = Convert.ToDecimal(rdr["Credit"].ToString()),
                             Stages = rdr["Stages"].ToString(),
-                            days = Convert.ToInt32(rdr["Number"].ToString())
+                            Period = rdr["PeriodName"].ToString(),
+                            days = Convert.ToInt32(rdr["Number"].ToString()),
+                            Year = Convert.ToInt64(rdr["PeriodYear"].ToString())
 
 
                         };
@@ -1916,11 +2279,13 @@ namespace Reconcillations.Repository
                             EndDate = Convert.ToDateTime(rdr["EndDate"].ToString()),
                             AccountID = Convert.ToInt64(rdr["AccountID"].ToString()),
                             StagesID = Convert.ToInt64(rdr["StagesID"].ToString()),
+                            Year = Convert.ToInt64(rdr["PeriodYear"].ToString()),
                             OpeningBal = Convert.ToDouble(rdr["OpeningBal"].ToString()),
                             ClosingBal = Convert.ToDouble(rdr["ClosingBal"].ToString()),
                             IsClosed = Convert.ToBoolean(rdr["IsClosed"].ToString()),
                             Symbol = rdr["Symbol"].ToString(),
                             Stages = rdr["Stages"].ToString(),
+                            Period = rdr["PeriodName"].ToString(),
                             Currency = rdr["Currency"].ToString()
 
                         };
@@ -2717,6 +3082,7 @@ namespace Reconcillations.Repository
                         sqlBulkCopy.ColumnMappings.Add("Revenuecode", "RevenueCode");
                         sqlBulkCopy.ColumnMappings.Add("Description", "PayerName");
                         sqlBulkCopy.ColumnMappings.Add("Tellerno", "TellerNo");
+                        sqlBulkCopy.ColumnMappings.Add("TransID", "TransID");
                         //con.Open();
                         sqlBulkCopy.WriteToServer(dtsnew);
 
@@ -4002,7 +4368,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select * from vwTransactionDefiniations where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AccountID={2} and TransID={3} AND PaymentRefNumber NOT IN  (SELECT PaymentRefNumber FROM Reconcile.Normalise WHERE IsNormalised = 1 AND IsNormaliseApproved = 1)", exception.Startdate, exception.Enddate, exception.AccountID, exception.TransID);
+                string sqlquery = string.Format("select * from vwTransactionDefiniations where PeriodMonth={0} and PeriodYear={1} and AccountID={2} and TransID={3} AND PaymentRefNumber NOT IN  (SELECT PaymentRefNumber FROM Reconcile.Normalise WHERE IsNormalised = 1 AND IsNormaliseApproved = 1)", exception.periodMonth, exception.periodYear, exception.AccountID, exception.TransID);
 
                 SqlDataAdapter _adp;
 
@@ -4074,7 +4440,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select * from vwTransactionDefiniations where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AccountID={2} and TransID={3}", exception.Startdate, exception.Enddate, exception.AccountID, exception.TransID);
+                string sqlquery = string.Format("select * from vwTransactionDefiniations where PeriodMonth={0} and PeriodYear={1} and AccountID={2} and TransID={3}", exception.periodMonth, exception.periodYear, exception.AccountID, exception.TransID);
 
                 SqlDataAdapter _adp;
 
@@ -4160,7 +4526,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("SELECT * from vwBankCollection where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' ORDER BY BankName ASC", sumbanks.Startdate, sumbanks.Enddate);
+                string sqlquery = string.Format("SELECT * from vwBankCollection where PeriodMonth={0} and PeriodYear={1} ORDER BY BankName ASC", sumbanks.periodMonth, sumbanks.periodYear);
 
                 SqlDataAdapter _adp;
 
@@ -4223,7 +4589,7 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
-        public DataTable Viewdetails(string strrevenue, DateTime dtstart, DateTime dtenddate)
+        public DataTable Viewdetails(string strrevenue, long lngPeriodMonth, long lngPeriodYear)
         {
             DataTable dtresult = new DataTable();
 
@@ -4233,7 +4599,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select * from vwCollectionDetails where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and RevenueName='{2}' ORDER BY PayerName ASC", dtstart, dtenddate, strrevenue.Trim().ToString());
+                string sqlquery = string.Format("select * from vwCollectionDetails where PeriodMonth={0} and PeriodYear={1} and RevenueName='{2}' ORDER BY PayerName ASC", lngPeriodMonth, lngPeriodYear, strrevenue.Trim().ToString());
 
                 SqlDataAdapter _adp;
 
@@ -4296,7 +4662,7 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
-        public DataTable viewBankdetails(string accountnumber, DateTime dtstart, DateTime dtenddate)
+        public DataTable viewBankdetails(string accountnumber, long lngPeriodMonth, long lngPeriodYear)
         {
             DataTable dtresult = new DataTable();
 
@@ -4306,7 +4672,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("SELECT * from vwCollectionDetails where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AccountNumber='{2}' ORDER BY  PayerName ASC, RevenueName ASC", dtstart, dtenddate, accountnumber.Trim().ToString());
+                string sqlquery = string.Format("SELECT * from vwCollectionDetails where PeriodMonth={0} and PeriodYear={1} and AccountNumber='{2}' ORDER BY  PayerName ASC, RevenueName ASC", lngPeriodMonth, lngPeriodYear, accountnumber.Trim().ToString());
 
                 SqlDataAdapter _adp;
 
@@ -4369,7 +4735,7 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
-        public DataTable ViewAgencydetails(string strAgency, DateTime dtstart, DateTime dtenddate)
+        public DataTable ViewAgencydetails(string strAgency, long lngPeriodMonth, long lngPeriodYear)
         {
             DataTable dtresult = new DataTable();
 
@@ -4379,7 +4745,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select  AgencyCode, AgencyName, RevenueCode,RevenueName,SUM(Amount) Amount,StartDate,EndDate from vwRevenueCollection where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AgencyName='{2}' GROUP BY AgencyCode,AgencyName, RevenueCode,RevenueName,StartDate,EndDate", dtstart, dtenddate, strAgency.Trim().ToString());
+                string sqlquery = string.Format("select  AgencyCode, AgencyName, RevenueCode,RevenueName,SUM(Amount) Amount,StartDate,EndDate,  PeriodYear,PeriodMonth,PeriodName from vwRevenueCollection where PeriodMonth={0} and PeriodYear={1} and AgencyName='{2}' GROUP BY AgencyCode,AgencyName, RevenueCode,RevenueName,StartDate,EndDate,  PeriodYear,PeriodMonth,PeriodName", lngPeriodMonth, lngPeriodYear, strAgency.Trim().ToString());
 
                 SqlDataAdapter _adp;
 
@@ -4442,7 +4808,7 @@ namespace Reconcillations.Repository
             return dtresult;
         }
 
-        public DataTable viewReversedTransaction(string accountnumber, DateTime dtstart, DateTime dtenddate)
+        public DataTable viewReversedTransaction(string accountnumber, long lngPeriodMonth, long lngPeriodYear)
         {
             DataTable dtresult = new DataTable();
 
@@ -4452,7 +4818,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select  * from vwreversedtransaction where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' and AccountNumber='{2}' ", dtstart, dtenddate, accountnumber.Trim().ToString());
+                string sqlquery = string.Format("select  * from vwreversedtransaction where PeriodMonth={0} and PeriodYear={1} and AccountNumber='{2}' ", lngPeriodMonth, lngPeriodYear, accountnumber.Trim().ToString());
 
                 SqlDataAdapter _adp;
 
@@ -4525,7 +4891,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select * from dbo.[vw•VariancesbyAgency] where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}'", sumagency.Startdate, sumagency.Enddate);
+                string sqlquery = string.Format("select * from dbo.[vw•VariancesbyAgency] where PeriodMonth={0} and PeriodYear={1}", sumagency.periodMonth, sumagency.periodYear);
 
                 SqlDataAdapter _adp;
 
@@ -4598,7 +4964,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select * from vwVariancesMonths where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}'", sumagency.Startdate, sumagency.Enddate);
+                string sqlquery = string.Format("select * from vwVariancesMonths where PeriodMonth={0} and PeriodYear={1}", sumagency.periodMonth, sumagency.periodYear);
 
                 SqlDataAdapter _adp;
 
@@ -4671,7 +5037,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("SELECT AgencyCode,AgencyName,SUM(Amount) Amount,StartDate,EndDate from vwAgencyCollection where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' GROUP BY  AgencyCode,AgencyName,StartDate,EndDate", sumagency.Startdate, sumagency.Enddate);
+                string sqlquery = string.Format("SELECT AgencyCode,AgencyName,SUM(Amount) Amount,StartDate,EndDate,PeriodName, PeriodMonth, PeriodYear from vwAgencyCollection where PeriodMonth={0} and PeriodYear={1} GROUP BY  AgencyCode,AgencyName,StartDate,EndDate,PeriodName,PeriodMonth,PeriodYear", sumagency.periodMonth, sumagency.periodYear);
 
                 SqlDataAdapter _adp;
 
@@ -4744,7 +5110,7 @@ namespace Reconcillations.Repository
 
             try
             {
-                string sqlquery = string.Format("select * from vwreconcilesummary where StartDate='{0:yyyy/MM/dd}' and EndDate='{1:yyyy/MM/dd}' ORDER BY BankName ASC", marsy.Startdate, marsy.Enddate);
+                string sqlquery = string.Format("select * from vwreconcilesummary where PeriodMonth={0} and PeriodYear={1} ORDER BY BankName ASC", marsy.periodMonth, marsy.periodYear);
 
                 SqlDataAdapter _adp;
 
@@ -6067,5 +6433,53 @@ namespace Reconcillations.Repository
             return responses;
         }
 
+        public void DoReemsPush()
+        {
+            var connectionString = this.GetConnection();
+
+            try
+            {
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spdoGetRecordtoReems", con);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    con.Open();
+
+                    cmd.CommandTimeout = 0;
+
+                    response.Clear();
+                    _adp = new SqlDataAdapter(cmd);
+                    _adp.Fill(response);
+
+
+                    con.Close();
+
+                    var loggers = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    loggers.Information($"Reems Push To Successfully ");
+                    //loggers.Information(JsonConvert.SerializeObject(count));
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+
+                logger.Fatal($"Do Reems Push thrown an error - {e.Message}");
+            }
+        }
     }
 }

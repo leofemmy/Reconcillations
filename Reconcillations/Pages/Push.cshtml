@@ -1,0 +1,163 @@
+﻿@page
+@model Reconcillations.Pages.PushModel
+@{
+    Layout = "Shared/_Layout"; ;
+    ViewData["Title"] = "Push Exception to Reems online Request";
+}
+@section header
+{
+    <!--select2-->
+    @*<link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+        <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />*@
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="page-bar">
+    <div class="page-title-breadcrumb">
+        <div class=" pull-left">
+            <div class="page-title">Push Exception to Reems online Request </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-topline-red">
+            <div class="card-head">
+                <header> Exception Lists to be Push</header>
+            </div>
+            <form>
+                @Html.AntiForgeryToken()
+            </form>
+            <div class="card-body ">
+                <table id="saveStage" class="display" style="width:100%;">
+                    <thead>
+                        <tr>
+                            @*<th></th>*@
+                            <th>S/N</th>
+                            <th>Payment Date</th>
+                            <th>Payment Ref. Number</th>
+                            <th>Payer Name</th>
+                            <th>Revenue Name</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        @foreach (var items in Model._translist)
+                        {
+                            <tr>
+                                <td onclick="myFunction(this)" class="view-message ">
+                                    <h5>
+                                        @{ sno++; }
+                                        @sno
+                                    </h5>
+                                </td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.PaymentDate)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.PaymentRefNumber</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.payername</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.RevenueName</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.Amount)</h5></td>
+                                <td>
+                                    @*<form method="post">*@
+                                    <span class="btn-group pull-right" style="margin-top: 5px">
+                                        @*<button type="submit" class="btn btn-circle btn-info btn-xs" asp-page-handler="Request" asp-route-id="@items.PaymentRefNumber" style="height: 27px; margin-top: 0px;">
+                                                <i class="fa fa-pull-right "></i>
+                                                Push Request
+                                            </button>*@
+
+
+                                        <button class="btn btn-circle btn-info btn-xs" style="height: 27px; margin-top: 0px;"
+                                                onclick="PushRequest('@items.PaymentRefNumber');">
+                                            <i class="fa fa-reorder"></i>
+                                            Push Request
+                                        </button>
+
+                                    </span>
+                                    @*</form>*@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+        function PushRequest(parameters) {
+            console.log(parameters);
+
+            Swal.fire({
+                title: "Reconciliation Solution",
+                text: "Reason for Pushing Request",
+                input: 'text',
+                showCancelButton: true,
+                confirmButtonColor: 'green'
+            }).then((result) => {
+                if (result.value) {
+                    // Swal.fire('Result:' + result.value);
+
+                    var objPushgrequest = {};
+
+                    objPushgrequest.paymentRefNumber = parameters.toString();
+                    objPushgrequest.requestCommet = result.value.toString();
+
+                    console.log(objPushgrequest);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "Push?handler=PushRequest",
+                        data: JSON.stringify(objPushgrequest),
+                        contentType: "application/json",
+                        dataType: "json",
+                        traditional: true,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (result) {
+                            console.log(result);
+                            var pus = result;
+                            if (pus.toString() === '1') {
+                                Swal.fire({
+                                    type: 'success',
+                                    title: 'Reconciliation Solution',
+                                    text: 'Push to Reem Request Sent',
+                                    footer: ''
+                                });
+                            }
+                        },
+                        error: function () {
+                            //alert("Something went wrong call the police");
+                            $("#msg").html("Error while making Ajax call!");
+                        }
+                    });
+                }
+            });
+
+
+            //Swal.fire({
+            //    type: 'warning',
+            //    title: 'Oops...',
+            //    text: 'Calculated Closing Balance not equal to Bank Statement closing balance!!!',
+            //    footer: ''
+            //})
+        }
+    </script>
+    <!-- data tables -->
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+    <!-- Sweet Alert -->
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert.min.js"></script>
+    <script src="~/smile/assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+}

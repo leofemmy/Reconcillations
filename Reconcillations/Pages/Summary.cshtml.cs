@@ -14,16 +14,56 @@ using Microsoft.Extensions.Hosting;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Reconcillations.Services;
 
 namespace Reconcillations.Pages
 {
     public class SummaryModel : PageModel
     {
+
+        public SelectList PeriodSelectList
+        {
+            get; set;
+        }
+
+        public SelectList peryear
+        {
+            get; set;
+        }
+
         ITransactionRepository _transactionRepository; IHostingEnvironment _hostingEnvironment;
-        public XtraReport Report { get; set; }
+
+
+        public XtraReport Report
+        {
+            get; set;
+        }
+
         [BindProperty]
-        public Summarys summarys { get; set; }
-        public string summarytype { get; set; }
+        public Summarys summarys
+        {
+            get; set;
+        }
+
+        public string summarytype
+        {
+            get; set;
+        }
+
+        [BindProperty]
+        public Periodlist Periodlist
+        {
+            get; set;
+        }
+
+        [BindProperty]
+        public PeriodYear PeriodYear
+        {
+            get; set;
+        }
+
+
         public string[] summarytypes = new[] { "Summary", "Reversals" };
 
         public SummaryModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
@@ -35,6 +75,13 @@ namespace Reconcillations.Pages
         
         public void OnGet()
         {
+            var per = (from e in _transactionRepository.GetPeriodlist() select e).ToList();
+            PeriodSelectList = new SelectList(per, "PeriodMonth", "PeriodName");
+            HttpContext.Session.Set("Periodlist", per);
+
+            var yer = (from y in _transactionRepository.GetPeriodYear() select y).ToList();
+            peryear = new SelectList(yer, "PeridYear", "PeridYear");
+            HttpContext.Session.Set("PeriodYear", yer);
         }
        
         XtraReport createreport(DataTable dts)

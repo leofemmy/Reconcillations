@@ -7,6 +7,11 @@
     ViewData["Title"] = "Normalise Record";
 
     var postList = httpContextAccessor.HttpContext.Session.GetObject<List<Accountlists>>("actlist");
+
+    var yerlist = httpContextAccessor.HttpContext.Session.GetObject<List<PeriodYear>>("PeriodYear");
+
+    var perList = httpContextAccessor.HttpContext.Session.GetObject<List<Periodlist>>("Periodlist");
+
 }
 @section header
 {
@@ -38,32 +43,66 @@
     <div id="dvsearch" class="col-md-12 col-sm-12">
         <div class="card-body" id="bar-parent2">
             <form>
-                <div class="form-group row">
-                    <label class="col-md-3 control-label">
-                        Start Date <span class="required"> * </span>
-                    </label>
-                    <span class="alert-danger"></span>
-                    <div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy/mm/dd">
-                        <input id="txtstart" class="form-control" size="12" type="text" value="">
-                        <span class="input-group-addon"><span class="fa fa-remove"></span></span>
-                        <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                @*<div class="form-group row">
+                        <label class="col-md-3 control-label">
+                            Start Date <span class="required"> * </span>
+                        </label>
+                        <span class="alert-danger"></span>
+                        <div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy/mm/dd">
+                            <input id="txtstart" class="form-control" size="12" type="text" value="">
+                            <span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                        </div>
+                        <input type="hidden" id="dtp_input1" value="" />
+                        <br />
                     </div>
-                    <input type="hidden" id="dtp_input1" value="" />
-                    <br />
+                    <div class="form-group row">
+                        <label class="col-md-3 control-label">
+                            End Date
+                            <span class="required"> * </span>
+                        </label>
+                        <span class="alert-danger"></span>
+                        <div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy/mm/dd">
+                            <input id="txtend" class="form-control" size="12" type="text" value="">
+                            <span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                        </div>
+                        <input type="hidden" id="dtp_input2" value="" />
+                        <br />
+                    </div>*@
+                <div class="form-group row">
+                    <label class="control-label col-md-3">
+                        Period
+                        <span class="required"> * </span>
+                        <span class="alert-danger" asp-validation-for="bankimport.periodMonth"></span>
+                    </label>
+                    <div class="col-md-4">
+
+                        <select asp-for="bankimport.periodMonth" id="periodid" class="form-control select2"
+                                asp-items="@(new SelectList(perList, "PeriodMonth", "PeriodName"))">
+                            @if (perList != null)
+                            {
+                                <option value="">-- Select Period  --</option>
+                            }
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-3 control-label">
-                        End Date
+                    <label class="control-label col-md-3">
+                        Year
                         <span class="required"> * </span>
+                        <span class="alert-danger" asp-validation-for="bankimport.periodYear"></span>
                     </label>
-                    <span class="alert-danger"></span>
-                    <div id="ddstart" class="input-group date form_date col-md-4" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy/mm/dd">
-                        <input id="txtend" class="form-control" size="12" type="text" value="">
-                        <span class="input-group-addon"><span class="fa fa-remove"></span></span>
-                        <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                    <div class="col-md-4">
+
+                        <select asp-for="bankimport.periodYear" id="periodyear" class="form-control select2"
+                                asp-items="@(new SelectList(yerlist, "PeridYear","PeridYear"))">
+                            @if (yerlist != null)
+                            {
+                                <option value="">-- Select Year  --</option>
+                            }
+                        </select>
                     </div>
-                    <input type="hidden" id="dtp_input2" value="" />
-                    <br />
                 </div>
                 <div class="form-group row">
                     <label class="control-label col-md-3">
@@ -519,21 +558,23 @@
 
             console.log($("#postid").val());
 
-            if ($('#txtstart').val().length == 0) {
-                Swal.fire({
-                    type: 'info',
-                    title: 'Reconciliation Solution',
-                    text: 'Start Date is Empty',
-                    footer: ''
-                });
-            } else if ($('#txtend').val().length == 0) {
-                Swal.fire({
-                    type: 'info',
-                    title: 'Reconciliation Solution',
-                    text: 'End Date is empty',
-                    footer: ''
-                });
-            } else if ($('#postid').val().length == 0) {
+            //if ($('#txtstart').val().length == 0) {
+            //    Swal.fire({
+            //        type: 'info',
+            //        title: 'Reconciliation Solution',
+            //        text: 'Start Date is Empty',
+            //        footer: ''
+            //    });
+            //} else if ($('#txtend').val().length == 0) {
+            //    Swal.fire({
+            //        type: 'info',
+            //        title: 'Reconciliation Solution',
+            //        text: 'End Date is empty',
+            //        footer: ''
+            //    });
+            //}
+            //else
+            if ($('#postid').val().length == 0) {
                 Swal.fire({
                     type: 'info',
                     title: 'Reconciliation Solution',
@@ -551,9 +592,10 @@
                 //$("#txtstartdate").val()
 
                 var objexception = {};
+                
 
-                objexception.startdate = $('#txtstart').val();
-                objexception.enddate = $('#txtend').val();
+                objexception.period = $('#periodid').val();
+                objexception.year = $('#periodyear').val();
                 objexception.transID = 15;
                 objexception.accountID = $('#postid').val();
 

@@ -280,7 +280,8 @@ namespace Reconcillations.Pages.ImpBank
                                 Balance = !DBNull.Value.Equals(row["Balance"]) ? Convert.ToDecimal(row["Balance"]) : 0,
                                 Tellerno = !DBNull.Value.Equals(row["Tellerno"]) ? row["Tellerno"].ToString() : null,
                                 Revenuecode = !DBNull.Value.Equals(row["RevenueCode"]) ? row["RevenueCode"].ToString() : null,
-                                Description = !DBNull.Value.Equals(row["PayerName"]) ? row["PayerName"].ToString() : null
+                                Description = !DBNull.Value.Equals(row["PayerName"]) ? row["PayerName"].ToString() : null,
+                                TransID = !DBNull.Value.Equals(row["TransID"]) ? Convert.ToDecimal(row["TransID"]) : 0
                                 //RecperID
                             }).ToList();
 
@@ -456,7 +457,7 @@ namespace Reconcillations.Pages.ImpBank
 
 
             }
-            
+
             if (TempData.ContainsKey("MatchedData"))
             {
                 var md = TempData["MatchedData"];
@@ -483,16 +484,9 @@ namespace Reconcillations.Pages.ImpBank
 
         public ActionResult OnPostAllocateTransaction([FromBody] Allocate allocate)
         {
-            //DataTable dtexcel = (DataTable)JsonConvert.DeserializeObject(hgb.ToString(), (typeof(DataTable)));
+
             DataSet dstresult = new DataSet();
-            // allocate.reconileID = 10003;
-            //DataTable dtdeb = JsonStringToDataTable(allocate.dtDebit.ToString());
 
-            //DataTable dtcred = JsonStringToDataTable(allocate.dtCredit.ToString());
-
-            //int gh = _transactionRepository.SaveAllocatetrans();
-
-            //HttpContext.Session.SetString("Usernames", strusername);
 
             DataTable dtsdebit = allocate.dtDebit;
             DataTable dtscredit = allocate.dtCredit;

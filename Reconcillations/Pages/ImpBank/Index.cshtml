@@ -36,8 +36,8 @@
                             <th> Opening </th>
                             <th> Closing </th>
                             <th> Currency </th>
-                            <th> Start Date </th>
-                            <th> End Date </th>
+                            <th> Period </th>
+                            <th> Year </th>
                             <th> Stage </th>
                             @*<th> Period Closed </th>*@
                             <th> Action </th>
@@ -61,8 +61,10 @@
                                 <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.OpeningBal)</h5></td>
                                 <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.ClosingBal)</h5></td>
                                 <td onclick="myFunction(this)" class="view-message "><h5>@items.Currency</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Period</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Year</h5></td>
+                                @*<td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>*@
                                 <td onclick="myFunction(this)" class="view-message "><h5>@items.Stages</h5></td>
                                 <td>
                                     <form method="post">

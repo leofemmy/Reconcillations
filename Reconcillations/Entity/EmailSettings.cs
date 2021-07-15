@@ -150,6 +150,7 @@ namespace Reconcillations.Entity
             get; set;
         }
     }
+
     public class Pass
     {
         [Required(ErrorMessage = "Email is required")]
@@ -162,11 +163,13 @@ namespace Reconcillations.Entity
         [DataType(DataType.Password)]
         public string Userpass { get; set; }
     }
+
     public class BankTypecode
     {
         public string Code { get; set; }
         public string Description { get; set; }
     }
+
     public class Banklist
     {
         public string BankCode { get; set; }
@@ -189,6 +192,7 @@ namespace Reconcillations.Entity
         [RegularExpression("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$", ErrorMessage = "Must be a valid email")]
         public string Email { get; set; }
     }
+
     public class Changepasss
     {
         [Required(ErrorMessage = "Email is required")]
@@ -211,6 +215,7 @@ namespace Reconcillations.Entity
         public string ConfirmPassword { get; set; }
 
     }
+   
     public class Cuserpass
     {
         [Required(ErrorMessage = "Email is required")]
@@ -229,40 +234,91 @@ namespace Reconcillations.Entity
 
         public string Code { get; set; }
     }
+   
     public class TransactionList
     {
         //[Key]
         //[Display(Name = "Account Id")]
-        public Int64 RecperID { get; set; }
+        public Int64 RecperID
+        {
+            get; set;
+        }
 
         //[Required]
         [Display(Name = "Account")]
         [StringLength(500, ErrorMessage = "Name should be 1 to 500 char in length")]
-        public string AccountName { get; set; }
+        public string AccountName
+        {
+            get; set;
+        }
 
         [Display(Name = "Bank")]
         [StringLength(500, ErrorMessage = "Name should be 1 to 500 char in length")]
-        public string BankName { get; set; }
+        public string BankName
+        {
+            get; set;
+        }
 
-        public DateTime StartDate { get; set; }
+        public DateTime StartDate
+        {
+            get; set;
+        }
 
-        public DateTime EndDate { get; set; }
+        public DateTime EndDate
+        {
+            get; set;
+        }
 
-        public Int64 AccountID { get; set; }
+        public Int64 AccountID
+        {
+            get; set;
+        }
 
-        public Int64 StagesID { get; set; }
+        public Int64 StagesID
+        {
+            get; set;
+        }
 
-        public double OpeningBal { get; set; }
+        public double OpeningBal
+        {
+            get; set;
+        }
 
-        public double ClosingBal { get; set; }
+        public double ClosingBal
+        {
+            get; set;
+        }
 
-        public bool IsClosed { get; set; }
+        public bool IsClosed
+        {
+            get; set;
+        }
 
-        public string Symbol { get; set; }
+        public string Symbol
+        {
+            get; set;
+        }
 
-        public string Stages { get; set; }
+        public string Stages
+        {
+            get; set;
+        }
 
-        public string Currency { get; set; }
+        public string Currency
+        {
+            get; set;
+        }
+
+        public string Period
+        {
+            get; set;
+        }
+
+        public long Year
+        {
+            get; set;
+        }
+
     }
 
     public class SearchUser
@@ -271,6 +327,7 @@ namespace Reconcillations.Entity
 
         public string Email { get; set; }
     }
+   
     public class Account
     {
         public double AccountID { get; set; }
@@ -309,19 +366,31 @@ namespace Reconcillations.Entity
 
     public class Summarys
     {
-        [Required(ErrorMessage = "Please choose Start date.")]
-        [Display(Name = "Start Date")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        //[Required(ErrorMessage = "Please choose Start date.")]
+        //[Display(Name = "Start Date")]
+        //[DataType(DataType.Date)]
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         //[CustomAdmissionDate(ErrorMessage = "Admission Date must be less than or equal to Today's Date.")]
         public DateTime Startdate { get; set; }
 
-        [Required(ErrorMessage = "Please choose end date.")]
-        [Display(Name = "End Date")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        //[Required(ErrorMessage = "Please choose end date.")]
+        //[Display(Name = "End Date")]
+        //[DataType(DataType.Date)]
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         //[CustomAdmissionDate(ErrorMessage = "Admission Date must be less than or equal to Today's Date.")]
         public DateTime Enddate { get; set; }
+
+        [Required(ErrorMessage = "Select Period")]
+        public long periodMonth
+        {
+            get; set;
+        }
+
+        [Required(ErrorMessage = "Select Year")]
+        public long periodYear
+        {
+            get; set;
+        }
 
     }
 
@@ -382,28 +451,82 @@ namespace Reconcillations.Entity
         public string BankName { get; set; }
         public string Description { get; set; }
     }
+
     public class Posting
     {
         public long reconileID { get; set; }
         public string Userid { get; set; }
     }
+
+    public class PushExceptRequest
+    {
+        public string Userid
+        {
+            get; set;
+        }
+
+        public string PaymentRefNumber
+        {
+            get; set;
+        }
+
+        public string RequestCommet
+        {
+            get; set;
+        }
+    }
+
     public class ExcelEment
     {
-        public DateTime Date { get; set; }
-        public decimal Debit { get; set; }
-        public decimal Credit { get; set; }
-        public decimal Balance { get; set; }
-        public string Tellerno { get; set; }
-        public string Revenuecode { get; set; }
-        public string Description { get; set; }
+        public DateTime Date
+        {
+            get; set;
+        }
+
+        public decimal Debit
+        {
+            get; set;
+        }
+
+        public decimal Credit
+        {
+            get; set;
+        }
+
+        public decimal Balance
+        {
+            get; set;
+        }
+
+        public string Tellerno
+        {
+            get; set;
+        }
+
+        public string Revenuecode
+        {
+            get; set;
+        }
+
+        public string Description
+        {
+            get; set;
+        }
+
+        public decimal TransID
+        {
+            get; set;
+        }
 
     }
+
     public class Reconcileday
     {
         public long Accountid { get; set; }
         public DateTime Startdate { get; set; }
         public DateTime Enddate { get; set; }
     }
+
     public class Reconcilelist
     {
         public long RecperID { get; set; }
@@ -430,6 +553,47 @@ namespace Reconcillations.Entity
         public string NormalisedBy { get; set; }
         public DateTime NormaliseDate { get; set; }
     }
+
+    public class RequestPushReemList
+    {
+        public DateTime PaymentDate
+        {
+            get;
+            set;
+        }
+
+        public string PaymentRefNumber
+        {
+            get;
+            set;
+        }
+        public string payername
+        {
+            get;
+            set;
+        }
+        public decimal Amount
+        {
+            get;
+            set;
+        }
+        public string RevenueName
+        {
+            get;
+            set;
+        }
+        public string PushToReemsRequestBy
+        {
+            get;
+            set;
+        }
+        public DateTime PushToReemsRequestOn
+        {
+            get;
+            set;
+        }
+    }
+
     public class ModifyRecords
     {
         public long ModifyID { get; set; }
@@ -445,21 +609,113 @@ namespace Reconcillations.Entity
         public string ModifyBy { get; set; }
         public DateTime ModifyDate { get; set; }
     }
+
+    public class PushToReemsExceution
+    {
+        public string PaymentRefNumber
+        {
+            get; set;
+        }
+
+        public string Comment
+        {
+            get; set;
+        }
+
+        public string Userid
+        {
+            get; set;
+        }
+
+        public int Execution
+        {
+            get; set;
+        }
+    }
+   
+    public class PushException
+    {
+        public string PaymentRefNumber { get; set; }
+        public DateTime PaymentDate { get; set; }
+        public string payername { get; set; }
+        public decimal Amount { get; set; }
+        public string RevenueName { get; set; }
+    }
+
     public class RequestApprove
     {
-        public long RecperID { get; set; }
-        public string BankName { get; set; }
-        public string Description { get; set; }
-        public string AccountName { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public string Stages { get; set; }
-        public int days { get; set; }
-        public decimal openingbal { get; set; }
-        public decimal closebal { get; set; }
-        public decimal credit { get; set; }
-        public decimal debit { get; set; }
+        public long RecperID
+        {
+            get; set;
+        }
+
+        public string BankName
+        {
+            get; set;
+        }
+
+        public string Description
+        {
+            get; set;
+        }
+
+        public string AccountName
+        {
+            get; set;
+        }
+
+        public string Period
+        {
+            get;
+            set;
+        }
+
+        public long Year
+        {
+            get;
+            set;
+        }
+        public DateTime StartDate
+        {
+            get; set;
+        }
+
+        public DateTime EndDate
+        {
+            get; set;
+        }
+
+        public string Stages
+        {
+            get; set;
+        }
+
+        public int days
+        {
+            get; set;
+        }
+
+        public decimal openingbal
+        {
+            get; set;
+        }
+
+        public decimal closebal
+        {
+            get; set;
+        }
+
+        public decimal credit
+        {
+            get; set;
+        }
+
+        public decimal debit
+        {
+            get; set;
+        }
     }
+
     public class Requesntsent
     {
         public long RecperID { get; set; }
@@ -476,11 +732,13 @@ namespace Reconcillations.Entity
         public decimal debit { get; set; }
         public string Requestby { get; set; }
     }
+
     public class ResponseInfo
     {
         public string StatusCode { get; set; }
         public string StatusMessage { get; set; }
     }
+
     public class ResponseInfo<TObject> where TObject : class
     {
         public string StatusCode { get; set; }
@@ -488,6 +746,7 @@ namespace Reconcillations.Entity
 
         public TObject ResponseObject { get; set; }
     }
+
     public class ResponseMessage<T>
     {
         public int StatusId { get; set; }
@@ -496,6 +755,7 @@ namespace Reconcillations.Entity
         public T RecordResponseObject { get; set; }
         public bool IsSuccessful => StatusId == 1;
     }
+
     public class ReconcileEntity
     {
         public long reconileID { get; set; }
@@ -520,11 +780,13 @@ namespace Reconcillations.Entity
 
         public string reasons { get; set; }
     }
+
     public class AllocateModify
     {
         public string Userid { get; set; }
         public DataTable dbvalue { get; set; }
     }
+
     public class Allocate
     {
         public long reconileID { get; set; }
@@ -532,11 +794,13 @@ namespace Reconcillations.Entity
         public DataTable dtDebit { get; set; }
         public DataTable dtCredit { get; set; }
     }
+
     public class Currency
     {
         public int CurrencyID { get; set; }
         public string CurrencyName { get; set; }
     }
+
     public class Transaction
     {
         [Key]
@@ -567,37 +831,44 @@ namespace Reconcillations.Entity
         [Display(Name = "Element Category")]
         public Int64 ElementCategoryID { get; set; }
     }
+
     public class Currencys
     {
         public Int64 CurrencyID { get; set; }
         public string CurrencyName { get; set; }
     }
+
     public class Classtypes
     {
         public string Code { get; set; }
         public string Description { get; set; }
     }
+
     public class BankType
     {
         public string BankCode { get; set; }
         public string BankName { get; set; }
     }
+
     public class ActionType
     {
         public int Id { set; get; }
         public string Name { set; get; }
     }
+
     public class Type
     {
         public string TypeCode { get; set; }
         public string TypeName { get; set; }
     }
+
     public class Element
     {
         public int? ElementCategoryID { get; set; }
 
         public string Name { get; set; }
     }
+
     public class CUsers
     {
         [Required]
@@ -622,37 +893,101 @@ namespace Reconcillations.Entity
         public string Usercode { get; set; }
 
     }
+
     public class Exceptions
     {
         [Required(ErrorMessage = "Transaction Type")]
-        public long TransID { get; set; }
+        public long TransID
+        {
+            get; set;
+        }
+
         [Required(ErrorMessage = "Account Name")]
-        public long AccountID { get; set; }
+        public long AccountID
+        {
+            get; set;
+        }
 
-        [Required(ErrorMessage = "Please choose Start date.")]
-        [Display(Name = "Start Date")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-       
-        public DateTime Startdate { get; set; }
+        [Required(ErrorMessage = "Select Period")]
+        public long periodMonth
+        {
+            get; set;
+        }
 
-        [Required(ErrorMessage = "Please choose end date.")]
-        [Display(Name = "End Date")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime Enddate { get; set; }
-      
+        [Required(ErrorMessage = "Select Year")]
+        public long periodYear
+        {
+            get; set;
+        }
+
+        //[Required(ErrorMessage = "Please choose Start date.")]
+        //[Display(Name = "Start Date")]
+        //[DataType(DataType.Date)]
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+
+        public DateTime Startdate
+        {
+            get; set;
+        }
+
+        //[Required(ErrorMessage = "Please choose end date.")]
+        //[Display(Name = "End Date")]
+        //[DataType(DataType.Date)]
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime Enddate
+        {
+            get; set;
+        }
+
     }
+
     public class Accountlists
     {
-        public long AccountID { get; set; }
-        public string AccountName { get; set; }
+        public long AccountID
+        {
+            get; set;
+        }
+
+        public string AccountName
+        {
+            get; set;
+        }
     }
+
+    public class Periodlist
+    {
+        public long PeriodMonth
+        {
+            get; set;
+        }
+
+        public string PeriodName
+        {
+            get; set;
+        }
+    }
+
     public class Definitionlist
     {
-        public long TransID { get; set; }
-        public string Description { get; set; }
+        public long TransID
+        {
+            get; set;
+        }
+
+        public string Description
+        {
+            get; set;
+        }
     }
+
+    public class PeriodYear
+    {
+        public Int64 PeridYear
+        {
+            get; set;
+        }
+    }
+
     public class Postinglist
     {
         public long RecperID { get; set; }
@@ -664,21 +999,25 @@ namespace Reconcillations.Entity
         public Int64 AgencyId { get; set; }
         public string AgencyName { get; set; }
     }
+
     public class element
     {
         public Int64 ElementCategoryID { get; set; }
         public string Name { get; set; }
     }
+
     public class typeuser
     {
         public string TypeCode { get; set; }
         public string TypeName { get; set; }
     }
+
     public class Usertypelist
     {
         public string TypeCode { get; set; }
         public string Description { get; set; }
     }
+
     public class UsersList
     {
         public long UserId { get; set; }

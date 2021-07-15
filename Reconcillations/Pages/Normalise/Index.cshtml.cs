@@ -27,6 +27,10 @@ namespace Reconcillations.Pages.Normalise
 
         public SelectList AccountSelectlist { get; set; }
 
+        public SelectList PeriodSelectList { get; set; }
+
+        public SelectList peryear { get; set; }
+
         [BindProperty]
         public NorRec norrec { get; set; }
 
@@ -35,6 +39,12 @@ namespace Reconcillations.Pages.Normalise
 
         [BindProperty]
         public Accountlists actlist { get; set; }
+
+        [BindProperty]
+        public Periodlist Periodlist { get; set; }
+
+        [BindProperty]
+        public PeriodYear PeriodYear { get; set; }
 
         public IndexModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
@@ -51,6 +61,16 @@ namespace Reconcillations.Pages.Normalise
             AccountSelectlist = new SelectList(dat, "AccountID", "AccountName");
 
             HttpContext.Session.Set("actlist", dat);
+
+
+            var per = (from e in _transactionRepository.GetPeriodlist() select e).ToList();
+            PeriodSelectList = new SelectList(per, "PeriodMonth", "PeriodName");
+            HttpContext.Session.Set("Periodlist", per);
+
+
+            var yer = (from y in _transactionRepository.GetPeriodYear() select y).ToList();
+            peryear = new SelectList(yer, "PeridYear", "PeridYear");
+            HttpContext.Session.Set("PeriodYear", yer);
         }
 
         public IActionResult OnGetAgencyAll()
@@ -169,19 +189,21 @@ namespace Reconcillations.Pages.Normalise
                     {
                         _bankrecod.AccountID = Convert.ToInt64(item.Value.ToString());
                     }
-                    else if (item.Key.ToString() == "startdate")
+                    else if (item.Key.ToString() == "period")
                     {
                         //_recondays.Startdate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                        _bankrecod.Startdate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
-
+                        //_bankrecod.Startdate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                        _bankrecod.periodMonth = Convert.ToInt64(item.Value);
                     }
-                    else if (item.Key.ToString() == "transID")
+                    else
+                    if (item.Key.ToString() == "transID")
                     {
                         _bankrecod.TransID = Convert.ToInt64(item.Value.ToString());
                     }
-                    else if (item.Key.ToString() == "enddate")
+                    else if (item.Key.ToString() == "year")
                     {
-                        _bankrecod.Enddate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                        //_bankrecod.Enddate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                        _bankrecod.periodYear = Convert.ToInt64(item.Value);
                     }
 
                 }

@@ -343,6 +343,7 @@
                 return true;
             }
         });
+
         function isNumberKey(evt) {
             var charCode = (evt.which) ? evt.which : event.keyCode
             //if (charCode > 31 && (charCode < 48 || charCode > 57))
@@ -873,13 +874,6 @@
                     "bFilter": false,
                     "paging": false,
                     'scrollY': 500,
-                    //"columnDefs": [
-                    //    {
-                    //        "targets": [0],
-                    //        "visible": true,
-                    //        "searchable": false
-                    //    }
-                    //],
                     columnDefs: [
                         {
                             targets: [0, 1],
@@ -911,7 +905,9 @@
                         },
                         {
                             data: 'transID',
-                            render: function (data) { return createSelect(data); },
+                            render: function (data) {
+                                return createSelect(data);
+                            },
                             width: "10%"
 
 
@@ -919,6 +915,7 @@
 
                     ]
                 });
+
                 $('#tblcredit').removeAttr('width').DataTable({
                     data: ced,
                     "paging": false,
@@ -945,9 +942,11 @@
                         },
                         { data: 'cPayerName' },
                         {
-                            //data: 'CTransID',
-                            data: null,
-                            render: function (data) { return createSelect2(data); }
+                            data: 'transID',
+                            //data: null,
+                            render: function (data) {
+                                return createSelect2(data);
+                            }
 
                         }
 
@@ -1123,13 +1122,17 @@
         // the function creates a select box
         function createSelect(selItem) {
             //class="form-control  select2"
+
             var sel = "<select><option>Select Transaction Definition</option>";
             for (var i = 0; i < debtran.length; ++i) {
-                if (debtran[i] == selItem) {
-                    sel += "<option selected value = '" + debtran[0].transID + "' >" + debtran[i].description + "</option>";
+
+                if (debtran[i].transID == selItem) {
+
+                    sel += "<option selected value = '" + debtran[i].transID + "' >" + debtran[i].description + "</option>";
                 }
                 else {
                     sel += "<option  value = '" + debtran[i].transID + "' >" + debtran[i].description + "</option>";
+
                 }
             }
             sel += "</select>";
@@ -1137,10 +1140,13 @@
         }
 
         function createSelect2(selItem) {
+
             var sel = "<select class='selcred'><option value='0'>Select Transaction Definition</option>";
+
             for (var i = 0; i < cedtran.length; ++i) {
-                if (cedtran[i] == selItem) {
-                    sel += "<option selected value = '" + cedtran[0].transID + "' >" + cedtran[i].description + "</option>";
+
+                if (cedtran[i].transID == selItem) {
+                    sel += "<option selected value = '" + cedtran[i].transID + "' >" + cedtran[i].description + "</option>";
                 }
                 else {
                     sel += "<option  value = '" + cedtran[i].transID + "' >" + cedtran[i].description + "</option>";

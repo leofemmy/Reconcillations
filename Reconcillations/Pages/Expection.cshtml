@@ -6,7 +6,11 @@
 @{
     var postList = httpContextAccessor.HttpContext.Session.GetObject<List<Accountlists>>("actlist");
 
+    var perList = httpContextAccessor.HttpContext.Session.GetObject<List<Periodlist>>("Periodlist");
+
     var deftList = httpContextAccessor.HttpContext.Session.GetObject<List<Definitionlist>>("_definitionlist");
+
+    var yerlist = httpContextAccessor.HttpContext.Session.GetObject<List<PeriodYear>>("PeriodYear");
 }
 @section header{
     <!-- Sweet Alert item CSS -->
@@ -27,19 +31,19 @@
             <div class="card-body" id="bar-parent2">
                 <form method="post">
                     @Html.AntiForgeryToken()
-                    <div class="form-group row">
-                        <label class="col-md-3 control-label">
-                            Start Date   <span class="required"> * </span>
-                        </label>
-                        <span class="alert-danger"></span>
-                        <div class="col-md-4">
-                            <input asp-for="bankimport.Startdate" class="form-control">
-                            <span class="alert-danger" asp-validation-for="bankimport.Startdate"></span>
-                        </div>
-                        <input type="hidden" id="dtp_input1" value="" />
-                        <br />
-                    </div>
-                    <div class="form-group row">
+                    @*<div class="form-group row">
+                            <label class="col-md-3 control-label">
+                                Start Date   <span class="required"> * </span>
+                            </label>
+                            <span class="alert-danger"></span>
+                            <div class="col-md-4">
+                                <input asp-for="bankimport.Startdate" class="form-control">
+                                <span class="alert-danger" asp-validation-for="bankimport.Startdate"></span>
+                            </div>
+                            <input type="hidden" id="dtp_input1" value="" />
+                            <br />
+                        </div>*@
+                    <!--<div class="form-group row">
                         <label class="col-md-3 control-label">
                             End Date
                             <span class="required"> * </span>
@@ -47,13 +51,47 @@
                         </label>
                         <span class="alert-danger"></span>
                         <div class="col-md-4">
-                            <input asp-for="bankimport.Enddate" class="form-control">
-                            @*<span class="input-group-addon"><span class="fa fa-remove"></span></span>
-                                <span class="input-group-addon"><span class="fa fa-calendar"></span></span>*@
-                            <span class="alert-danger" asp-validation-for="bankimport.Enddate"></span>
+                            <input asp-for="bankimport.Enddate" class="form-control">-->
+                    @*<span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                        <span class="input-group-addon"><span class="fa fa-calendar"></span></span>*@
+                    <!--<span class="alert-danger" asp-validation-for="bankimport.Enddate"></span>
                         </div>
                         <input type="hidden" id="dtp_input1" value="" />
                         <br />
+                    </div>-->
+                    <div class="form-group row">
+                        <label class="control-label col-md-3">
+                            Period
+                            <span class="required"> * </span>
+                            <span class="alert-danger" asp-validation-for="bankimport.periodMonth"></span>
+                        </label>
+                        <div class="col-md-4">
+
+                            <select asp-for="bankimport.periodMonth" id="periodid" class="form-control select2"
+                                    asp-items="@(new SelectList(perList, "PeriodMonth", "PeriodName"))">
+                                @if (perList != null)
+                                {
+                                    <option value="">-- Select Period  --</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-md-3">
+                            Year
+                            <span class="required"> * </span>
+                                                 <span class="alert-danger" asp-validation-for="bankimport.periodYear"></span>
+                        </label>
+                        <div class="col-md-4">
+
+                            <select asp-for="bankimport.periodYear" id="periodyear" class="form-control select2"
+                                    asp-items="@(new SelectList(yerlist, "PeridYear","PeridYear"))">
+                                @if (yerlist != null)
+                                {
+                                    <option value="">-- Select Year  --</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-3">
@@ -82,16 +120,20 @@
                                     asp-items="@(new SelectList(deftList,"TransID","Description"))">
                                 @if (deftList != null)
                                 {
-                                    <option value="">-- Select Bank  Account Name --</option>
+                                    <option value="">-- Select Exception Type --</option>
                                 }
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="control-label col-md-9">
+                    <div class="form-group row">
+                        <div class="control-label col-md-3">
+
+                        </div>
+                        <div class="col-md-4">
                             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"> View </button>
                         </div>
                     </div>
+
 
                 </form>
             </div>

@@ -32,10 +32,13 @@ namespace Reconcillations.Pages
         public void OnPost()
         {
             var gt = HttpContext.Session.GetString("RevenueName");
-            var gtstart = HttpContext.Session.GetString("StartDate");
-            var gtend = HttpContext.Session.GetString("EndDate");
+            //var gtstart = HttpContext.Session.GetString("StartDate");
+            //var gtend = HttpContext.Session.GetString("EndDate");
 
-            DataTable dt = _transactionRepository.Viewdetails(gt.ToString(), Convert.ToDateTime(gtstart), Convert.ToDateTime(gtend));
+            var pMonths = HttpContext.Session.GetString("perMonth");
+            var pYear = HttpContext.Session.GetString("perYear");
+
+            DataTable dt = _transactionRepository.Viewdetails(gt.ToString(), Convert.ToInt64(pMonths), Convert.ToInt64(pYear));
 
             Report = createreport(dt);
         }

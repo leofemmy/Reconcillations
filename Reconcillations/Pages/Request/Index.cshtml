@@ -16,7 +16,7 @@
 }
 <div class="page-bar">
     @*@HttpContext.Session.GetString("UserEmail")*@
-    @HttpContext.Request.Host.Value.ToString();
+    @*@HttpContext.Request.Host.Value.ToString();*@
     <div class="page-title-breadcrumb">
         <div class=" pull-left">
             <div class="page-title">Posting Requesting </div>
@@ -51,8 +51,8 @@
                             <th>Credit</th>
                             <th>Debit</th>
                             <th>Closing bal</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
+                            <th>Period</th>
+                            <th>Year</th>
                             <th>Stage</th>
                             <th>Days</th>
                             <th>Action</th>
@@ -83,8 +83,10 @@
                                 <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.credit)</h5></td>
                                 <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.debit)</h5></td>
                                 <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.closebal)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Period</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Year</h5></td>
+                                @*<td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>*@
                                 <td onclick="myFunction(this)" class="view-message "><h5>@items.Stages</h5></td>
                                 <td onclick="myFunction(this)" class="view-message "><h5>@items.days</h5></td>
                                 <td>
