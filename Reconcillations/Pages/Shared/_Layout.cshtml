@@ -108,7 +108,7 @@
                             </div>
                         </li>
 
-                        @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "I"))
+                        @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "I") || (session.GetString("UserType") == "P"))
                         {
                             @*<li class="nav-item">
                                     <a href="~/Transaction" class="nav-link nav-toggle">
@@ -193,7 +193,7 @@
                                 <span class="arrow"></span>
                             </a>
                             <ul class="sub-menu">
-                                @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "I"))
+                                @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "I") || (session.GetString("UserType") == "P"))
                                 {
                                     <li class="nav-item">
                                         <a href="~/Normalise" class="nav-link ">
@@ -219,7 +219,7 @@
                             </a>
                             <ul class="sub-menu">
 
-                                @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "I"))
+                                @if ((session.GetString("UserType") == "SA") || (session.GetString("UserType") == "I") || (session.GetString("UserType") == "P"))
                                 {
                                     <li class="nav-item">
                                         <a href="~/Transaction" class="nav-link nav-toggle">

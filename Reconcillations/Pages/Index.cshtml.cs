@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +24,8 @@ namespace Reconcillations.Pages
         private IHostingEnvironment _hostingEnvironment;
 
         ITransactionRepository _transactionRepository;
+
+        //private readonly int PasswordExpireDays ;
 
         [TempData]
         public string Message { get; set; }
@@ -58,8 +61,12 @@ namespace Reconcillations.Pages
 
             _logger.LogInformation(Newtonsoft.Json.JsonConvert.SerializeObject(cuserpass));
 
+
             if (ModelState.IsValid)
             {
+
+                int PasswordExpireDays = Convert.ToInt32(ConfigurationManager.AppSettings["PasswordExpireDays"]);
+
                 DataSet dsusers = _transactionRepository.GetUserLogin(cuserpass.Email);
 
                 if (dsusers != null && dsusers.Tables[0].Rows.Count > 0)
@@ -80,17 +87,17 @@ namespace Reconcillations.Pages
 
                         if (dbCheckUserid != null && dbCheckUserid.Tables[0].Rows.Count > 0)
                         {
-                            Boolean blflag = !string.IsNullOrWhiteSpace(dbCheckUserid.Tables[0].Rows[0]["Flag"].ToString()) ? Convert.ToBoolean(dbCheckUserid.Tables[0].Rows[0]["Flag"].ToString()) : false;
+                            //Boolean blflag = !string.IsNullOrWhiteSpace(dbCheckUserid.Tables[0].Rows[0]["Flag"].ToString()) ? Convert.ToBoolean(dbCheckUserid.Tables[0].Rows[0]["Flag"].ToString()) : false;
 
-                            if (blflag)
+                            //if (blflag)
+                            //{
+                            //    //already log in using another browser
+                            //    Message = "User have previously log in with another browser, Log out to continue";
+                            //    MessageCode = "1";
+                            //}
+                            //else
                             {
-                                //already log in using another browser
-                                Message = "User have previously log in with another browser, Log out to continue";
-                                MessageCode = "1";
-                            }
-                            else
-                            {
-                           Int32 kj=     _transactionRepository.UpdateUserlog(cuserpass.Email, 1);
+                                Int32 kj = _transactionRepository.UpdateUserlog(cuserpass.Email, 1);
 
                                 MessageCode = "0";
 

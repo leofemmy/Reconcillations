@@ -69,24 +69,7 @@
             </script>
         }-->
         </form>
-        @*@if (ViewData["Mess"] != null)
-        {
-            var hj = @Html.Raw(ViewData["Mess"]);
-            <script>
-                Swal.fire({
-                    type: 'success',
-                    title: 'Success',
-                    text: hj,
-                    footer: ''
-                })
-            </script>
-        }*@
-        @*@if (ViewData["JavaScript"] != null)
-        {
-            <script>
-                    @Html.Raw(ViewData["JavaScript"])
-            </script>
-        }*@
+       
 
         @if (!string.IsNullOrWhiteSpace(Model.MessageCode))
         {
