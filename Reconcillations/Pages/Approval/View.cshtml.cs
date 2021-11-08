@@ -55,8 +55,6 @@ namespace Reconcillations.Pages.Approval
                 string emial = HttpContext.Session.GetString("UserEmail").ToString();
 
                 retval = _transactionRepository.posttransactionapproval(emial, recperiodid);
-
-
             }
 
             return new JsonResult(retval);
@@ -86,13 +84,17 @@ namespace Reconcillations.Pages.Approval
 
             return new JsonResult(retval);
         }
-      
+
         XtraReport createreport(DataTable dts)
         {
             XtraRepPostingRequestlist report = new XtraRepPostingRequestlist();
+
             report.DataSource = dts;
+
             report.DataMember = "vwpostingrequestlist";
+
             report.CreateDocument();
+
             return report;
         }
     }
