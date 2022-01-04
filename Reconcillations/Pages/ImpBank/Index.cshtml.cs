@@ -46,7 +46,7 @@ namespace Reconcillations.Pages.ImpBank
                     {
                         Message = responses.StatusMessage;
 
-                        return RedirectToPage("/Reconcile/Index");
+                        return RedirectToPage("/ImpBank/Index");
                     }
                     else
                     {

@@ -154,7 +154,9 @@ namespace Reconcillations
 
             app.UseRouting();
 
-            app.UseHangfireDashboard();
+            //"/hangfire"
+
+            app.UseHangfireDashboard("/Pusher");
 
             RecurringJob.AddOrUpdate(() => DoReemsPush(), Cron.MinuteInterval(2));
 
@@ -193,7 +195,7 @@ namespace Reconcillations
         {
             //var connectionString = this.GetConnection();
 
-            string connectionString = this.Configuration.GetConnectionString("DefaultConnection");
+             string connectionString = this.Configuration.GetConnectionString("DefaultConnection");
             try
             {
                 SqlDataAdapter _adp;
@@ -226,7 +228,7 @@ namespace Reconcillations
                         .WriteTo.MSSqlServer(connectionString, "Logs")
                         .CreateLogger();
                     loggers.Information($"Reems Push To Successfully ");
-                  
+
                 }
             }
             catch (Exception e)

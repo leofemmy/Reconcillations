@@ -1,9 +1,7 @@
 ﻿@page
 @model Reconcillations.Pages.ImpBank.IndexModel
-@{
-    Layout = "Shared/_Layout";
-    ViewData["Title"] = "Bank Transaction Lists";
-}
+@{ Layout = "Shared/_Layout";
+    ViewData["Title"] = "Bank Transaction Lists"; }
 @section header{
     <!-- data tables -->
     <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
@@ -44,42 +42,40 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @{
-                            int sno = 0;
-                        }
+                        @{ int sno = 0; }
                         @foreach (var items in Model._translist)
                         {
-                            <tr>
-                                <td onclick="myFunction(this)" class="view-message ">
-                                    <h5>
-                                        @{ sno++; }
-                                        @sno
-                                    </h5>
-                                </td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@items.BankName</h5></td>
-                                <td onclick="myFunction(this)" class="center view-message "><h5>@items.AccountName</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.OpeningBal)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.ClosingBal)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Currency</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Period</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Year</h5></td>
-                                @*<td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
-                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>*@
-                                <td onclick="myFunction(this)" class="view-message "><h5>@items.Stages</h5></td>
-                                <td>
-                                    <form method="post">
-                                        <span class="btn-group pull-right" style="margin-top: 5px">
-                                            <button type="submit" class="btn btn-outline-warning btn-xs" asp-page-handler="Delete" asp-route-id="@items.RecperID" style="height: 27px; margin-top: 0px;" title="Clear Transaction"
-                                                    onclick="return confirm('Are you sure to clear this transaction ?');">
-                                                @*onclick="Disable(@items.RecperID)"*@
-                                                <i class="fa fa-trash-o "></i>
-                                            </button>
+            <tr>
+                <td onclick="myFunction(this)" class="view-message ">
+                    <h5>
+                        @{ sno++; }
+                        @sno
+                    </h5>
+                </td>
+                <td onclick="myFunction(this)" class="view-message "><h5>@items.BankName</h5></td>
+                <td onclick="myFunction(this)" class="center view-message "><h5>@items.AccountName</h5></td>
+                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.OpeningBal)</h5></td>
+                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.ClosingBal)</h5></td>
+                <td onclick="myFunction(this)" class="view-message "><h5>@items.Currency</h5></td>
+                <td onclick="myFunction(this)" class="view-message "><h5>@items.Period</h5></td>
+                <td onclick="myFunction(this)" class="view-message "><h5>@items.Year</h5></td>
+                @*<td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.StartDate)</h5></td>
+                    <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:dd/MM/yyyy}", items.EndDate)</h5></td>*@
+                <td onclick="myFunction(this)" class="view-message "><h5>@items.Stages</h5></td>
+                <td>
+                    <form method="post">
+                        <span class="btn-group pull-right" style="margin-top: 5px">
+                            <button type="submit" class="btn btn-outline-warning btn-xs" asp-page-handler="Delete" asp-route-id="@items.RecperID" style="height: 27px; margin-top: 0px;" title="Clear Transaction">
+                                @*onclick="Swal.fire({type: 'warning',title: 'Are you sure?',text: 'You will not be able to recover this imaginary file!',showCancelButton: true,confirmButtonColor: '#DD6B55', confirmButtonText: 'Yes, delete it!',closeOnConfirm: false,footer: ''},function () { Swal.fire('Deleted!', 'Your imaginary file has been deleted.', 'success');})"*@
+                                @*onclick="Disable(@items.RecperID)"  confirm('Are you sure to clear this transaction ?');  *@
+                                <i class="fa fa-trash-o "></i>
+                            </button>
 
-                                        </span>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
+                        </span>
+                    </form>
+                </td>
+            </tr>
+}
                     </tbody>
                 </table>
             </div>

@@ -3065,9 +3065,7 @@ namespace Reconcillations.Repository
                     {
                         con.Open();
                     }
-
-                    //using (SqlTransaction sqlTransaction = con.BeginTransaction())
-                    //{
+                                        
                     using (SqlBulkCopy sqlBulkCopy = new SqlBulkCopy(con))
                     {
                         //Set the database table name
@@ -3087,27 +3085,11 @@ namespace Reconcillations.Repository
                         sqlBulkCopy.WriteToServer(dtsnew);
 
 
-
-
-                        //try
-                        //{
-                        //    sqlBulkCopy.WriteToServer(dtsnew);
-
-                        //    sqlTransaction.Commit();
-
                         count = 1;
-                        //}
-                        //catch (Exception e)
-                        //{
-                        //    var gh = e.Message;
-
-                        //    sqlTransaction.Rollback();
-
-                        //    count = 0;
-                        //}
+                        
 
                     }
-                    //}
+                  
                     con.Close();
                 }
             }
@@ -3176,7 +3158,7 @@ namespace Reconcillations.Repository
 
                         bc.StatusId = Convert.ToInt32(response.Tables[0].Rows[0]["returnCode"].ToString());
                         bc.StatusMessage = response.Tables[0].Rows[0]["returnMessage"].ToString();
-                        //bc.Reconcileid = Convert.ToInt64(response.Tables[1].Rows[0]["Reconcileid"].ToString());
+                        bc.Reconcileid = Convert.ToInt64(response.Tables[1].Rows[0]["Reconcileid"].ToString());
 
                         //count = 1;
                         var logger = new LoggerConfiguration()
