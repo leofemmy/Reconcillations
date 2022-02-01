@@ -44,6 +44,16 @@ namespace Reconcillations.Pages.ImpBank
         //I also tried to add [BindProperty] after
         public decimal Closebal { get; set; }
 
+        [BindProperty]
+        [HiddenInput]
+        public Boolean blValiddate { get; set; }
+
+        [TempData]
+        public DateTime dtstartDate { get; set; }
+
+        [TempData]
+        public DateTime dtendDate { get; set; }
+
         public CreateModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
@@ -119,6 +129,10 @@ namespace Reconcillations.Pages.ImpBank
         {
             var _reconcile = _transactionRepository.GetReconcileid(reconileID);
 
+            dtstartDate = Convert.ToDateTime(_reconcile.startdate);
+
+            dtendDate = Convert.ToDateTime(_reconcile.enddate);
+
             Reconcileperiodid reconciles = new Reconcileperiodid
             {
                 accountname = _reconcile.accountname,
@@ -141,6 +155,10 @@ namespace Reconcillations.Pages.ImpBank
 
         public ActionResult OnPostImport()
         {
+            //bool blIsvaidDate = false;
+            Boolean bsresult = false;
+            // 
+
             DataTable tbimport = new DataTable();
 
             DataTable dt = new DataTable();
@@ -230,17 +248,42 @@ namespace Reconcillations.Pages.ImpBank
                                         if (DateUtil.IsCellDateFormatted(cell))
                                         {
                                             DateTime date = cell.DateCellValue;
-                                            ICellStyle style = cell.CellStyle;
-                                            // Excel uses lowercase m for month whereas .Net uses uppercase
-                                            string format = style.GetDataFormatString().Replace('m', 'M');
 
-                                            sb.Append("<td>" + date + "</td>");
-                                            dataRow[j] = date;
+
+                                            ////Excel uses lowercase m for month whereas .Net uses uppercase
+                                            //ICellStyle style = cell.CellStyle;
+
+
+                                            //string format = style.GetDataFormatString().Replace('m', 'M');
+
+                                            //sb.Append("<td>" + date + "</td>");
+                                            //dataRow[j] = date;
+
+
+                                            if (date.Date >= dtstartDate.Date && date.Date <= dtendDate.Date)
+                                            {
+
+                                                ICellStyle style = cell.CellStyle;
+                                                // Excel uses lowercase m for month whereas .Net uses uppercase
+                                                string format = style.GetDataFormatString().Replace('m', 'M');
+
+                                                sb.Append("<td>" + date + "</td>");
+                                                dataRow[j] = date;
+
+                                                bsresult = true;
+
+                                                //break;
+                                            }
+                                            else
+                                            {
+                                                bsresult = false;
+                                            }
+
                                         }
                                         else
                                         {
-
                                             sb.Append("<td>" + string.Format("{0:N2}", row.GetCell(j).NumericCellValue) + "</td>");
+
                                             dataRow[j] = string.Format("{0:N2}", row.GetCell(j).NumericCellValue);
                                         }
 
@@ -271,42 +314,69 @@ namespace Reconcillations.Pages.ImpBank
                 decimal dbclose = 0m;
 
 
-                var gety = (from DataRow row in tbimport.Rows
-                            select new ExcelEment
-                            {
-                                Date = !DBNull.Value.Equals(row["Date"]) ? Convert.ToDateTime(row["Date"]) : Convert.ToDateTime(row["Date"]),
-                                Debit = !DBNull.Value.Equals(row["Debit"]) ? Convert.ToDecimal(row["Debit"]) : 0,
-                                Credit = !DBNull.Value.Equals(row["Credit"]) ? Convert.ToDecimal(row["Credit"]) : 0,
-                                Balance = !DBNull.Value.Equals(row["Balance"]) ? Convert.ToDecimal(row["Balance"]) : 0,
-                                Tellerno = !DBNull.Value.Equals(row["Tellerno"]) ? row["Tellerno"].ToString() : null,
-                                Revenuecode = !DBNull.Value.Equals(row["RevenueCode"]) ? row["RevenueCode"].ToString() : null,
-                                Description = !DBNull.Value.Equals(row["PayerName"]) ? row["PayerName"].ToString() : null,
-                                TransID = !DBNull.Value.Equals(row["TransID"]) ? Convert.ToDecimal(row["TransID"]) : 0
-                                //RecperID
-                            }).ToList();
+
+                if (bsresult)
+                {
+                    var gety = (from DataRow row in tbimport.Rows
+                                select new ExcelEment
+                                {
+                                    Date = !DBNull.Value.Equals(row["Date"]) ? Convert.ToDateTime(row["Date"]) : Convert.ToDateTime(row["Date"]),
+                                    Debit = !DBNull.Value.Equals(row["Debit"]) ? Convert.ToDecimal(row["Debit"]) : 0,
+                                    Credit = !DBNull.Value.Equals(row["Credit"]) ? Convert.ToDecimal(row["Credit"]) : 0,
+                                    Balance = !DBNull.Value.Equals(row["Balance"]) ? Convert.ToDecimal(row["Balance"]) : 0,
+                                    Tellerno = !DBNull.Value.Equals(row["Tellerno"]) ? row["Tellerno"].ToString() : null,
+                                    Revenuecode = !DBNull.Value.Equals(row["RevenueCode"]) ? row["RevenueCode"].ToString() : null,
+                                    Description = !DBNull.Value.Equals(row["PayerName"]) ? row["PayerName"].ToString() : null,
+                                    TransID = !DBNull.Value.Equals(row["TransID"]) ? Convert.ToDecimal(row["TransID"]) : 0
+                                    //RecperID
+                                }).ToList();
 
 
 
-                dbopening = gety.AsEnumerable().FirstOrDefault().Balance;
-                dbcredit = gety.AsEnumerable().Sum(x => x.Credit);
-                dbdebit = gety.AsEnumerable().Sum(x => x.Debit);
-                dbclose = ((dbopening + dbcredit) - dbdebit);
-                //bankimport.CalClosingBal = dbclose;
+                    dbopening = gety.AsEnumerable().FirstOrDefault().Balance;
+                    dbcredit = gety.AsEnumerable().Sum(x => x.Credit);
+                    dbdebit = gety.AsEnumerable().Sum(x => x.Debit);
+                    dbclose = ((dbopening + dbcredit) - dbdebit);
+                    //bankimport.CalClosingBal = dbclose;
 
 
-                /////
-                dt = ConvertToDataTable(gety);
+                    /////
+                    dt = ConvertToDataTable(gety);
+
+
+                }
+                else
+                {
+                    dt = null;
+
+                }
+
+
 
                 sb.Append("+");
                 //sb.AppendFormat("{0}", tbimport);
                 //sb.Append("+");
-                sb.AppendFormat("{0:n2}", dbclose);
-                sb.Append("+");
                 sb.AppendFormat("{0:n2}", dbopening);
                 sb.Append("+");
                 sb.AppendFormat("{0:n2}", dbcredit);
                 sb.Append("+");
                 sb.AppendFormat("{0:n2}", dbdebit);
+                sb.Append("+");
+                sb.AppendFormat("{0:n2}", dbclose);
+
+                if (bsresult)
+                {
+                    sb.Append("+");
+                    sb.AppendFormat("{0}", 1);
+                }
+                else
+                {
+                    sb.Append("+");
+                    sb.AppendFormat("{0}", 0);
+                }
+
+
+
 
                 var serializeReponse = JsonConvert.SerializeObject(dt);
                 sb.Append("+");
@@ -315,6 +385,8 @@ namespace Reconcillations.Pages.ImpBank
                 TempData["MyexcelData"] = serializeReponse;
             }
 
+            blValiddate = bsresult;
+            ViewData["finalbresult"] = blValiddate;
 
             return this.Content(sb.ToString());
         }

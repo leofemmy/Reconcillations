@@ -42,16 +42,18 @@ namespace Reconcillations
 
             services.AddRazorPages();
 
-            // Add MVC services.
-            // services.AddMvc((x) => x.EnableEndpointRouting = false);
+            services.ConfigureReportingServices(configurator =>
+            {
+                configurator.UseDevelopmentMode();
+                configurator.DisableCheckForCustomControllers();
+                // ... 
+            });
 
-            // Add MVC services.
-            services.AddMvc(options => { options.EnableEndpointRouting = false; }).AddDefaultReportingControllers();
 
-            //services.Configure<IISOptions>(options =>
-            //{
-            //    options.AutomaticAuthentication = false;
-            //});
+            services.Configure<IISOptions>(options =>
+            {
+                options.AutomaticAuthentication = false;
+            });
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
@@ -69,6 +71,7 @@ namespace Reconcillations
 
             // Add the processing server as IHostedService
             services.AddHangfireServer();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -121,6 +124,10 @@ namespace Reconcillations
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobs)
         {
+
+            // Initialize reporting services.
+            app.UseDevExpressControls();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -132,15 +139,8 @@ namespace Reconcillations
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
 
             app.UseStaticFiles();
-
-            app.UseSession();
-
-            // Initialize reporting services.
-            app.UseDevExpressControls();
-
             // ...
             app.UseFileServer(new FileServerOptions
             {
@@ -150,9 +150,7 @@ namespace Reconcillations
 
             });
 
-            app.UseStaticFiles();
 
-            app.UseRouting();
 
             //"/hangfire"
 
@@ -160,42 +158,34 @@ namespace Reconcillations
 
             RecurringJob.AddOrUpdate(() => DoReemsPush(), Cron.MinuteInterval(2));
 
+            app.UseHttpsRedirection();
+
+
+
+            app.UseSession();
+
+
+
+            app.UseRouting();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllerRoute( //<-- ADDED
+                   name: "default",
+                   pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller}/{action=Index}/{id?}");
-            //});
 
-            //Pre .NET core 3.0 way of doing things
-            //app.UseMvc(routes => {<some routing stuff here>});
-
-            //.NET core 3.0 way
-            //app.UseRouting();
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapRazorPages(); //Routes for pagIReconcile_Delta20210607es
-            //    endpoints.MapControllers(); //Routes for my API controllers
-            //});
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllerRoute("Default", "{controller=Home}/{action=Index}/{id?}");
-            //});
-            app.UseMvc();
         }
 
         public void DoReemsPush()
         {
             //var connectionString = this.GetConnection();
 
-             string connectionString = this.Configuration.GetConnectionString("DefaultConnection");
+            string connectionString = this.Configuration.GetConnectionString("DefaultConnection");
             try
             {
                 SqlDataAdapter _adp;

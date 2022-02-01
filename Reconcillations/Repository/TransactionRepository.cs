@@ -2006,28 +2006,33 @@ namespace Reconcillations.Repository
 
                     SqlDataReader rdr = cmd.ExecuteReader();
 
-                    while (rdr.Read())
+                    while (rdr.HasRows)
                     {
-                        Requesntsent banklist = new Requesntsent
+                        while (rdr.Read())
                         {
-                            RecperID = Convert.ToInt64(rdr["RecperID"].ToString()),
-                            Description = rdr["Description"].ToString(),
-                            BankName = rdr["BankName"].ToString(),
-                            AccountName = rdr["AccountName"].ToString(),
-                            StartDate = Convert.ToDateTime(rdr["StartDate"].ToString()),
-                            EndDate = Convert.ToDateTime(rdr["EndDate"].ToString()),
-                            openingbal = Convert.ToDecimal(rdr["OpeningBal"].ToString()),
-                            closebal = Convert.ToDecimal(rdr["ClosingBal"].ToString()),
-                            debit = Convert.ToDecimal(rdr["Debit"].ToString()),
-                            credit = Convert.ToDecimal(rdr["Credit"].ToString()),
-                            Stages = rdr["Stages"].ToString(),
-                            Requestby = rdr["RequestBy"].ToString(),
-                            days = Convert.ToInt32(rdr["Number"].ToString())
+                            Requesntsent banklist = new Requesntsent
+                            {
+                                RecperID = Convert.ToInt64(rdr["RecperID"].ToString()),
+                                Description = rdr["Description"].ToString(),
+                                BankName = rdr["BankName"].ToString(),
+                                AccountName = rdr["AccountName"].ToString(),
+                                StartDate = Convert.ToDateTime(rdr["StartDate"].ToString()),
+                                EndDate = Convert.ToDateTime(rdr["EndDate"].ToString()),
+                                openingbal = Convert.ToDecimal(rdr["OpeningBal"].ToString()),
+                                closebal = Convert.ToDecimal(rdr["ClosingBal"].ToString()),
+                                debit = Convert.ToDecimal(rdr["Debit"].ToString()),
+                                credit = Convert.ToDecimal(rdr["Credit"].ToString()),
+                                Stages = rdr["Stages"].ToString(),
+                                Requestby = rdr["RequestBy"].ToString(),
+                                days = Convert.ToInt32(rdr["Number"].ToString())
 
 
-                        };
-                        _banklists.Add(banklist);
+                            };
+                            _banklists.Add(banklist);
+                        }
+                        rdr.NextResult();
                     }
+
 
                     con.Close();
 
@@ -2134,29 +2139,34 @@ namespace Reconcillations.Repository
 
                     SqlDataReader rdr = cmd.ExecuteReader();
 
-                    while (rdr.Read())
+                    while (rdr.HasRows)
                     {
-                        RequestApprove banklist = new RequestApprove
+                        while (rdr.Read())
                         {
-                            RecperID = Convert.ToInt64(rdr["RecperID"].ToString()),
-                            Description = rdr["Description"].ToString(),
-                            BankName = rdr["BankName"].ToString(),
-                            AccountName = rdr["AccountName"].ToString(),
-                            StartDate = Convert.ToDateTime(rdr["StartDate"].ToString()),
-                            EndDate = Convert.ToDateTime(rdr["EndDate"].ToString()),
-                            openingbal = Convert.ToDecimal(rdr["OpeningBal"].ToString()),
-                            closebal = Convert.ToDecimal(rdr["ClosingBal"].ToString()),
-                            debit = Convert.ToDecimal(rdr["Debit"].ToString()),
-                            credit = Convert.ToDecimal(rdr["Credit"].ToString()),
-                            Stages = rdr["Stages"].ToString(),
-                            Period = rdr["PeriodName"].ToString(),
-                            days = Convert.ToInt32(rdr["Number"].ToString()),
-                            Year = Convert.ToInt64(rdr["PeriodYear"].ToString())
+                            RequestApprove banklist = new RequestApprove
+                            {
+                                RecperID = Convert.ToInt64(rdr["RecperID"].ToString()),
+                                Description = rdr["Description"].ToString(),
+                                BankName = rdr["BankName"].ToString(),
+                                AccountName = rdr["AccountName"].ToString(),
+                                StartDate = Convert.ToDateTime(rdr["StartDate"].ToString()),
+                                EndDate = Convert.ToDateTime(rdr["EndDate"].ToString()),
+                                openingbal = Convert.ToDecimal(rdr["OpeningBal"].ToString()),
+                                closebal = Convert.ToDecimal(rdr["ClosingBal"].ToString()),
+                                debit = Convert.ToDecimal(rdr["Debit"].ToString()),
+                                credit = Convert.ToDecimal(rdr["Credit"].ToString()),
+                                Stages = rdr["Stages"].ToString(),
+                                Period = rdr["PeriodName"].ToString(),
+                                days = Convert.ToInt32(rdr["Number"].ToString()),
+                                Year = Convert.ToInt64(rdr["PeriodYear"].ToString())
 
 
-                        };
-                        _banklists.Add(banklist);
+                            };
+                            _banklists.Add(banklist);
+                        }
+                        rdr.NextResult();
                     }
+
 
                     con.Close();
 
@@ -3065,7 +3075,7 @@ namespace Reconcillations.Repository
                     {
                         con.Open();
                     }
-                                        
+
                     using (SqlBulkCopy sqlBulkCopy = new SqlBulkCopy(con))
                     {
                         //Set the database table name
@@ -3086,10 +3096,10 @@ namespace Reconcillations.Repository
 
 
                         count = 1;
-                        
+
 
                     }
-                  
+
                     con.Close();
                 }
             }

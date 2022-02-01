@@ -1,7 +1,6 @@
 ﻿@page
 @model Reconcillations.Pages.Reconcile.CreateModel
-@{
-}
+@{ }
 @section header{
     <!-- Sweet Alert item CSS -->
     @*<link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">*@
@@ -321,14 +320,18 @@
                                                     processData: true,
                                                     success: function (response) {
                                                         $('#loading-div-background').hide();
-                                                        if (response.length == 0)
+                                                        if (response.length == 0) {
+
                                                             Swal.fire({
                                                                 type: 'Error',
                                                                 title: 'Oops...',
-                                                                text: 'Some error occured while uploading!!!',
+                                                                text: 'Some error occured while Validate records!!!',
                                                                 footer: ''
                                                             })
 
+                                                            $("#btnvalidate").show();
+                                                            $('#btnsubmit').hide();
+                                                        }
                                                         else {
                                                             console.log($("#txtopen").val());
                                                             console.log(response);
@@ -377,6 +380,9 @@
                                                             text: e.responseText,
                                                             footer: ''
                                                         })
+
+                                                        $("#btnvalidate").hide();
+                                                        $('#btnsubmit').hide();
                                                     }
                                                 }))
                                         }

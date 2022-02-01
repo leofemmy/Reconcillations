@@ -1,11 +1,9 @@
 ﻿@page
 @model Reconcillations.Pages.ImpBank.CreateModel
-@{
-    var session = httpContextAccessor.HttpContext.Session;
+@{ var session = httpContextAccessor.HttpContext.Session;
     var suname = session.GetString("Usernames");
     var useremail = session.GetString("UserEmail");
-
-}
+    var re = ViewData["finalbresult"]; }
 
 @section header{
     <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
@@ -113,6 +111,7 @@
                         </div>
                     </div>
                     <input type="hidden" id="reconid" />
+                    <input type="hidden" id="hfValideRecord" name="ValideRecord" value="@re" />
                     <div id="loading-div-background">
                         <div id="loading-div" class="ui-corner-all">
                             <div id="loadingbar"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>
@@ -525,44 +524,92 @@
 
                                         console.log(response);
                                         var splitted = response.split("+");
-                                        $('#dvData').html(splitted[0]);
+
                                         //console.log(splitted[1]);
-                                        var dbclose = splitted[1].replace(/[^0-9.]/g, "");
-                                        console.log(dbclose);
+
+
+
+                                        var dbopening = splitted[1].replace(/[^0-9.]/g, "");
+                                        console.log(numeral(dbopening).format('0,0.00'));
 
                                         var dbcredit = splitted[2].replace(/[^0-9.]/g, "");
-                                        console.log(dbcredit);
-                                        var string1 = numeral(dbclose).format('0,0.00');
-                                        console.log(string1);
+                                        console.log(numeral(dbcredit).format('0,0.00'));
 
                                         var dbdebit = splitted[3].replace(/[^0-9.]/g, "");
-                                        console.log(dbdebit);
-                                        //console.log(splitted[4]);
-                                        //var dbopebal = $("#txtopen").val().replace(/[^0-9.]/g, "");
-                                        //console.log(dbopebal);
-                                        /// console.log(Number.parseFloat(dbopenbal).toFixed(2));
-                                        //var op = parseFloat(Number(dbopenbal).toFixed(2));
-                                        //console.log(op);
-                                        //var cd = parseFloat((dbcredit).toFixed(2));
-                                        //console.log(cd);
-                                        //var db = parseFloat((dbdebit).toFixed(2));
-                                        //console.log(db);
-                                        //var dbcredittotal = ((parseFloat(dbopenbal) + parseFloat(dbcredit)).toFixed(2));
-                                        //console.log(dbcredittotal);
-                                        //var dbresult = dbcredittotal - dbdebit;
-                                        //var gf = numeral(dbresult).format('0,0.00');
-                                        //console.log(dbresult);
+                                        console.log(numeral(dbdebit).format('0,0.00'));
 
-                                        $("#txtcalucatedclose").val(string1);
-                                        $('#btnSave').show();
+                                        var dbclose = splitted[4].replace(/[^0-9.]/g, "");
+                                        console.log(numeral(dbclose).format('0,0.00'));
+
+                                        var dbcalclose = ((parseFloat(dbopening) + parseFloat(dbcredit)) - parseFloat(dbdebit));
+                                        console.log(numeral(dbcalclose).format('0,0.00'));
+
+                                        var vb = splitted[5].replace(/[^0-9.]/g, "");
+                                        console.log(vb);
+
+                                        if (vb == '1') {
+                                            alert(vb);
+
+                                            $('#dvData').html(splitted[0]);
+
+                                            if (parseFloat(dbclose) == parseFloat(dbcalclose)) {
+
+                                                var string1 = numeral(dbclose).format('0,0.00');
+                                                console.log(string1);
+                                                $("#txtcalucatedclose").val(string1);
+                                                $('#btnSave').show();
+                                            }
+                                            else {
+                                                var string1 = numeral(dbcalclose).format('0,0.00');
+                                                console.log(string1);
+                                                $("#txtcalucatedclose").val(string1);
+                                                $('#btnSave').show();
+
+                                            }
+
+                                        } else {
+                                            Swal.fire({
+                                                type: 'error',
+                                                title: 'Reconciliation Solution',
+                                                text: 'Incorrect Data format encountered,Date not within selected period range. Check It !!!',
+                                                footer: ''
+                                            })
+
+                                        }
 
 
-                                        Swal.fire({
-                                            type: 'success',
-                                            title: 'Reconciliation Solution',
-                                            text: 'Excel uploaded !!!',
-                                            footer: ''
-                                        })
+
+
+                                        //if (dbvalid == 1) {
+
+                                        //    Swal.fire({
+                                        //        type: 'Error',
+                                        //        title: 'Reconciliation Solution',
+                                        //        text: 'Incorrect Data format encountered.Check it !!!',
+                                        //        footer: ''
+                                        //    })
+                                        //}
+                                        //else {
+                                        //    var dbclose = splitted[2].replace(/[^0-9.]/g, "");
+                                        //    console.log(dbclose);
+
+                                        //    var dbcredit = splitted[3].replace(/[^0-9.]/g, "");
+                                        //    console.log(dbcredit);
+                                        //    var string1 = numeral(dbclose).format('0,0.00');
+                                        //    console.log(string1);
+
+                                        //    var dbdebit = splitted[4].replace(/[^0-9.]/g, "");
+                                        //    console.log(dbdebit);
+
+
+                                        //    $("#txtcalucatedclose").val(string1);
+                                        //    $('#btnSave').show();
+
+
+
+                                        //}
+
+
                                     }
                                 },
                                 error: function (e) {
