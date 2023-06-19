@@ -3,7 +3,12 @@
 @{ var session = httpContextAccessor.HttpContext.Session;
     var suname = session.GetString("Usernames");
     var useremail = session.GetString("UserEmail");
+<<<<<<< HEAD
+    var re = ViewData["finalbresult"];
+}
+=======
     var re = ViewData["finalbresult"]; }
+>>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
 
 @section header{
     <link href="~/smile/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
@@ -139,7 +144,6 @@
                                                         <input type="button" id="btnSave" value="Update" style="display: none" class="btn btn-circle btn-primary" />
                                                     </div>
                                                     <div class="col-md-4">
-
                                                     </div>
                                                 </div>
                                                 <br />
@@ -511,7 +515,9 @@
                                 contentType: false,
                                 processData: false,
                                 success: function (response) {
+                                    debugger;
                                     $('#loading-div-background').hide();
+
                                     if (response.length == 0)
                                         Swal.fire({
                                             type: 'error',
@@ -519,11 +525,63 @@
                                             text: 'Some error occured while uploading!!!',
                                             footer: ''
                                         })
-                                    //alert('Some error occured while uploading');
                                     else {
 
-                                        console.log(response);
+                                        console.log(response, "Response");
                                         var splitted = response.split("+");
+<<<<<<< HEAD
+
+                                        console.log(splitted, "Splitted");
+
+
+
+                                        //var dbopening = splitted[2].replace(/[^0-9.]/g, "");
+                                        //console.log(numeral(dbopening).format('0,0.00'));
+
+                                        //var dbcredit = splitted[3].replace(/[^0-9.]/g, "");
+                                        //console.log(numeral(dbcredit).format('0,0.00'));
+
+                                        //var dbdebit = splitted[4].replace(/[^0-9.]/g, "");
+                                        //console.log(numeral(dbdebit).format('0,0.00'));
+
+                                        var dbclose = splitted[3];
+                                        console.log(numeral(dbclose).format('0,0.00'));
+
+                                        //var dbcalclose = ((parseFloat(dbopening) + parseFloat(dbcredit)) - parseFloat(dbdebit));
+                                        //console.log(numeral(dbcalclose).format('0,0.00'));
+
+                                        //var vb = splitted[6].replace(/[^0-9.]/g, "");
+                                        ///*alert(vb);*/
+                                        //console.log(vb);
+                                        var vbresult = splitted[4];
+                                        debugger;
+
+                                        if (vbresult == "true") {
+
+                                            var string1 = numeral(dbclose).format('0,0.00');
+                                            console.log(string1);
+
+                                            $("#txtcalucatedclose").val(string1);
+
+                                            $('#btnSave').show();
+
+                                            $('#dvData').html(splitted[5]);
+
+                                            //Swal.fire({
+                                            //    type: 'success',
+                                            //    title: 'Reconciliation Solution',
+                                            //    text: msg.statusMessage,
+                                            //    footer: ''
+                                            //})
+
+
+                                            Swal.fire({
+                                                type: 'sucesss',
+                                                title: 'Reconciliation Solution',
+                                                text: 'Bank Statement Uploaded !!!',
+                                                footer: ''
+                                            })
+=======
 
                                         //console.log(splitted[1]);
 
@@ -567,6 +625,7 @@
 
                                             }
 
+>>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
                                         } else {
                                             Swal.fire({
                                                 type: 'error',
@@ -575,19 +634,58 @@
                                                 footer: ''
                                             })
 
+<<<<<<< HEAD
+                                            $('#btnSave').hide();
+
                                         }
 
 
+                                        //if (parseFloat(dbclose) == parseFloat(dbcalclose)) {
+
+                                        //    var string1 = numeral(dbcalclose).format('0,0.00');
+                                        //    console.log(string1);
+                                        //    $("#txtcalucatedclose").val(string1);
+                                        //    $('#btnSave').show();
+                                        //}
+                                        //else {
+                                        //    var string1 = numeral(dbcalclose).format('0,0.00');
+                                        //    console.log(string1);
+                                        //    $("#txtcalucatedclose").val(string1);
+                                        //    $('#btnSave').show();
+
+                                        //}
+
+
+
+                                        //if (vb == '1') {
+                                        //    /* alert(vb);*/
+
+
+
+                                        //} else {
+
+                                        //}
+
+
+=======
+                                        }
+
+
+>>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
 
 
                                         //if (dbvalid == 1) {
 
+<<<<<<< HEAD
+
+=======
                                         //    Swal.fire({
                                         //        type: 'Error',
                                         //        title: 'Reconciliation Solution',
                                         //        text: 'Incorrect Data format encountered.Check it !!!',
                                         //        footer: ''
                                         //    })
+>>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
                                         //}
                                         //else {
                                         //    var dbclose = splitted[2].replace(/[^0-9.]/g, "");
@@ -767,6 +865,7 @@
                 datatype: "json",
                 traditional: true,
                 success: function (data) {
+                    debugger;
                     console.log(data);
                     console.log(data.table1);
                     var cbl = data.table4;
@@ -879,6 +978,7 @@
 
                 },
                 error: function (e) {
+                    debugger;
                     $('#dvData').html(e.responseText);
                 }
             })
@@ -907,107 +1007,129 @@
                     $('input:hidden[name="__RequestVerificationToken"]').val());
             };
             options.success = function (data) {
+                debugger;
                 console.log(data);
                 var msgb = data.table;
-                var deb = data.table1;
-                debtran = data.table2;
-                var ced = data.table3;
-                cedtran = data.table4;
-                //console.log(debtran);
+                console.log(msgb);
+                console.log(msgb[0].returnCode);
 
+                //alert(msgb[0].returnCode);
 
-                dtdebit = $('#tbldebit').removeAttr('width').DataTable({
-                    data: deb,
-                    "bFilter": false,
-                    "paging": false,
-                    'scrollY': 500,
-                    columnDefs: [
-                        {
-                            targets: [0, 1],
-                            width: "11%"
-                        }
-                    ],
-                    fixedColumns: true,
-                    columns: [
-                        {
-                            data: 'bsid',
-                            width: "10%"
-                        },
-                        {
-                            data: 'bsDate',
-                            render: function (d) {
-                                return moment(d).format("DD/MM/YYYY");
-                            },
-                            width: "10%"
+                if (msgb[0].returnCode == "-1") {
+                    $('#loading-div-background').hide();
+                    Swal.fire({
+                        type: 'Error',
+                        title: 'Reconciliation Solution',
+                        text: msgb[0].returnMessage,
+                        footer: ''
+                    })
+                }
+                else {
 
-                        },
-                        {
-                            data: 'amount',
-                            render: $.fn.dataTable.render.number(",", ".", 2),
-                            width: "10%"
-                        },
-                        {
-                            data: 'payerName',
-                            width: "10%"
-                        },
-                        {
-                            data: 'transID',
-                            render: function (data) {
-                                return createSelect(data);
-                            },
-                            width: "10%"
+                    var deb = data.table1;
+                    debtran = data.table2;
+                    var ced = data.table3;
+                    cedtran = data.table4;
+                    //console.log(debtran);
 
-
-                        }
-
-                    ]
-                });
-
-                $('#tblcredit').removeAttr('width').DataTable({
-                    data: ced,
-                    "paging": false,
-                    "info": false,
-                    "bFilter": false, 'scrollY': 700,
-                    "columnDefs": [
-                        {
-                            "targets": [0],
-                            "visible": true,
-                            "searchable": false
-                        }
-                    ], fixedColumns: true,
-                    columns: [
-                        { data: 'csid' },
-                        {
-                            data: 'csDate', render: function (d) {
-                                return moment(d).format("DD/MM/YYYY");
+                    dtdebit = $('#tbldebit').removeAttr('width').DataTable({
+                        data: deb,
+                        "bFilter": false,
+                        "paging": false,
+                        'scrollY': 500,
+                        columnDefs: [
+                            {
+                                targets: [0, 1],
+                                width: "11%"
                             }
-                        },
-                        {
-                            data: 'cAmount',
-                            render: $.fn.dataTable.render.number(",", ".", 2),
-                            width: "10%"
-                        },
-                        { data: 'cPayerName' },
-                        {
-                            data: 'transID',
-                            //data: null,
-                            render: function (data) {
-                                return createSelect2(data);
+                        ],
+                        fixedColumns: true,
+                        columns: [
+                            {
+                                data: 'bsid',
+                                width: "10%"
+                            },
+                            {
+                                data: 'bsDate',
+                                render: function (d) {
+                                    return moment(d).format("DD/MM/YYYY");
+                                },
+                                width: "10%"
+
+                            },
+                            {
+                                data: 'amount',
+                                render: $.fn.dataTable.render.number(",", ".", 2),
+                                width: "10%"
+                            },
+                            {
+                                data: 'payerName',
+                                width: "10%"
+                            },
+                            {
+                                data: 'transID',
+                                render: function (data) {
+                                    return createSelect(data);
+                                },
+                                width: "10%"
+
+
                             }
 
-                        }
+                        ]
+                    });
 
-                    ]
-                });
-                //$("#reconid").val(msg.reconcileid)
-                $('#btnNext').show();
-                $('#loading-div-background').hide();
-                Swal.fire({
-                    type: 'success',
-                    title: 'Reconciliation Solution',
-                    text: 'Result Saved Successfull !!!',
-                    footer: ''
-                })
+                    $('#tblcredit').removeAttr('width').DataTable({
+                        data: ced,
+                        "paging": false,
+                        "info": false,
+                        "bFilter": false, 'scrollY': 700,
+                        "columnDefs": [
+                            {
+                                "targets": [0],
+                                "visible": true,
+                                "searchable": false
+                            }
+                        ], fixedColumns: true,
+                        columns: [
+                            { data: 'csid' },
+                            {
+                                data: 'csDate', render: function (d) {
+                                    return moment(d).format("DD/MM/YYYY");
+                                }
+                            },
+                            {
+                                data: 'cAmount',
+                                render: $.fn.dataTable.render.number(",", ".", 2),
+                                width: "10%"
+                            },
+                            { data: 'cPayerName' },
+                            {
+                                data: 'transID',
+                                //data: null,
+                                render: function (data) {
+                                    return createSelect2(data);
+                                }
+
+                            }
+
+                        ]
+                    });
+                    //$("#reconid").val(msg.reconcileid)
+                    $('#btnNext').show();
+                    $('#loading-div-background').hide();
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Reconciliation Solution',
+                        text: 'Result Saved Successfull !!!',
+                        footer: ''
+                    })
+                }
+
+
+
+
+
             };
             options.error = function () {
                 $("#msg").html("Error while making Ajax call!");

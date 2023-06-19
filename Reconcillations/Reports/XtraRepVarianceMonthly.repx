@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<XtraReportsLayoutSerializer SerializerVersion="20.1.3.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v20.1, Version=20.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="XtraRepVarianceMonthly" Margins="100, 100, 169, 27" PageWidth="850" PageHeight="1100" Version="20.1" DataMember="vwVariancesMonths" DataSource="#Ref-0">
+<XtraReportsLayoutSerializer SerializerVersion="22.1.3.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v22.1, Version=22.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="XtraRepVarianceMonthly" Margins="100, 100, 169, 27" PageWidth="850" PageHeight="1100" Version="22.1" DataMember="vwVariancesMonths" DataSource="#Ref-0">
   <CalculatedFields>
     <Item1 Ref="2" Name="calcurrentAmount" Expression="Iif(IsNullOrEmpty([CurrentMonthAmount]), 0 ,[CurrentMonthAmount] )" DataMember="vwVariancesMonths" />
     <Item2 Ref="3" Name="calpreviousAmount" Expression="Iif(IsNullOrEmpty([previousmonthAmount]), 0 ,[previousmonthAmount] )" DataMember="vwVariancesMonths" />

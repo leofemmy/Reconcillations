@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
+<XtraReportsLayoutSerializer SerializerVersion="22.1.3.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v22.1, Version=22.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="XtraRepSummary" Landscape="true" Margins="100, 0, 129, 23" PageWidth="1100" PageHeight="850" Version="21.1" DataMember="vwreconcilesummary" DataSource="#Ref-0" Font="Arial, 9.75pt">
+=======
 <XtraReportsLayoutSerializer SerializerVersion="21.1.5.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v21.1, Version=21.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="XtraRepSummary" Landscape="true" Margins="100, 0, 129, 23" PageWidth="1100" PageHeight="850" Version="21.1" DataMember="vwreconcilesummary" DataSource="#Ref-0" Font="Arial, 9.75pt">
+>>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
   <Extensions>
     <Item1 Ref="2" Key="VSReportExtInfo" Value=".repx" />
   </Extensions>
