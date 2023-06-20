@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DevExpress.AspNetCore;
 using DevExpress.AspNetCore.Reporting;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,17 +23,19 @@ using Reconcillations.Entity;
 using Reconcillations.Repository;
 using Reconcillations.Services;
 using Serilog;
+using System.Text;
 
 namespace Reconcillations
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -55,19 +58,23 @@ namespace Reconcillations
                 options.AutomaticAuthentication = false;
             });
             // Add Hangfire services.
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
-                {
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    DisableGlobalLocks = true
-                }));
+            //services.AddHangfire(configuration => configuration
+            //    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+            //    .UseSimpleAssemblyNameTypeSerializer()
+            //    .UseRecommendedSerializerSettings()
+            //    .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
+            //    {
+            //        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            //        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            //        QueuePollInterval = TimeSpan.Zero,
+            //        UseRecommendedIsolationLevel = true,
+            //        DisableGlobalLocks = true
+            //    }));
 
+            services.AddHangfire(x =>
+            {
+                x.UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"));
+            });
 
             // Add the processing server as IHostedService
             services.AddHangfireServer();
@@ -124,6 +131,16 @@ namespace Reconcillations
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobs)
         {
+            var absolutePath = Configuration.GetSection("AppSettings").GetSection("ApplicationBaseUrl").Value;
+            SqlServerStorageOptions optionsStorage = new()
+            {
+                CommandBatchMaxTimeout = TimeSpan.FromMinutes(10),
+                SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                QueuePollInterval = TimeSpan.FromMinutes(5),
+                UseRecommendedIsolationLevel = true,
+                UsePageLocksOnDequeue = true,
+                DisableGlobalLocks = true
+            };
 
             // Initialize reporting services.
             app.UseDevExpressControls();
@@ -154,13 +171,25 @@ namespace Reconcillations
 
             //"/hangfire"
 
-            app.UseHangfireDashboard("/Pusher");
+            //app.UseHangfireDashboard("/Pusher");
 
-            RecurringJob.AddOrUpdate(() => DoReemsPush(), Cron.MinuteInterval(2));
+            app.UseHangfireDashboard("/Pusher", new DashboardOptions
+            {
+                DashboardTitle = "Reconcilliation Portal Jobs",
+                Authorization = new[] { new  HangfireAuthorizationFilter()
+            },
+                IsReadOnlyFunc = (DashboardContext context) => false,
+                // Change `Back to site` link URL
+                AppPath = $"{absolutePath}/Index",
+                StatsPollingInterval = 30000
+            });
+
+
+            //RecurringJob.AddOrUpdate(() => DoReemsPush(), Cron.MinuteInterval(2));
+
+            PusherServices.InitialiseService();
 
             app.UseHttpsRedirection();
-
-
 
             app.UseSession();
 
@@ -181,53 +210,117 @@ namespace Reconcillations
 
         }
 
-        public void DoReemsPush()
-        {
-            //var connectionString = this.GetConnection();
+        //public void DoReemsPush()
+        //{
+        //    //var connectionString = this.GetConnection();
 
-            string connectionString = this.Configuration.GetConnectionString("DefaultConnection");
-            try
+        //    string connectionString = this.Configuration.GetConnectionString("DefaultConnection");
+        //    try
+        //    {
+        //        SqlDataAdapter _adp;
+
+        //        DataSet response = new DataSet();
+
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            if (con.State != ConnectionState.Closed)
+        //            {
+        //                con.Close();
+        //            }
+
+        //            SqlCommand cmd = new SqlCommand("spdoGetRecordtoReems", con);
+
+        //            cmd.CommandType = CommandType.StoredProcedure;
+
+        //            con.Open();
+
+        //            cmd.CommandTimeout = 0;
+
+        //            response.Clear();
+        //            _adp = new SqlDataAdapter(cmd);
+        //            _adp.Fill(response);
+
+
+        //            con.Close();
+
+        //            var loggers = new LoggerConfiguration()
+        //                .WriteTo.MSSqlServer(connectionString, "Logs")
+        //                .CreateLogger();
+        //            loggers.Information($"Reems Push To Successfully ");
+
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        var logger = new LoggerConfiguration()
+        //            .WriteTo.MSSqlServer(connectionString, "Logs")
+        //            .CreateLogger();
+
+        //        logger.Fatal($"Do Reems Push thrown an error - {e.Message}");
+        //    }
+        //}
+
+
+        public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
+        {
+
+            private readonly string[] _roles;
+
+            //string connectionString = this.Configuration.GetConnectionString("DefaultConnection");
+
+            public HangfireAuthorizationFilter(params string[] roles)
             {
+
+                _roles = roles;
+
                 SqlDataAdapter _adp;
 
                 DataSet response = new DataSet();
 
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    if (con.State != ConnectionState.Closed)
-                    {
-                        con.Close();
-                    }
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                //    if (con.State != ConnectionState.Closed)
+                //    {
+                //        con.Close();
+                //    }
 
-                    SqlCommand cmd = new SqlCommand("spdoGetRecordtoReems", con);
+                //    SqlCommand cmd = new SqlCommand("spdoGetRecordtoReems", con);
 
-                    cmd.CommandType = CommandType.StoredProcedure;
+                //    cmd.CommandType = CommandType.StoredProcedure;
 
-                    con.Open();
+                //    con.Open();
 
-                    cmd.CommandTimeout = 0;
+                //    cmd.CommandTimeout = 0;
 
-                    response.Clear();
-                    _adp = new SqlDataAdapter(cmd);
-                    _adp.Fill(response);
+                //    response.Clear();
+                //    _adp = new SqlDataAdapter(cmd);
+                //    _adp.Fill(response);
 
 
-                    con.Close();
+                //    con.Close();
 
-                    var loggers = new LoggerConfiguration()
-                        .WriteTo.MSSqlServer(connectionString, "Logs")
-                        .CreateLogger();
-                    loggers.Information($"Reems Push To Successfully ");
+                //    var loggers = new LoggerConfiguration()
+                //        .WriteTo.MSSqlServer(connectionString, "Logs")
+                //        .CreateLogger();
+                //    loggers.Information($"Reems Push To Successfully ");
 
-                }
+                //}
+
             }
-            catch (Exception e)
-            {
-                var logger = new LoggerConfiguration()
-                    .WriteTo.MSSqlServer(connectionString, "Logs")
-                    .CreateLogger();
 
-                logger.Fatal($"Do Reems Push thrown an error - {e.Message}");
+            public bool Authorize(DashboardContext context)
+            {
+                var httpContext = ((AspNetCoreDashboardContext)context).HttpContext;
+
+                //Your authorization logic goes here.
+                //bool isLogedIn = httpContext.User.Identity.IsAuthenticated;
+                //if (isLogedIn)
+                //{
+                //    return true;
+                //}
+                //return false;
+
+                return true;
             }
         }
     }
