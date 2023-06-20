@@ -3527,8 +3527,6 @@ namespace Reconcillations.Repository
                     }
                     else
                     {
-                        dtresult = response;
-
                         var logger = new LoggerConfiguration()
                             .WriteTo.MSSqlServer(connectionString, "Logs")
                             .CreateLogger();

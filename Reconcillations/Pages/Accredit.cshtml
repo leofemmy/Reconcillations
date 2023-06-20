@@ -5,7 +5,7 @@
     ViewData["Title"] = "Reclassification Authorization";
 }
 @section header
-    {
+{
     <!-- data tables -->
     <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <!-- Sweet Alert item CSS -->
@@ -15,82 +15,76 @@
     <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
     <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
 }
-    <div class="page-bar">
-        @*@HttpContext.Session.GetString("UserEmail")*@
-        <div class="page-title-breadcrumb">
-            <div class=" pull-left">
-                <div class="page-title">Reclassification Authorization </div>
-            </div>
+<div class="page-bar">
+    @*@HttpContext.Session.GetString("UserEmail")*@
+    <div class="page-title-breadcrumb">
+        <div class=" pull-left">
+            <div class="page-title">Reclassification Authorization </div>
         </div>
     </div>
-    <div class="row">
+</div>
+<div class="row">
 
-        <div id="dvtoken" class="col-md-12 col-sm-12">
-            <div class="card card-box">
-                <h3>Enter the OTP sent to your registered Email address: </h3>  @HttpContext.Session.GetString("UserEmail")
-                <div class="card-body" id="bar-parent">
-                    <div class="form-body">
-                        <div class="form-group row">
-                            <div class="col-md-8">
-                                <input class="control-label col-md-12" type="text" id="idtoken" placeholder=" Enter OTP Sent to your Email Address">
-                            </div>
+    <div id="dvtoken" class="col-md-12 col-sm-12">
+        <div class="card card-box">
+            <h3>Enter the OTP sent to your registered Email address: </h3>  @HttpContext.Session.GetString("UserEmail")
+            <div class="card-body" id="bar-parent">
+                <div class="form-body">
+                    <div class="form-group row">
+                        <div class="col-md-8">
+                            <input class="control-label col-md-12" type="text" id="idtoken" placeholder=" Enter OTP Sent to your Email Address">
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <input type="button" id="validate" value="Validate OTP" class="btn btn-circle btn-primary">
-                        </div>
-
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="button" id="validate" value="Validate OTP" class="btn btn-circle btn-primary">
                     </div>
+
                 </div>
             </div>
         </div>
-        <form method="post">
-            @Html.AntiForgeryToken()
-            <div id="idview" class="col-md-12">
-                <div class="card card-topline-red">
-                    <div class="card-head">
-                        <header>List of Reclassified Enteries </header>
-                    </div>
-                    <div class="card-body ">
-                        <table id="example" class="table table-striped table-bordered table-hover responsive" cellspacing="0" width="100%">
-                            <thead class="thin-border-bottom">
-                                <tr>
-                                    <th style="text-align: left; width:15%">ID</th>
-                                    <th style="text-align: left; width:15%">Date</th>
-                                    <th style="text-align: left; width:10%">Amount</th>
-                                    <th style="text-align: left; width:20%">Old Category</th>
-                                    <th style="text-align: left; width:20%">New Category</th>
-                                    <th>Modifed By</th>
-                                    <th>Modifed Date</th>
-                                    <th>Approve</th>
-                                    <th>Disapprove</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
+    </div>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div id="idview" class="col-md-12">
+            <div class="card card-topline-red">
+                <div class="card-head">
+                    <header>List of Reclassified Enteries </header>
+                </div>
+                <div class="card-body ">
+                    <table id="example" class="table table-striped table-bordered table-hover responsive" cellspacing="0" width="100%">
+                        <thead class="thin-border-bottom">
+                            <tr>
+                                <th style="text-align: left; width:15%">ID</th>
+                                <th style="text-align: left; width:15%">Date</th>
+                                <th style="text-align: left; width:10%">Amount</th>
+                                <th style="text-align: left; width:20%">Old Category</th>
+                                <th style="text-align: left; width:20%">New Category</th>
+                                <th>Modifed By</th>
+                                <th>Modifed Date</th>
+                                <th>Approve</th>
+                                <th>Disapprove</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
-        </form>
-    </div>
-    @section Scripts
-    {
+        </div>
+    </form>
+</div>
+@section Scripts
+{
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
             $("#idview").hide();
-
-            loadTable();
-
-        });
-
-        function loadTable() {
-
+        
             var dtdebit = null;
             var options = {};
             options.url = "Accredit?handler=ModifyAll";
             options.type = "GET";
             options.dataType = "json";
-            options.success = function(data) {
+            options.success = function (data) {
                 console.log(data);
 
                 var db = data;
@@ -125,7 +119,7 @@
                             },
                             {
                                 data: 'bsDate',
-                                render: function(d) {
+                                render: function (d) {
                                     return moment(d).format("DD/MM/YYYY");
                                 },
                                 width: "10%"
@@ -149,18 +143,18 @@
                             },
                             {
                                 data: 'modifyDate',
-                                render: function(d) {
+                                render: function (d) {
                                     return moment(d).format("DD/MM/YYYY");
                                 }
                             },
                             {
-                                "render": function(data, type, full, meta) {
+                                "render": function (data, type, full, meta) {
                                     //return '<a class="btn btn-info" href="#' + full.modifyID + '">Approve</a>';
                                     return "<a href='#' class='btn btn-info' onclick=ApproveRec('" + full.modifyID + "'); >Approve</a>";
                                 }
                             },
                             {
-                                data: null, render: function(data, type, row) {
+                                data: null, render: function (data, type, row) {
                                     return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.modifyID + "'); >Disapprove</a>";
                                 }
                             }
@@ -168,14 +162,16 @@
                     });
                 }
             };
-            options.error = function() {
+            options.error = function () {
                 $("#msg").html("Error while making Ajax call!");
             };
 
 
             $.ajax(options);
-        }
-        $('#validate').click(function() {
+
+        });
+
+        $('#validate').click(function () {
             var strOtp = {};
 
             if ($('#idtoken').val().length != 0) {
@@ -185,18 +181,18 @@
                 console.log(strOtp);
 
                 $.ajax({
-                    url: "Accredit?handler=Validteotp",
+                    url: "Approval/Index?handler=Validteotp",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: JSON.stringify(strOtp),
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader("MY-XSRF-TOKEN",
                             $('input:hidden[name="__RequestVerificationToken"]').val());
                     },
                     //dataType: "json",
                     //traditional: true,
-                    success: function(data) {
+                    success: function (data) {
                         console.log(data);
                         if (data === "00") {
 
@@ -224,7 +220,7 @@
                         }
 
                     },
-                    error: function(e) {
+                    error: function (e) {
                         //$('#loading-div-background').hide();
                         //$('#dvData').html(e.responseText);
                         Swal.fire({
@@ -271,14 +267,14 @@
                     options.data = JSON.stringify(objModify);
                     options.contentType = "application/json";
                     options.dataType = "json";
-                    options.beforeSend = function(xhr) {
+                    options.beforeSend = function (xhr) {
                         xhr.setRequestHeader("MY-XSRF-TOKEN",
                             $('input:hidden[name="__RequestVerificationToken"]').val());
                     };
-                    options.success = function(msg) {
+                    options.success = function (msg) {
                         $("#msg").html(msg);
                     };
-                    options.error = function() {
+                    options.error = function () {
                         $("#msg").html("Error while making Ajax call!");
 
                         var retval = null;
@@ -297,15 +293,21 @@
                                 'success'
                             )
                             //return retmsg.toString()
-
                         }
-                        loadTable();
                     };
                     $.ajax(options);
 
                 }
             })
 
+
+
+            //if (confirm("Do you want to Approve ?")) {
+            //    console.log(ModifyID)
+            //}
+            //else {
+            //    return false;
+            //}
         };
 
         function Disapprec(value1, value2) {
@@ -322,11 +324,11 @@
             options.data = JSON.stringify(objModify);
             options.contentType = "application/json";
             options.dataType = "json";
-            options.beforeSend = function(xhr) {
+            options.beforeSend = function (xhr) {
                 xhr.setRequestHeader("MY-XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
             };
-            options.success = function(msg) {
+            options.success = function (msg) {
                 $("#msg").html(msg);
 
                 var retval = null;
@@ -341,9 +343,8 @@
                     // swal("Reconciliation Solution", retmsg.toString(), "success");
                     return retmsg.toString()
                 }
-                loadTable();
             };
-            options.error = function() {
+            options.error = function () {
                 $("#msg").html("Error while making Ajax call!");
             };
             $.ajax(options);
@@ -362,7 +363,7 @@
                 inputAttributes: { autocapitalize: 'off' },
                 inputPlaceholder: "Write something"
             },
-                function(inputValue) {
+                function (inputValue) {
                     if (inputValue === false) return false;
 
                     if (inputValue === "") {
@@ -372,6 +373,8 @@
                     else {
 
                         Disapprec(ModifyID, inputValue);
+                        // console.log(returnValue.toString());
+                        //swal("Reconciliation Solution", returnValue.toString(), "success");
 
                     }
 

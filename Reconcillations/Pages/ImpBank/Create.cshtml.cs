@@ -170,7 +170,6 @@ namespace Reconcillations.Pages.ImpBank
             string webRootPath = _hostingEnvironment.WebRootPath;
             string newPath = Path.Combine(webRootPath, folderName);
             StringBuilder sb = new StringBuilder();
-           List<string> sbb = new List<string>();
 
             //declaring datatable
 
@@ -354,36 +353,9 @@ namespace Reconcillations.Pages.ImpBank
 
 
 
+                sb.Append("+");
+                //sb.AppendFormat("{0}", tbimport);
                 //sb.Append("+");
-<<<<<<< HEAD
-                ////sb.AppendFormat("{0}", tbimport);
-                ////sb.Append("+");
-                //sb.AppendFormat("{0:n2}", dbopening);
-                //sb.Append("+");
-                //sb.AppendFormat("{0:n2}", dbcredit);
-                //sb.Append("+");
-                //sb.AppendFormat("{0:n2}", dbdebit);
-                //sb.Append("+");
-                //sb.AppendFormat("{0:n2}", dbclose);
-                sbb.Add(dbopening.ToString());
-                sbb.Add(dbcredit.ToString());
-                sbb.Add(dbdebit.ToString());
-                sbb.Add(dbclose.ToString());
-
-                if (bsresult)
-                {
-                    sbb.Add("true");
-                }
-                else
-                {
-                    sbb.Add("false");
-                }
-
-
-                
-                sbb.Add(sb.ToString());
-
-=======
                 sb.AppendFormat("{0:n2}", dbopening);
                 sb.Append("+");
                 sb.AppendFormat("{0:n2}", dbcredit);
@@ -404,7 +376,6 @@ namespace Reconcillations.Pages.ImpBank
                 }
 
 
->>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
 
 
                 var serializeReponse = JsonConvert.SerializeObject(dt);
@@ -416,13 +387,8 @@ namespace Reconcillations.Pages.ImpBank
 
             blValiddate = bsresult;
             ViewData["finalbresult"] = blValiddate;
-<<<<<<< HEAD
-            string list = String.Join("+", sbb);
-            return this.Content(list);
-=======
 
             return this.Content(sb.ToString());
->>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
         }
 
         //public ActionResult OnPostBankstatement([FromBody] BankImport objBankImport)
@@ -585,7 +551,6 @@ namespace Reconcillations.Pages.ImpBank
             }
 
             DataSet dstcompare = _transactionRepository.SaveCompareStatement(reconcile.reconileID, reconcile.closebal, dtbank, dtCD, dtMD, HttpContext.Session.GetString("Usernames").ToString());
-           
             return new JsonResult(dstcompare);
         }
 

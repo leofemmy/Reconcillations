@@ -191,6 +191,8 @@ namespace Reconcillations.Pages.Normalise
                     }
                     else if (item.Key.ToString() == "period")
                     {
+                        //_recondays.Startdate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                        //_bankrecod.Startdate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                         _bankrecod.periodMonth = Convert.ToInt64(item.Value);
                     }
                     else
@@ -200,6 +202,7 @@ namespace Reconcillations.Pages.Normalise
                     }
                     else if (item.Key.ToString() == "year")
                     {
+                        //_bankrecod.Enddate = DateTime.ParseExact(item.Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                         _bankrecod.periodYear = Convert.ToInt64(item.Value);
                     }
 

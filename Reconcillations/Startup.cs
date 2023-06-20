@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using DevExpress.AspNetCore;
 using DevExpress.AspNetCore.Reporting;
 using Hangfire;
-using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -56,23 +55,20 @@ namespace Reconcillations
                 options.AutomaticAuthentication = false;
             });
             // Add Hangfire services.
-            //services.AddHangfire(configuration => configuration
-            //    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-            //    .UseSimpleAssemblyNameTypeSerializer()
-            //    .UseRecommendedSerializerSettings()
-            //    .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
-            //    {
-            //        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-            //        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-            //        QueuePollInterval = TimeSpan.Zero,
-            //        UseRecommendedIsolationLevel = true,
-            //        DisableGlobalLocks = true
-            //    }));
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }));
 
-            services.AddHangfire(x =>
-            {
-                x.UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"));
-            });
+
             // Add the processing server as IHostedService
             services.AddHangfireServer();
 
@@ -130,19 +126,6 @@ namespace Reconcillations
         {
 
             // Initialize reporting services.
-<<<<<<< HEAD
-            var absolutePath = Configuration.GetSection("AppSettings").GetSection("ApplicationBaseUrl").Value;
-            SqlServerStorageOptions optionsStorage = new ()
-            {
-                CommandBatchMaxTimeout = TimeSpan.FromMinutes(10),
-                SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                QueuePollInterval = TimeSpan.FromMinutes(5),
-                UseRecommendedIsolationLevel = true,
-                UsePageLocksOnDequeue = true,
-                DisableGlobalLocks = true
-            };
-=======
->>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
             app.UseDevExpressControls();
 
             if (env.IsDevelopment())
@@ -167,39 +150,8 @@ namespace Reconcillations
 
             });
 
-<<<<<<< HEAD
 
 
-            //"/hangfire"
-
-            //app.UseHangfireDashboard("/Pusher");
-
-            app.UseHangfireDashboard("/Pusher", new DashboardOptions
-            {
-                DashboardTitle = "Reconcilliation Portal Jobs",
-                Authorization = new[] { new  HangfireAuthorizationFilter()
-            },
-                IsReadOnlyFunc = (DashboardContext context) => false,
-                // Change `Back to site` link URL
-                AppPath = $"{absolutePath}/Index",
-                StatsPollingInterval = 30000
-            });
-
-            //RecurringJob.AddOrUpdate(() => DoReemsPush(), Cron.MinuteInterval(2));
-            PusherServices.InitialiseService();
-
-            app.UseHttpsRedirection();
-
-            //app.UseHangfireServer();
-
-            app.UseSession();
-
-=======
->>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
-
-
-<<<<<<< HEAD
-=======
             //"/hangfire"
 
             app.UseHangfireDashboard("/Pusher");
@@ -216,7 +168,6 @@ namespace Reconcillations
 
             app.UseRouting();
 
->>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -230,15 +181,13 @@ namespace Reconcillations
 
         }
 
-        public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
+        public void DoReemsPush()
         {
-            private readonly string[] _roles;
+            //var connectionString = this.GetConnection();
 
-            public HangfireAuthorizationFilter(params string[] roles)
+            string connectionString = this.Configuration.GetConnectionString("DefaultConnection");
+            try
             {
-<<<<<<< HEAD
-                _roles = roles;
-=======
                 SqlDataAdapter _adp;
 
                 DataSet response = new DataSet();
@@ -271,25 +220,15 @@ namespace Reconcillations
                     loggers.Information($"Reems Push To Successfully ");
 
                 }
->>>>>>> fa934164762a6aa3c5134c27d4cd01c7aab9d266
             }
-
-            public bool Authorize(DashboardContext context)
+            catch (Exception e)
             {
-                var httpContext = ((AspNetCoreDashboardContext)context).HttpContext;
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
 
-                //Your authorization logic goes here.
-                //bool isLogedIn = httpContext.User.Identity.IsAuthenticated;
-                //if (isLogedIn)
-                //{
-                //    return true;
-                //}
-                //return false;
-
-                return true;
+                logger.Fatal($"Do Reems Push thrown an error - {e.Message}");
             }
         }
-
-        
     }
 }
