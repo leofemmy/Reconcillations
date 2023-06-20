@@ -22,14 +22,14 @@ namespace Reconcillations.Pages
     {
         ITransactionRepository _transactionRepository;
 
-        IHostingEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
+        IHostEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
 
         public SelectList PostingSelectlist { get; set; }
         [BindProperty]
         public Postinglist pstlist { get; set; }
         public XtraReport Report { get; set; }
 
-        public AllocationModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
+        public AllocationModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
         {
             _transactionRepository = transactionRepository;
 

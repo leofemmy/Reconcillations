@@ -23,7 +23,7 @@ namespace Reconcillations.Pages
     {
         ITransactionRepository _transactionRepository;
 
-        private IHostingEnvironment _hostingEnvironment;
+        private IHostEnvironment _hostingEnvironment;
 
         //private IHostingEnvironment  _hostingEnvironment;
 
@@ -52,7 +52,7 @@ namespace Reconcillations.Pages
         [BindProperty]
         public PeriodYear PeriodYear { get; set; }
 
-        public ExpectionModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
+        public ExpectionModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
 

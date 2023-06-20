@@ -30,9 +30,9 @@ namespace Reconcillations.Services
 
                 mimeMessage.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.Sender));
 
-                mimeMessage.To.Add(new MailboxAddress(email));
+                mimeMessage.To.Add(new MailboxAddress("IReconcile Solution", email));
 
-                mimeMessage.Subject = subject;
+                               mimeMessage.Subject = subject;
 
                 mimeMessage.Body = new TextPart("html")
                 {
@@ -62,74 +62,7 @@ namespace Reconcillations.Services
 
                     await client.DisconnectAsync(true);
                 }
-                //// Credentials
-                //var credentials = new NetworkCredential(_emailSettings.Sender, _emailSettings.Password);
 
-                //// Mail message
-                //var mail = new MailMessage()
-                //{
-                //    From = new MailAddress(_emailSettings.Sender, _emailSettings.SenderName),
-                //    Subject = subject,
-                //    Body = message,
-                //    IsBodyHtml = true
-                //};
-
-                //mail.To.Add(new MailAddress(email));
-
-                //// Smtp client
-                //var client = new System.Net.Mail.SmtpClient()
-                //{
-                //    Port = _emailSettings.MailPort,
-                //    DeliveryMethod = SmtpDeliveryMethod.Network,
-                //    UseDefaultCredentials = false,
-                //    Host = _emailSettings.MailServer,
-                //    EnableSsl = true,
-                //    Credentials = credentials
-                //};
-
-                //// Send it...         
-                //client.Send(mail);
-
-                //From Address  
-                //                string FromAddress = _emailSettings.Sender;//"myname@company.com";
-                //                string FromAdressTitle = "ASP.NET Core DemoApp";
-                //                //To Address  
-                //                string ToAddress = email;
-                //                string ToAdressTitle = "Nishan Aryal";
-                //                string Subject = subject;
-                //                string BodyContent = message;
-
-                //                //Smtp Server  
-                //                string SmtpServer = _emailSettings.MailServer;//"smtp.office365.com";
-                //                //Smtp Port Number  
-                //                int SmtpPortNumber = _emailSettings.MailPort;//587;
-
-                //                var mimeMessage = new MimeMessage();
-                //                mimeMessage.From.Add(new MailboxAddress
-                //                                        (FromAdressTitle,
-                //                                         FromAddress
-                //                                         ));
-                //                mimeMessage.To.Add(new MailboxAddress
-                //                                         (ToAdressTitle,
-                //                                         ToAddress
-                //                                         ));
-                //                mimeMessage.Subject = Subject; //Subject
-                //                mimeMessage.Body = new TextPart("html")
-                //                {
-                //                    Text = BodyContent
-                //                };
-
-                //                using (var client = new SmtpClient())
-                //                {
-                //                    client.Connect(SmtpServer, SmtpPortNumber, false);
-                //                    client.Authenticate(
-                // _emailSettings.Sender,  // "myemail@mydomain.com",  //Enter your email here
-                //_emailSettings.Password//      "MyPassword" //Enter your Password here.
-                //    );
-                //                    await client.SendAsync(mimeMessage);
-                //                    Console.WriteLine("The mail has been sent successfully !!");
-                //                    Console.ReadLine();
-                //                    await client.DisconnectAsync(true);
             }
 
             catch (System.Exception ex)

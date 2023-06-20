@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 using MimeKit;
 using Reconcillations.Entity;
 using Reconcillations.Repository;
@@ -17,6 +18,7 @@ namespace Reconcillations.Pages.Account
 {
     public class forgot_passwordModel : PageModel
     {
+
         private IHostingEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
 
         ITransactionRepository _transactionRepository;
@@ -49,7 +51,9 @@ namespace Reconcillations.Pages.Account
                     if (ghtcoe > 0)
                     {
                         //send confirmation mail here
+                        
                         var webRoot = _hostingEnvironment.WebRootPath;
+
                         string webRootPath = _hostingEnvironment.WebRootPath;
                         string contentRootPath = _hostingEnvironment.ContentRootPath;
 

@@ -18,10 +18,10 @@ namespace Reconcillations.Pages.Approval
 {
     public class ViewModel : PageModel
     {
-        ITransactionRepository _transactionRepository; private IHostingEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
+        ITransactionRepository _transactionRepository; private IHostEnvironment _hostingEnvironment; private readonly IEmailSender _emailSender;
         public XtraReport Report { get; set; }
 
-        public ViewModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
+        public ViewModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository, IEmailSender emailSender)
         {
             _transactionRepository = transactionRepository;
 

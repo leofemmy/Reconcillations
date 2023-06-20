@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
 using Reconcillations.Entity;
 using Reconcillations.Reports;
@@ -19,7 +20,7 @@ namespace Reconcillations.Pages
 {
     public class BanksModel : PageModel
     {
-        ITransactionRepository _transactionRepository; IHostingEnvironment _hostingEnvironment;
+        ITransactionRepository _transactionRepository; IHostEnvironment _hostingEnvironment;
 
         public SelectList PeriodSelectList { get; set; }
 
@@ -30,7 +31,7 @@ namespace Reconcillations.Pages
         [BindProperty]
         public Summarys summarys { get; set; }
 
-        public BanksModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
+        public BanksModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
 

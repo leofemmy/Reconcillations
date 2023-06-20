@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Hosting;
 using Reconcillations.Entity;
 using Reconcillations.Reports;
 using Reconcillations.Repository;
@@ -18,7 +19,7 @@ namespace Reconcillations.Pages
 {
     public class YearModel : PageModel
     {
-        ITransactionRepository _transactionRepository; IHostingEnvironment _hostingEnvironment;
+        ITransactionRepository _transactionRepository; IHostEnvironment _hostingEnvironment;
 
         public SelectList PeriodSelectList
         {
@@ -53,7 +54,7 @@ namespace Reconcillations.Pages
             get; set;
         }
 
-        public YearModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
+        public YearModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
 

@@ -7,6 +7,7 @@ using DevExpress.XtraReports.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Hosting;
 using Reconcillations.Entity;
 using Reconcillations.Reports;
 using Reconcillations.Repository;
@@ -16,13 +17,13 @@ namespace Reconcillations.Pages
 {
     public class ChatModel : PageModel
     {
-        ITransactionRepository _transactionRepository; IHostingEnvironment _hostingEnvironment;
+        ITransactionRepository _transactionRepository; IHostEnvironment _hostingEnvironment;
         public XtraReport Report { get; set; }
 
         [BindProperty]
         public Summarys summarys { get; set; }
 
-        public ChatModel(IHostingEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
+        public ChatModel(IHostEnvironment hostingEnvironment, ITransactionRepository transactionRepository)
         {
             _transactionRepository = transactionRepository;
 
