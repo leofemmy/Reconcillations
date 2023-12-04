@@ -32,7 +32,7 @@ namespace Reconcillations.Services
 
                 mimeMessage.To.Add(new MailboxAddress("IReconcile Solution", email));
 
-                               mimeMessage.Subject = subject;
+                mimeMessage.Subject = subject;
 
                 mimeMessage.Body = new TextPart("html")
                 {
