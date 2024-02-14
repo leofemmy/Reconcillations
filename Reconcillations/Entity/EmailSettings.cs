@@ -215,7 +215,7 @@ namespace Reconcillations.Entity
         public string ConfirmPassword { get; set; }
 
     }
-   
+
     public class Cuserpass
     {
         [Required(ErrorMessage = "Email is required")]
@@ -234,7 +234,7 @@ namespace Reconcillations.Entity
 
         public string Code { get; set; }
     }
-   
+
     public class TransactionList
     {
         //[Key]
@@ -327,7 +327,7 @@ namespace Reconcillations.Entity
 
         public string Email { get; set; }
     }
-   
+
     public class Account
     {
         public double AccountID { get; set; }
@@ -394,6 +394,21 @@ namespace Reconcillations.Entity
 
     }
 
+    public class ReemsRec
+    {
+        [Key]
+        public string PaymentRefNumber { get; set; }
+        public DateTime PaymentDate { get; set; }
+        public string payername { get; set; }
+        public decimal Amount { get; set; }
+        public string PaymentMethod { get; set; }
+        public string RevenueName { get; set; }
+        public string AgencyName { get; set; }
+        public string BankName { get; set; }
+        public bool PushToReemsSuccessful { get; set; }
+        public DateTime PushToReemsOn { get; set; }
+        public string PushToReemsBy { get; set; }
+    }
     public class Bank
     {
         [Key]
@@ -632,7 +647,7 @@ namespace Reconcillations.Entity
             get; set;
         }
     }
-   
+
     public class PushException
     {
         public string PaymentRefNumber { get; set; }

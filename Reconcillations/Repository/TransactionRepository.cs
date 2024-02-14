@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using NPOI.SS.Formula.Functions;
+using Dapper;
 
 namespace Reconcillations.Repository
 {
@@ -2434,6 +2435,36 @@ namespace Reconcillations.Repository
             return _acctbal;
         }
 
+        public List<ReemsRec> GetReems()
+        {
+            var connectionString = this.GetConnection();
+
+            List<ReemsRec> reemsRecs = new List<ReemsRec>();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    reemsRecs = con.Query<ReemsRec>("spDolistReemsRecord", commandType: CommandType.StoredProcedure).AsList();
+
+                    var logger = new LoggerConfiguration()
+                        .WriteTo.MSSqlServer(connectionString, "Logs")
+                        .CreateLogger();
+                    logger.Information($"Get ReemsRecords Lists");
+                    logger.Information(JsonConvert.SerializeObject(reemsRecs));
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var logger = new LoggerConfiguration()
+                    .WriteTo.MSSqlServer(connectionString, "Logs")
+                    .CreateLogger();
+                logger.Fatal($"Get Bank Lists thrown an error - {ex.Message}");
+            }
+
+            return reemsRecs;
+        }
         public List<Bank> GetBanklistList()
         {
             var connectionString = this.GetConnection();
@@ -2954,6 +2985,85 @@ namespace Reconcillations.Repository
             return count;
         }
 
+        public DataSet PushedRecordtoReems(string usermail)
+        {
+            DataSet dtresult = new DataSet();
+
+            var connectionString = this.GetConnection();
+
+            dtresult.Clear();
+            try
+            {
+                SqlDataAdapter _adp;
+
+                DataSet response = new DataSet();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (con.State != ConnectionState.Closed)
+                    {
+                        con.Close();
+                    }
+                    else
+                    {
+                        con.Open();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("spdoGetRecordtoReem", con);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@useremail", usermail);
+                  
+                    cmd.CommandTimeout = 0;
+                    response.Clear();
+                    _adp = new SqlDataAdapter(cmd);
+                    _adp.Fill(response);
+
+                    if (response.Tables[0].Rows[0]["returnCode"].ToString() == "00")
+                    {
+                        dtresult = response;
+
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    else
+                    {
+                        dtresult = response;
+                        var logger = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        logger.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+
+                        var serializeReponse = JsonConvert.SerializeObject(response);
+                        var loggers = new LoggerConfiguration()
+                            .WriteTo.MSSqlServer(connectionString, "Logs")
+                            .CreateLogger();
+                        loggers.Information(response.Tables[0].Rows[0]["returnMessage"].ToString());
+                        loggers.Information(serializeReponse);
+                    }
+                    con.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                var logger = new LoggerConfiguration()
+                      .WriteTo.MSSqlServer(connectionString, "Logs")
+                      .CreateLogger();
+                logger.Fatal($"Normalise thrown an error - {e.Message}");
+            }
+
+            return dtresult;
+        }
         public DataSet SaveNormaliseRecord(string usermail, string paymentref, string payername, string agencyname,
             string agencycode, string revenuename, string revenusecode, string address)
         {

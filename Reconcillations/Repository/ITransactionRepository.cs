@@ -33,6 +33,8 @@ namespace Reconcillations.Repository
 
         DataSet SearchUserbyEmial(string useremail);
 
+        DataSet PushedRecordtoReems(string usermail);
+
         int ValidateEmailAddress(fpass fpass);
 
         public UsersList GetUserid(long userid);
@@ -189,5 +191,6 @@ namespace Reconcillations.Repository
         List<Requesntsent> GetRequestsentlist();
 
         List<Revenuelist> GetRevenuelist(long agancyid);
+        List<ReemsRec> GetReems();
     }
 }

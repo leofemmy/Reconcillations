@@ -1,0 +1,104 @@
+﻿@page
+@model Reconcillations.Pages.ReemsRecordsModel
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "Push Records to Reems";
+}
+@section header {
+    <!-- data tables -->
+    <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+}
+<script>
+
+    function myFunction(x) {
+        $("#item_view").modal();
+    };
+    $(document).ready(function () {
+        $("#success-alert").hide();
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#success-alert").slideUp(500);
+        });
+    });
+
+</script>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-topline-red">
+            <div class="card-head">
+                <header>Bank Account Lists</header>
+            </div>
+            <div class="card-body ">
+                <div class="row p-b-20">
+                    <div class="col-md-6 col-sm-6 col-6">
+                        <div class="btn-group">
+                             <form method="post">
+                            @*    <a class="btn btn-info" style="margin-top: 20px; margin-bottom: 20px;" asp-page="/Bank/Create">
+                            <i class="fa fa-plus"></i> Create
+                            </a> *@
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"><i class="glyphicon glyphicon-plus"></i> Pushed to Reems </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <table id="saveStage" class="display" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th> S/N </th>
+                            <th> Payment Ref Number </th>
+                            <th> Payment Date </th>
+                            <th> Payer Name </th>
+                            <th> Amount </th>
+                            <th> Payment Method </th>
+                            <th> Revenue </th>
+                            <th>Agency </th>
+                            <th>Bank </th>
+                            <th>Successfuliy Pushed</th>
+                            <th>Date Pushed </th>
+                            <th>Push By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        @foreach (var items in Model._reemsrec)
+                        {
+                            <tr>
+                                <td onclick="myFunction(this)" class="view-message ">
+                                    <h5>
+                                        @{
+                                            sno++;
+                                        }
+                                        @sno
+                                    </h5>
+                                </td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.PaymentRefNumber</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:d}", items.PaymentDate)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.payername</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:n2}", items.Amount)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.PaymentMethod</h5></td>
+
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.RevenueName</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.AgencyName</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.BankName</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.PushToReemsSuccessful</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@string.Format("{0:d}", items.PushToReemsOn)</h5></td>
+                                <td onclick="myFunction(this)" class="view-message "><h5>@items.PushToReemsBy</h5></td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <!-- data tables -->
+    <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+    <script src="~/smile/assets/js/pages/table/table_data.js"></script>
+
+}
