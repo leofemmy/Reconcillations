@@ -15,6 +15,7 @@ namespace Reconcillations.Repository
 
         int AddTransaction(Transaction transaction);
 
+        DataSet pushrecordtoogun(DataSet ds);
         int AddBankAccount(Bank bank);
 
         int SaveBankmport(DataTable dts, long RecperID);
@@ -33,7 +34,7 @@ namespace Reconcillations.Repository
 
         DataSet SearchUserbyEmial(string useremail);
 
-        DataSet PushedRecordtoReems(string usermail);
+        string PushedRecordtoReems(string usermail);
 
         int ValidateEmailAddress(fpass fpass);
 

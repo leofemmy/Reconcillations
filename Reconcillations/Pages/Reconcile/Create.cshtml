@@ -1,7 +1,7 @@
 ﻿@page
 @model Reconcillations.Pages.Reconcile.CreateModel
 @{ }
-@section header{
+@section header {
     <!-- Sweet Alert item CSS -->
     @*<link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">*@
 
@@ -19,7 +19,7 @@
     <!--select2-->
     <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
     <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
-    @*
+                @*
         <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>*@
     <script src="~/smile/assets/plugins/numeral/numeral.min.js"></script>
 }
@@ -119,6 +119,14 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <div class="checkbox checkbox-icon-black p-0">
+                                <input id="checkbox1" type="checkbox" checked>
+                                <label for="checkbox1">
+                                    Used Normal date for this recocile period
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <input type="hidden" id="reconid" />
                     <div id="loading-div-background">
@@ -137,7 +145,7 @@
         </div>
     </div>
 </div>
-@section Scripts{
+@section Scripts {
 
     <script type="text/javascript">
         $(document).ready(function () {

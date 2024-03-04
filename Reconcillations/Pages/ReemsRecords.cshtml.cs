@@ -23,19 +23,22 @@ namespace Reconcillations.Pages
         {
             _reemsrec = _transactionRepository.GetReems();
         }
-        public IActionResult OnPost()
+        public IActionResult OnPostPushed()
         {
-            string useremail = string.Empty;
+            string useremail = string.Empty; string retval = string.Empty;
 
             if (!string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserEmail").ToString()))
             {
                 useremail = HttpContext.Session.GetString("UserEmail").ToString();
             }
-           
-            var count = _transactionRepository.PushedRecordtoReems(useremail);
 
-            return Page();
+            retval = _transactionRepository.PushedRecordtoReems(useremail);
+
+            
+            //return new PageResult();
+            OnGet();
+            return new JsonResult(retval);
         }
 
-    }  
+    }
 }

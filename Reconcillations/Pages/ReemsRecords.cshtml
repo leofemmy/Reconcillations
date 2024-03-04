@@ -5,6 +5,12 @@
     ViewData["Title"] = "Push Records to Reems";
 }
 @section header {
+    <!-- Sweet Alert item CSS -->
+    <link rel="stylesheet" href="~/smile/assets/plugins/sweet-alert/sweetalert.min.css">
+    <script src="~/smile/assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+    <!--select2-->
+    <link href="~/smile/assets/plugins/select2/css/select2.css" rel="stylesheet" type="text/css" />
+    <link href="~/smile/assets/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
     <!-- data tables -->
     <link href="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 
@@ -26,17 +32,20 @@
     <div class="col-md-12">
         <div class="card card-topline-red">
             <div class="card-head">
-                <header>Bank Account Lists</header>
+                <header>Reems Records to Push Lists</header>
             </div>
             <div class="card-body ">
+                <div id="loading-div-background">
+                    <div id="loading-div" class="ui-corner-all">
+                        <div id="loadingbar"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></div>
+                        <h2 style="color:gray;font-weight:normal;">Processing, Please wait.... <img src="~/smile/assets/img/2.gif" /> </h2>
+                    </div>
+                </div>
                 <div class="row p-b-20">
                     <div class="col-md-6 col-sm-6 col-6">
                         <div class="btn-group">
-                             <form method="post">
-                            @*    <a class="btn btn-info" style="margin-top: 20px; margin-bottom: 20px;" asp-page="/Bank/Create">
-                            <i class="fa fa-plus"></i> Create
-                            </a> *@
-                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="submit" data-type="success"><i class="glyphicon glyphicon-plus"></i> Pushed to Reems </button>
+                            <form method="post">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-circle btn-primary" type="button" id="btnpushed"  data-type="success"><i class="glyphicon glyphicon-plus"></i> Pushed </button>
                             </form>
                         </div>
                     </div>
@@ -96,6 +105,55 @@
 </div>
 @section Scripts
 {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#loading-div-background').hide();
+            $('#btnpushed').click(function () {
+                $('#loading-div-background').show();
+                Promise.resolve(
+                    $.ajax({
+                        url: "ReemsRecords?handler=Pushed",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        //data: JSON.stringify(apprec),
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("MY-XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        //dataType: "json",
+                        //traditional: true,
+                        success: function (data) {
+                            console.log(data);
+                            $('#loading-div-background').hide();
+                            if (data === "00") {
+
+                                Swal.fire({
+                                    type: 'info',
+                                    title: 'Information',
+                                    text: 'Record push to Reems',
+                                    footer: ''
+                                });
+
+                                // $('#idtoken').hide();
+                                // $('#btntoken').hide();
+                                // $("#validate").hide();
+                                // $('#btnApprove').show();
+                            } else {
+                                Swal.fire({
+                                    type: 'Error',
+                                    title: 'Error',
+                                    text: 'Error occur Approving Reconcile Record!',
+                                    footer: ''
+                                });
+
+                            }
+
+                        }
+                    }))
+            });
+        });
+    </script>
     <!-- data tables -->
     <script src="~/smile/assets/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="~/smile/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
