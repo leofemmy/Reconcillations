@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System;
 using Hangfire;
+using Reconcillations.HangFireServices;
 
 namespace Reconcillations.Services
 {
@@ -12,14 +13,15 @@ namespace Reconcillations.Services
         {
             // Pusher Reems Starts Here
             const string reemsPushJobId = "482cbab9d555-423abfe6c2c5b541276c";
+            //RecurringJob.RemoveIfExists(reemsPushJobId);
+
+            //RecurringJob.AddOrUpdate<HangFireServices.ServiceScheduler>(reemsPushJobId, x => x.DoReemsPushAsync(), Cron.MinuteInterval(45));
+
             RecurringJob.RemoveIfExists(reemsPushJobId);
-
-            RecurringJob.AddOrUpdate<HangFireServices.ServiceScheduler>(reemsPushJobId, x => x.DoReemsPushAsync(), Cron.MinuteInterval(45));
-
-            //RecurringJob.AddOrUpdate<ServiceScheduler>(reemsPushJobId, x => x.DoReemsPushAsync(), Cron.MinuteInterval(2));
+            RecurringJob.AddOrUpdate<HangFireServices.ServiceScheduler>(reemsPushJobId, x => x.DoReemsPushAsync(), "*/10 * * * *");
         }
 
-        
-        
+
+
     }
 }
